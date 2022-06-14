@@ -293,6 +293,9 @@ const ApiScreenA40 = () => {
     const [meterInstalled1, setMeterInstalled1] = useState("");
     const [meterInstalled2, setMeterInstalled2] = useState("");
     const [meterInstalled, setMeterInstalled] = useState("");
+    const [meterInstalled3, setMeterInstalled3] = useState("");
+
+
     const [fmrNo, setFMRNo] = useState("");
 
     /* Meter Testing Result ------------ End */
@@ -404,7 +407,7 @@ const ApiScreenA40 = () => {
     };
 
     const borderCell = {
-         
+
         minWidth: 30,
         justifyContent: 'center',
         alignItems: 'center',
@@ -412,20 +415,20 @@ const ApiScreenA40 = () => {
         fontWeight: 'bold',
         borderRightWidth: 2,
         borderRightColor: 'white',
-        height:50
-        
+        height: 50
+
 
     };
 
 
     const borderCell1 = {
         borderRightWidth: 2,
-       // minWidth: 2,
+        // minWidth: 2,
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: 10,
         borderRightColor: 'white',
-        height:50
+        height: 50
 
     };
 
@@ -485,44 +488,44 @@ const ApiScreenA40 = () => {
     };
 
     const borderCell2 = {
-       
+
         minWidth: 10,
         justifyContent: 'center',
         alignItems: 'center',
         borderRightWidth: 2,
         borderRightColor: 'white',
-        height:50
+        height: 50
 
     };
 
-  
+
 
     const borderCell3 = {
-      
+
         minWidth: 50,
         justifyContent: 'center',
         alignItems: 'center',
         borderRightWidth: 2,
         borderRightColor: 'white',
-        height:50
+        height: 50
     };
     const borderCell4 = {
-        
+
         minWidth: 5,
         justifyContent: 'center',
         alignItems: 'center',
         borderRightWidth: 2,
         borderRightColor: 'white',
-        height:50
+        height: 50
     };
     const borderCell5 = {
-        
+
         minWidth: 58,
         justifyContent: 'center',
         alignItems: 'center',
         borderRightWidth: 2,
         borderRightColor: 'white',
-        height:50
+        height: 50
     };
     const chooseFile = (type) => {
         let options = {
@@ -819,14 +822,14 @@ const ApiScreenA40 = () => {
     ]);
 
 
-    
-  const [lightmeterdetail, setLightmeterdetail] = useState([
-    { id: Date.now(), CurrentType: 'R', AMP: '', VOLT: '', PF: '' },
-    { id: Date.now(), CurrentType: 'Y', AMP: '', VOLT: '', PF: '' },
-    { id: Date.now(), CurrentType: 'B', AMP: '', VOLT: '', PF: '' },
-    { id: Date.now(), CurrentType: 'N', AMP: '', VOLT: '', PF: '' },
 
-  ]);
+    const [lightmeterdetail, setLightmeterdetail] = useState([
+        { id: Date.now(), CurrentType: 'R', AMP: '', VOLT: '', PF: '' },
+        { id: Date.now(), CurrentType: 'Y', AMP: '', VOLT: '', PF: '' },
+        { id: Date.now(), CurrentType: 'B', AMP: '', VOLT: '', PF: '' },
+        { id: Date.now(), CurrentType: 'N', AMP: '', VOLT: '', PF: '' },
+
+    ]);
 
 
     const [postalOrderSeal, setPostalOrderseal] = useState([
@@ -949,18 +952,18 @@ const ApiScreenA40 = () => {
         let newArray = [...lightmeterdetail];
         newArray[index] = { ...newArray[index], AMP: text };
         setLightmeterdetail(newArray);
-      };
-      const updateLVolt = (text, index) => {
+    };
+    const updateLVolt = (text, index) => {
         let newArray = [...lightmeterdetail];
         newArray[index] = { ...newArray[index], VOLT: text };
         setLightmeterdetail(newArray);
-      };
-      const updateLPF = (text, index) => {
+    };
+    const updateLPF = (text, index) => {
         let newArray = [...lightmeterdetail];
         newArray[index] = { ...newArray[index], PF: text };
         setLightmeterdetail(newArray);
-      };
-    
+    };
+
 
     const onAddmore = () => {
         setTableList([
@@ -1514,6 +1517,220 @@ const ApiScreenA40 = () => {
 
 
                             <View style={styles.container1}>
+
+                                <View style={styles.footerInputMeterInstalled}>
+
+                                    <View style={{ flex: 0.9, width: 380, alignItems: 'flex-start' }}>
+
+                                        <LinearGradient
+                                            colors={['#1565C0', '#64b5f6']}
+                                            style={styles.otherMeterInstalled}
+                                        >
+                                            <Text style={[styles.textSign, {
+                                                color: '#fff'
+                                            }]}> Other Meter Installed </Text>
+                                        </LinearGradient>
+                                    </View>
+
+                                    <View
+                                        style={{
+                                            //   flexDirection: 'column',
+                                            // flex: 8,
+                                            width: '20%',
+                                            marginTop: -2,
+                                            marginLeft: 20,
+                                        }}>
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                flex: 2,
+                                                //  width: '96%',
+                                                marginTop: 4,
+                                            }}>
+                                            <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                                                <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                                                    1 - {' '}
+                                                </Text>
+                                            </View>
+
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    flex: 1,
+                                                    width: '88%',
+                                                    alignSelf: 'center',
+                                                }}>
+                                                <View
+                                                    style={{
+                                                        flex: 2,
+                                                        alignItems: 'flex-start',
+                                                        marginTop: -5,
+                                                        marginLeft: -100,
+
+                                                    }}>
+                                                    <TextInput
+                                                        placeholder={''}
+                                                        keyboardType={'email-address'}
+                                                        placeholderTextColor="grey"
+                                                        onChangeText={text => {
+                                                            setMeterInstalled(text);
+                                                        }}
+                                                        style={{
+                                                            //height: 24,
+                                                            width: '100%',
+                                                            borderBottomWidth: 0.5,
+                                                            textAlign: 'left',
+                                                            textAlignVertical: 'top',
+                                                            color: 'black',
+                                                        }}></TextInput>
+                                                </View>
+                                            </View>
+                                        </View>
+
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                flex: 2,
+                                                width: '96%',
+                                                marginTop: 20,
+                                            }}>
+                                            <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                                                <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                                                    2 -{' '}
+                                                </Text>
+                                            </View>
+
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    flex: 1,
+                                                    width: '88%',
+                                                    alignSelf: 'center',
+                                                }}>
+                                                <View
+                                                    style={{
+                                                        flex: 2,
+                                                        alignItems: 'flex-start',
+                                                        marginTop: -5,
+                                                        marginLeft: -100,
+                                                    }}>
+                                                    <TextInput
+                                                        placeholder={''}
+                                                        keyboardType={'email-address'}
+                                                        placeholderTextColor="grey"
+                                                        onChangeText={text => {
+                                                            setMeterInstalled1(text);
+                                                        }}
+                                                        style={{
+                                                            //height: 24,
+                                                            width: '100%',
+                                                            borderBottomWidth: 0.5,
+                                                            textAlign: 'left',
+                                                            textAlignVertical: 'top',
+                                                            color: 'black',
+                                                        }}></TextInput>
+                                                </View>
+                                            </View>
+                                        </View>
+
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                flex: 2,
+                                                width: '96%',
+                                                marginTop: 20,
+                                            }}>
+                                            <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                                                <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                                                    3 -{' '}
+                                                </Text>
+                                            </View>
+
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    flex: 1,
+                                                    width: '88%',
+                                                    alignSelf: 'center',
+                                                }}>
+                                                <View
+                                                    style={{
+                                                        flex: 2,
+                                                        alignItems: 'flex-start',
+                                                        marginTop: -5,
+                                                        marginLeft: -100,
+                                                    }}>
+                                                    <TextInput
+                                                        // style={styles.inputLoadDetail}
+                                                        placeholder={''}
+                                                        keyboardType={'email-address'}
+                                                        placeholderTextColor="grey"
+                                                        onChangeText={text => {
+                                                            setMeterInstalled2(text);
+                                                        }}
+                                                        style={{
+                                                            //height: 24,
+                                                            width: '100%',
+                                                            borderBottomWidth: 0.5,
+                                                            textAlign: 'left',
+                                                            textAlignVertical: 'top',
+                                                            color: 'black',
+                                                        }}></TextInput>
+                                                </View>
+                                            </View>
+                                        </View>
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                flex: 2,
+                                                width: '96%',
+                                                marginTop: 20,
+                                            }}>
+                                            <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                                                <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                                                    4 - {' '}
+                                                </Text>
+                                            </View>
+
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    flex: 1,
+                                                    width: '88%',
+                                                    alignSelf: 'center',
+                                                }}>
+                                                <View
+                                                    style={{
+                                                        flex: 2,
+                                                        alignItems: 'flex-start',
+                                                        marginTop: -5,
+                                                        marginLeft: -100,
+                                                    }}>
+                                                    <TextInput
+                                                        placeholder={''}
+                                                        keyboardType={'numeric'}
+                                                        placeholderTextColor="grey"
+                                                        onChangeText={text => {
+                                                            setMeterInstalled3(text);
+                                                        }}
+                                                        style={{
+                                                            //height: 24,
+                                                            width: '100%',
+                                                            borderBottomWidth: 0.5,
+                                                            textAlign: 'left',
+                                                            textAlignVertical: 'top',
+                                                            color: 'black',
+                                                        }}></TextInput>
+                                                </View>
+                                            </View>
+                                        </View>
+
+
+
+
+                                    </View>
+                                </View>
+
                                 <View style={styles.mainbox}>
                                     <View
                                         style={{
@@ -1892,35 +2109,35 @@ const ApiScreenA40 = () => {
 
                                             <DataTable>
                                                 <DataTable.Header style={widerCell} textStyle={{ fontWeight: 'bold' }}>
-                                                    <DataTable.Cell  style={borderCell1} >
-                                                    <Text style={meteringEquipCelltext} >Meter</Text>  
+                                                    <DataTable.Cell style={borderCell1} >
+                                                        <Text style={meteringEquipCelltext} >Meter</Text>
                                                     </DataTable.Cell>
-                                                    <DataTable.Cell  style={borderCell2}>
-                                                    <Text style={meteringEquipCelltext} > Main Cover</Text>  
-                                                       
+                                                    <DataTable.Cell style={borderCell2}>
+                                                        <Text style={meteringEquipCelltext} > Main Cover</Text>
+
                                                     </DataTable.Cell>
-                                                    <DataTable.Cell   style={borderCell}>
-                                                    <Text style={meteringEquipCelltext} > Terminal Cover</Text>  
-                                                    
-                                                        
+                                                    <DataTable.Cell style={borderCell}>
+                                                        <Text style={meteringEquipCelltext} > Terminal Cover</Text>
+
+
                                                     </DataTable.Cell>
-                                                    <DataTable.Cell  style={borderCell}>
-                                                    <Text style={meteringEquipCelltext} >  At B/CT Chamber</Text>  
-                                                   
-                                                      
+                                                    <DataTable.Cell style={borderCell}>
+                                                        <Text style={meteringEquipCelltext} >  At B/CT Chamber</Text>
+
+
                                                     </DataTable.Cell>
 
-                                                    <DataTable.Cell   style={borderCell3}>
-                                                    <Text style={meteringEquipCelltext} >   PT Fuse And PT Side</Text>  
-                                                       
+                                                    <DataTable.Cell style={borderCell3}>
+                                                        <Text style={meteringEquipCelltext} >   PT Fuse And PT Side</Text>
+
                                                     </DataTable.Cell>
-                                                    <DataTable.Cell   style={borderCell4}>
-                                                    <Text style={meteringEquipCelltext} >    Panel Door</Text>  
-                                                       
+                                                    <DataTable.Cell style={borderCell4}>
+                                                        <Text style={meteringEquipCelltext} >    Panel Door</Text>
+
                                                     </DataTable.Cell>
-                                                    <DataTable.Cell   style={borderCell5}>
-                                                    <Text style={meteringEquipCelltext} >     Main Cover Plate and Terminal Seal</Text>  
-                                                       
+                                                    <DataTable.Cell style={borderCell5}>
+                                                        <Text style={meteringEquipCelltext} >     Main Cover Plate and Terminal Seal</Text>
+
 
                                                     </DataTable.Cell>
                                                 </DataTable.Header>
@@ -1935,7 +2152,7 @@ const ApiScreenA40 = () => {
                                                                 fontSize={10}
                                                                 value={l.Meter}
                                                             />
-                                                            
+
                                                         </View>
                                                         <View style={dataCell2}>
                                                             <TextInput
@@ -3159,6 +3376,19 @@ const styles = StyleSheet.create({
 
     },
 
+    footerInputMeterInstalled: {
+        //  flex: 3,
+        backgroundColor: 'white',
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        paddingHorizontal: 15,
+        paddingVertical: 70,
+        width: 1500,
+        marginLeft: 8
+        // height: 200,
+
+    },
+
     footerInputPower: {
         flex: 3,
         backgroundColor: 'white',
@@ -3313,6 +3543,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10
+    },
+
+    otherMeterInstalled: {
+        width: '100%',
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        marginTop: -50
     },
 
     submit: {

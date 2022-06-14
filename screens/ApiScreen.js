@@ -36,7 +36,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import ImageViewer from 'react-native-image-zoom-viewer';
 
-import Signature from "react-native-signature-canvas";
+ 
 
 
 let current = 100;
@@ -573,22 +573,7 @@ const ApiScreen = () => {
 
   // console.log('data response', apiRes);
 
-  const [signature, setSign] = useState(null);
-
-  const handleOK = (signature) => {
-    console.log(signature);
-    setSign(signature);
-  };
-
-  const handleEmpty = () => {
-    console.log("Empty");
-  };
-
-  const style = `.m-signature-pad--footer
-    .button {
-      background-color: red;
-      color: #FFF;
-    }`;
+  
 
 
   return (
@@ -2734,27 +2719,7 @@ const ApiScreen = () => {
                         </View>
                       </View>
                     </View>
-
-
-                    <View style={{ flex: 1 }}>
-                      <View style={styles.preview}>
-                        {signature ? (
-                          <Image
-                            resizeMode={"contain"}
-                            style={{ width: 335, height: 114 }}
-                            source={{ uri: signature }}
-                          />
-                        ) : null}
-                      </View>
-                      <Signature
-                        onOK={handleOK}
-                        onEmpty={handleEmpty}
-                        descriptionText="Sign"
-                        clearText="Clear"
-                        confirmText="Save"
-                        webStyle={style}
-                      />
-                    </View>
+                     
 
 
 
