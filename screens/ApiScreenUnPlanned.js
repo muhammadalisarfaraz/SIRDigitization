@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, createRef } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
-  ScrollView, Image, ImageBackground,
+  ScrollView, Image, ImageBackground, SafeAreaView,
   TouchableOpacity, Platform,
   PermissionsAndroid,
   ActivityIndicator, Dimensions
@@ -35,6 +35,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 
 import ImageViewer from 'react-native-image-zoom-viewer';
+import SignatureCapture from 'react-native-signature-capture';
 
 let current = 100;
 const ApiScreenUnPlanned = () => {
@@ -42,6 +43,27 @@ const ApiScreenUnPlanned = () => {
   const [pos, setPos] = React.useState(0);
   const [tab, setTab] = useState('Load Detail');
   const [loader, setLoader] = useState(false);
+  const sign = createRef();
+  const [signaturePreview, setSign] = useState(null);
+
+  const saveSign = () => {
+    sign.current.saveImage();
+  };
+  const resetSign = () => {
+    sign.current.resetImage();
+
+    setTimeout(() => {
+      setSign();
+    }, 1000);
+  };
+  const _onSaveEvent = (result) => {
+    alert('Signature Captured Successfully');
+    setSign(result.encoded);
+  }
+  const _onDragEvent = () => {
+    // This callback will be called when the user enters signature
+    console.log('dragged');
+  };
 
   var radio_props = [
     { label: 'Yes', value: 0 },
@@ -103,7 +125,7 @@ const ApiScreenUnPlanned = () => {
     }
   };
 
-  
+
 
   const [apiRes, setApiRes] = useState([]);
   const [filePath, setFilePath] = useState([]);
@@ -121,49 +143,49 @@ const ApiScreenUnPlanned = () => {
   const [visible1, setIsVisible1] = useState(false);
 
 
-/* Load Detail ------------ Start */
-const [sanctionLoad,setSanctionLoad] = useState("");
-const [meterTesting,setMeterTesting] = useState("");
-const [agediff,setAgediff] = useState("");
-const [meterPer,setMeterPer] = useState("");
-const [meterSlow,setMeterSlow] = useState("");
-const [connectedLoad,setConnectedLoad] = useState("");
-const [runningLoad,setRunningLoad] = useState("");
+  /* Load Detail ------------ Start */
+  const [sanctionLoad, setSanctionLoad] = useState("");
+  const [meterTesting, setMeterTesting] = useState("");
+  const [agediff, setAgediff] = useState("");
+  const [meterPer, setMeterPer] = useState("");
+  const [meterSlow, setMeterSlow] = useState("");
+  const [connectedLoad, setConnectedLoad] = useState("");
+  const [runningLoad, setRunningLoad] = useState("");
 
   /* Load Detail ------------ End */
 
 
   /* Meter Detail on Site ------------ Start */
-const [meterNo,setMeterNo] = useState("");
-const [currentReading,setCurrentReading] = useState("");
-const [peakReading,setPeakReading] = useState("");
-const [make,setMake] = useState("");
-const [amperes,setAmperes] = useState("");
-const [volts,setVolts] = useState("");
-const [meterConstant,setMeterConstant] = useState("");
-const [securitySlipNo,setSecuritySlipNo] = useState("");
-const [multiplyingFactor,setMultiplyingFactor] = useState("");
+  const [meterNo, setMeterNo] = useState("");
+  const [currentReading, setCurrentReading] = useState("");
+  const [peakReading, setPeakReading] = useState("");
+  const [make, setMake] = useState("");
+  const [amperes, setAmperes] = useState("");
+  const [volts, setVolts] = useState("");
+  const [meterConstant, setMeterConstant] = useState("");
+  const [securitySlipNo, setSecuritySlipNo] = useState("");
+  const [multiplyingFactor, setMultiplyingFactor] = useState("");
 
-/* Meter Detail on Site ------------ End */
+  /* Meter Detail on Site ------------ End */
 
-/* Discrepancy and Findings ------------ Start */
-const [serviceType,setServiceType] = useState("");
-const [tarif,setTarif] = useState("");
-const [premiseType,setPremiseType] = useState("");
-const [premiseCategory,setPremiseCategory] = useState("");
-const [remarks,setRemarks] = useState("");
-const [discrepancyfindingsRemarks,setdiscrepancyfindingsRemarks] = useState("");
-/* Discrepancy and Findings ------------ End */
+  /* Discrepancy and Findings ------------ Start */
+  const [serviceType, setServiceType] = useState("");
+  const [tarif, setTarif] = useState("");
+  const [premiseType, setPremiseType] = useState("");
+  const [premiseCategory, setPremiseCategory] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const [discrepancyfindingsRemarks, setdiscrepancyfindingsRemarks] = useState("");
+  /* Discrepancy and Findings ------------ End */
 
-/* Customer Acknowlegment ------------ Start */
+  /* Customer Acknowlegment ------------ Start */
 
-const [consumerName,setConsumerName] = useState("");
-const [mobileNo,setMobileNo] = useState("");
-const [consumerRemarks,setConsumerRemarks] = useState("");
-const [consumerRefuseYN,setConsumerRefuseYN] = useState("");
-const [consumerSign,setConsumerSign] = useState("");
+  const [consumerName, setConsumerName] = useState("");
+  const [mobileNo, setMobileNo] = useState("");
+  const [consumerRemarks, setConsumerRemarks] = useState("");
+  const [consumerRefuseYN, setConsumerRefuseYN] = useState("");
+  const [consumerSign, setConsumerSign] = useState("");
 
-/* Customer Acknowlegment ------------ End */
+  /* Customer Acknowlegment ------------ End */
 
 
 
@@ -392,7 +414,7 @@ const [consumerSign,setConsumerSign] = useState("");
 
 
 
-        
+
 
 
         var Allimages = images;
@@ -400,17 +422,17 @@ const [consumerSign,setConsumerSign] = useState("");
         if (imageNo == '1') {
           setIsImage1("Y");
           console.log(response.path);
-        //setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
-        setFilePath1([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }]);
-        setImages1({ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data });
-        //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+          //setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+          setFilePath1([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }]);
+          setImages1({ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data });
+          //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
 
         }
-        else{
+        else {
           setIsImage("Y");
           setFilePath([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }, ...Allimages]);
           setImages([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }, ...Allimages]);
-        
+
 
         }
         console.log("images1.uri", images1.uri);
@@ -420,25 +442,25 @@ const [consumerSign,setConsumerSign] = useState("");
 
   const [list, setList] = useState([
     {
-     
-    
+
+
       id: 1,
       name: 'Load Detail',
-      active: true ,
+      active: true,
     },
     {
       id: 2,
       name: 'Discrepancy and Findings',
       active: false,
-     
+
     },
     {
       id: 3,
       name: 'Appliance Detail',
       active: false,
-      
+
     },
-     
+
     {
       id: 4,
       name: 'Meter Detail - Onsite',
@@ -457,6 +479,11 @@ const [consumerSign,setConsumerSign] = useState("");
       name: 'SIR Pictures',
       active: false,
       tabvisible: true,
+    },
+    {
+      id: 7,
+      name: 'Customer Signature',
+      active: false,
     },
   ]);
 
@@ -487,11 +514,12 @@ const [consumerSign,setConsumerSign] = useState("");
 
   const [tableList, setTableList] = useState([
     {
-      id: Date.now(), LoadDetail: 'Fan', Quantity: '',  Rating: '80',  TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Bulb',Quantity: '',  Rating: '',      TotalWatts: '' },
+      id: Date.now(), LoadDetail: 'Fan', Quantity: '', Rating: '80', TotalWatts: ''
+    },
+    { id: Date.now(), LoadDetail: 'Bulb', Quantity: '', Rating: '', TotalWatts: '' },
     { id: Date.now(), LoadDetail: 'Energy Saver', Quantity: '', Rating: '', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Tube Light',   Quantity: '', Rating: '40', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Heater',  Quantity: '', Rating: '', TotalWatts: '' },
+    { id: Date.now(), LoadDetail: 'Tube Light', Quantity: '', Rating: '40', TotalWatts: '' },
+    { id: Date.now(), LoadDetail: 'Heater', Quantity: '', Rating: '', TotalWatts: '' },
     { id: Date.now(), LoadDetail: 'AC-Window', Quantity: '', Rating: '2500', TotalWatts: '' },
     { id: Date.now(), LoadDetail: '1 1/2 Ton', Quantity: '', Rating: '1800', TotalWatts: '' },
     { id: Date.now(), LoadDetail: '1 Ton', Quantity: '', Rating: '1200', TotalWatts: '' },
@@ -512,8 +540,8 @@ const [consumerSign,setConsumerSign] = useState("");
   };
 
 
- // console.log('list table', tableList);
- 
+  // console.log('list table', tableList);
+
 
   const updateLoadDetail = (text, index) => {
     let newArray = [...tableList];
@@ -705,7 +733,7 @@ const [consumerSign,setConsumerSign] = useState("");
           </View>
         </ScrollView>
         <View>
-          
+
           {tab == 'Load Detail' && (
             <ScrollView
               showsVerticalScrollIndicator={true}
@@ -1186,7 +1214,7 @@ const [consumerSign,setConsumerSign] = useState("");
                         }}>
                         <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                           <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Premise Category{' '}
+                            Premise Category{' '}
                           </Text>
                         </View>
 
@@ -1240,20 +1268,20 @@ const [consumerSign,setConsumerSign] = useState("");
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>
-                           
-                    
-            
-                           
-                       
-                            <LinearGradient
-                    colors={['#1565C0', '#64b5f6']}
-                    style={styles.signIn}
-                >
-                    <Text style={[styles.textSign, {
-                        color:'#fff'
-                    }]}>  Discrepancy</Text>
-                </LinearGradient>
-                       
+
+
+
+
+
+                          <LinearGradient
+                            colors={['#1565C0', '#64b5f6']}
+                            style={styles.signIn}
+                          >
+                            <Text style={[styles.textSign, {
+                              color: '#fff'
+                            }]}>  Discrepancy</Text>
+                          </LinearGradient>
+
                         </View>
 
 
@@ -1310,17 +1338,17 @@ const [consumerSign,setConsumerSign] = useState("");
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}>
-                         
+
 
                           <LinearGradient
-                    colors={['#1565C0', '#64b5f6']}
-                    style={styles.signIn}
-                >
-                    <Text style={[styles.textSign, {
-                        color:'#fff'
-                    }]}>   Remarks{' '}</Text>
-                </LinearGradient>
-                       
+                            colors={['#1565C0', '#64b5f6']}
+                            style={styles.signIn}
+                          >
+                            <Text style={[styles.textSign, {
+                              color: '#fff'
+                            }]}>   Remarks{' '}</Text>
+                          </LinearGradient>
+
                         </View>
 
 
@@ -1400,7 +1428,7 @@ const [consumerSign,setConsumerSign] = useState("");
                               placeholderTextColor="black"
                               fontSize={10}
 
-                             value={l.LoadDetail}
+                              value={l.LoadDetail}
                             />
                             {/* {l.test} */}
                           </View>
@@ -1412,7 +1440,7 @@ const [consumerSign,setConsumerSign] = useState("");
                               placeholderTextColor="black"
                               keyboardType={'numeric'}
                               fontSize={10}
-                             value={l.Quantity }
+                              value={l.Quantity}
                             />
                           </View>
                           <View style={{ flex: 5 }}>
@@ -1423,7 +1451,7 @@ const [consumerSign,setConsumerSign] = useState("");
                               keyboardType={'numeric'}
                               placeholderTextColor="black"
                               fontSize={10}
-                               value={l.Rating }
+                              value={l.Rating}
                             />
                           </View>
                           <View style={{ flex: 5 }}>
@@ -1433,7 +1461,7 @@ const [consumerSign,setConsumerSign] = useState("");
                               placeholder="Total Watts"
                               placeholderTextColor="black"
                               fontSize={10}
-                               value={l.TotalWatts }
+                              value={l.TotalWatts}
                             />
                           </View>
                         </DataTable.Row>
@@ -1462,7 +1490,7 @@ const [consumerSign,setConsumerSign] = useState("");
             </ScrollView>
           )}
 
-           
+
 
           {tab == 'Meter Detail - Onsite' && (
             <ScrollView
@@ -1538,7 +1566,7 @@ const [consumerSign,setConsumerSign] = useState("");
                         }}>
                         <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                           <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Current/off-Peak Reading{' '}
+                            Current/off-Peak Reading{' '}
                           </Text>
                         </View>
 
@@ -1583,7 +1611,7 @@ const [consumerSign,setConsumerSign] = useState("");
                         }}>
                         <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                           <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Peak Reading{' '}
+                            Peak Reading{' '}
                           </Text>
                         </View>
 
@@ -1973,7 +2001,7 @@ const [consumerSign,setConsumerSign] = useState("");
                         }}>
                         <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                           <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Mobile No{' '}
+                            Mobile No{' '}
                           </Text>
                         </View>
 
@@ -2173,43 +2201,44 @@ const [consumerSign,setConsumerSign] = useState("");
 
 
                     <View style={[styles.container1]}>
-                <View style={{ flexDirection: 'row', flex: 0.2, width: '96%' }}>
-                    <View style={{ flex: 1, alignItems: 'flex-start' }}>
-                       
-                            <Text style={styles.text_left}>Picture (Optional)</Text>
-                       
-                    </View>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
-                       
-                            <TouchableOpacity onPress={() => captureImage('photo', '1')} >
-                                <Image
-                                    source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
-                                    style={styles.imageStyle}
-                                />
-                            </TouchableOpacity>
-                       
-                        <ImageViewConsumer
-                           images={[images1]}
+                      <View style={{ flexDirection: 'row', flex: 0.2, width: '96%' }}>
+                        <View style={{ flex: 1, alignItems: 'flex-start' }}>
+
+                          <Text style={styles.text_left}>Picture (Optional)</Text>
+
+                        </View>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
+
+                          <TouchableOpacity onPress={() => captureImage('photo', '1')} >
+                            <Image
+                              source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
+                              style={styles.imageStyle}
+                            />
+                          </TouchableOpacity>
+
+                          <ImageViewConsumer
+                            images={[images1]}
                             imageIndex={0}
                             visible={visible1}
-                            
-                           onRequestClose={() => setIsVisible1(false)}
-                        />
-                        <View style={{ flex: 2.5 }}>
-                        
-                                <TouchableOpacity onPress={() => setIsVisible1(true)} >
-                                    <Image
-                                        source={{ uri: images1.uri }}/// source={{uri: filePath.uri}}
-                                        style={styles.imageStyle}
-                                    />
-                            
-                                </TouchableOpacity>
-                           
+
+                            onRequestClose={() => setIsVisible1(false)}
+                          />
+                          <View style={{ flex: 2.5 }}>
+
+                            <TouchableOpacity onPress={() => setIsVisible1(true)} >
+                              <Image
+                                source={{ uri: images1.uri }}/// source={{uri: filePath.uri}}
+                                style={styles.imageStyle}
+                              />
+
+                            </TouchableOpacity>
+
+                          </View>
                         </View>
+                      </View>
                     </View>
-                </View>
-                </View>
-                <View
+
+                    <View
                       style={{
                         flexDirection: 'row',
                         flex: 2,
@@ -2218,7 +2247,52 @@ const [consumerSign,setConsumerSign] = useState("");
                       }}>
                       <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                         <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          
+                          Signature {''}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          //    flexDirection: 'row',
+                          flex: 1,
+                          // width: '88%',
+                          alignSelf: 'center',
+                          marginLeft: -10,
+                        }}>
+                        <View
+                          style={{
+                            flex: 2,
+                            alignItems: 'flex-start',
+                            marginLeft: -10,
+                          }}>
+
+                          <View style={styles.preview}>
+
+                            <Image
+                              resizeMode={"contain"}
+                              style={{ width: 114, height: 114 }}
+                              //source={{ base64: signaturePreview}}
+                              source={{
+                                uri: 'data:image/png;base64,' + signaturePreview,
+                              }}
+                            // source={require('/storage/emulated/0/Android/data/com.sirdigitization/files/saved_signature/signature.png')}
+                            />
+
+                          </View>
+
+                        </View>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 2,
+                        width: '96%',
+                        marginTop: 20,
+                      }}>
+                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+
                         </Text>
                       </View>
 
@@ -2235,10 +2309,10 @@ const [consumerSign,setConsumerSign] = useState("");
                             alignItems: 'flex-start',
                             marginTop: -10,
                           }}>
-                           
+
                         </View>
                       </View>
-                    </View> 
+                    </View>
                   </View>
                 </View>
               </View>
@@ -2282,18 +2356,18 @@ const [consumerSign,setConsumerSign] = useState("");
 
 
 
-                    
-                    
 
-                      <LinearGradient
-                    colors={['#1565C0', '#64b5f6']}
-                    style={styles.signIn}
-                >
-                    <Text style={[styles.textSign, {
-                        color:'#fff'
-                    }]}> Photos of Surveyed Meter</Text>
-                </LinearGradient>
-                   
+
+
+                    <LinearGradient
+                      colors={['#1565C0', '#64b5f6']}
+                      style={styles.signIn}
+                    >
+                      <Text style={[styles.textSign, {
+                        color: '#fff'
+                      }]}> Photos of Surveyed Meter</Text>
+                    </LinearGradient>
+
 
                     <View
                       style={{
@@ -2506,10 +2580,10 @@ const [consumerSign,setConsumerSign] = useState("");
                     <View
                       style={{
                         marginTop: 50,
-                       // marginLeft: 8,
-              
+                        // marginLeft: 8,
+
                         // marginBottom: 20,
-                    //    width: '90%',
+                        //    width: '90%',
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'space-between',
@@ -2519,8 +2593,8 @@ const [consumerSign,setConsumerSign] = useState("");
                           flexDirection: 'row',
                           alignItems: 'center',
                           justifyContent: 'center',
-                      //    backgroundColor: '#1565C0',
-                       //   padding: 15
+                          //    backgroundColor: '#1565C0',
+                          //   padding: 15
                         }}
                         onPress={() => {
                           // setUploadingMsg(res.d.Return);
@@ -2529,16 +2603,16 @@ const [consumerSign,setConsumerSign] = useState("");
                           setAuthModalVisible(!isAuthModalVisible);
 
                         }}>
-                        
+
 
                         <LinearGradient
-                    colors={['#1565C0', '#64b5f6']}
-                    style={styles.submit}
-                >
-                    <Text style={[styles.textSign, {
-                        color:'#fff'
-                    }]}>Cancel</Text>
-                </LinearGradient>
+                          colors={['#1565C0', '#64b5f6']}
+                          style={styles.submit}
+                        >
+                          <Text style={[styles.textSign, {
+                            color: '#fff'
+                          }]}>Cancel</Text>
+                        </LinearGradient>
 
 
 
@@ -2548,8 +2622,8 @@ const [consumerSign,setConsumerSign] = useState("");
                           flexDirection: 'row',
                           alignItems: 'center',
                           justifyContent: 'center',
-                      //    backgroundColor: '#1565C0',
-                        //  padding: 15
+                          //    backgroundColor: '#1565C0',
+                          //  padding: 15
                         }}
                         onPress={() => {
                           // setUploadingMsg(res.d.Return);
@@ -2558,17 +2632,17 @@ const [consumerSign,setConsumerSign] = useState("");
                           setAuthModalVisible(!isAuthModalVisible);
 
                         }}>
-                       
-                        <LinearGradient
-                    colors={['#1565C0', '#64b5f6']}
-                    style={styles.submit}
-                >
-                    <Text style={[styles.textSign, {
-                        color:'#fff'
-                    }]}>Submit</Text>
-                </LinearGradient>
 
-                        
+                        <LinearGradient
+                          colors={['#1565C0', '#64b5f6']}
+                          style={styles.submit}
+                        >
+                          <Text style={[styles.textSign, {
+                            color: '#fff'
+                          }]}>Submit</Text>
+                        </LinearGradient>
+
+
 
                       </TouchableOpacity>
                     </View>
@@ -2578,6 +2652,107 @@ const [consumerSign,setConsumerSign] = useState("");
                 </View>
               </View>
             </ScrollView>
+          )}
+
+          {tab == 'Customer Signature' && (
+            <SafeAreaView
+              //   showsVerticalScrollIndicator={true}
+              // showsHorizontalScrollIndicator={false}
+              style={styles.container3}>
+              <View style={styles.container3}>
+
+
+                <SignatureCapture
+                  style={styles.signature}
+                  ref={sign}
+                  onSaveEvent={_onSaveEvent}
+                  onDragEvent={_onDragEvent}
+                  showNativeButtons={false}
+                  showTitleLabel={false}
+                  viewMode={'portrait'}
+                />
+
+
+
+                <View
+                  style={{
+                     marginTop: -55,
+                    // marginLeft: 8,
+
+                    // marginBottom: 20,
+                    //    width: '90%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      //    backgroundColor: '#1565C0',
+                      //   padding: 15
+                    }}
+                    onPress={() => {
+                      // setUploadingMsg(res.d.Return);
+
+
+                      resetSign();
+
+                    }}>
+
+
+                    <LinearGradient
+                      colors={['#1565C0', '#64b5f6']}
+                      style={styles.submit}
+                    >
+                      <Text style={[styles.textSign, {
+                        color: '#fff'
+                      }]}>Reset</Text>
+                    </LinearGradient>
+
+
+
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      //    backgroundColor: '#1565C0',
+                      //  padding: 15
+                    }}
+                    onPress={() => {
+                      // setUploadingMsg(res.d.Return);
+
+
+                      saveSign();
+
+                    }}>
+
+                    <LinearGradient
+                      colors={['#1565C0', '#64b5f6']}
+                      style={styles.submit}
+                    >
+                      <Text style={[styles.textSign, {
+                        color: '#fff'
+                      }]}>Save</Text>
+                    </LinearGradient>
+
+
+
+                  </TouchableOpacity>
+                </View>
+
+
+
+
+
+              </View>
+
+
+
+            </SafeAreaView>
           )}
 
 
@@ -2755,35 +2930,85 @@ const styles = StyleSheet.create({
     //    justifyContent:'space-between',
     //   paddingBottom: 50,
     //        backgroundColor: "red",
-},
-text_left: {
-  color: '#111012',
-  fontWeight: 'bold',
-  fontSize: 15,
-  textAlign: 'center',
-  fontWeight: 'bold',
-  paddingVertical:10
-  //padding: 15,
-},
+  },
+  text_left: {
+    color: '#111012',
+    fontWeight: 'bold',
+    fontSize: 15,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    paddingVertical: 10
+    //padding: 15,
+  },
 
-signIn: {
-  width: '100%',
-  height: 30,
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: 10
-},
+  signIn: {
+    width: '100%',
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10
+  },
 
-submit: {
-  width: '50%',
-  height: 50,
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: 10
-},
-textSign: {
-  fontSize: 14,
-  fontWeight: 'bold'
-}
- 
+  submit: {
+    width: '50%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10
+  },
+  textSign: {
+    fontSize: 14,
+    fontWeight: 'bold'
+  },
+  textSign: {
+    fontSize: 14,
+    fontWeight: 'bold'
+  },
+  titleStyle: {
+    fontSize: 20,
+    textAlign: 'center',
+    backgroundColor: 'red',
+    margin: 10,
+  },
+
+  signature: {
+    flex: 1,
+    borderColor: 'black',
+    borderWidth: 1,
+    fontSize: 10,
+    height: 535
+  },
+  buttonStyle: {
+    flex: 1,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    backgroundColor: 'red',
+    margin: 10,
+  },
+  preview: {
+    width: 335,
+    //height: 204,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: -10,
+    marginLeft: -100
+  },
+  previewText: {
+    color: "red",
+    fontSize: 14,
+    height: 40,
+    lineHeight: 40,
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: "#69B2FF",
+    width: 120,
+    textAlign: "center",
+    marginTop: 10,
+  },
+
+
+
+
 });

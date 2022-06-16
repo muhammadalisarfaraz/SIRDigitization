@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, createRef } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     TextInput, Button,
-    ScrollView, Image, ImageBackground,
+    ScrollView, Image, ImageBackground, SafeAreaView,
     TouchableOpacity, Platform,
     PermissionsAndroid,
     ActivityIndicator, Dimensions
@@ -47,8 +47,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Moment from 'moment';
 import { set } from 'react-native-reanimated';
-//import { obsDiscrepanciesB40 } from "./util/obsDiscrepanciesB40";
-//import "./styles.css";
+import SignatureCapture from 'react-native-signature-capture';
 
 let current = 100;
 const ApiScreenA40 = () => {
@@ -56,6 +55,27 @@ const ApiScreenA40 = () => {
     const [pos, setPos] = React.useState(0);
     const [tab, setTab] = useState('Consumer Detail');
     const [loader, setLoader] = useState(false);
+    const sign = createRef();
+    const [signaturePreview, setSign] = useState(null);
+
+    const saveSign = () => {
+        sign.current.saveImage();
+    };
+    const resetSign = () => {
+        sign.current.resetImage();
+
+        setTimeout(() => {
+            setSign();
+        }, 1000);
+    };
+    const _onSaveEvent = (result) => {
+        alert('Signature Captured Successfully');
+        setSign(result.encoded);
+    }
+    const _onDragEvent = () => {
+        // This callback will be called when the user enters signature
+        console.log('dragged');
+    };
 
     var radio_props = [
         { label: 'Yes', value: 0 },
@@ -226,6 +246,12 @@ const ApiScreenA40 = () => {
         {
             id: 7,
             name: 'SIR Pictures',
+            active: false,
+        },
+
+        {
+            id: 8,
+            name: 'Customer Signature',
             active: false,
         },
     ]);
@@ -2916,6 +2942,51 @@ const ApiScreenA40 = () => {
                                             }}>
                                             <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                                                 <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                                                    Signature {''}
+                                                </Text>
+                                            </View>
+
+                                            <View
+                                                style={{
+                                                    //    flexDirection: 'row',
+                                                    flex: 1,
+                                                    // width: '88%',
+                                                    alignSelf: 'center',
+                                                    marginLeft: -10,
+                                                }}>
+                                                <View
+                                                    style={{
+                                                        flex: 2,
+                                                        alignItems: 'flex-start',
+                                                        marginLeft: -10,
+                                                    }}>
+
+                                                    <View style={styles.preview}>
+
+                                                        <Image
+                                                            resizeMode={"contain"}
+                                                            style={{ width: 114, height: 114 }}
+                                                            //source={{ base64: signaturePreview}}
+                                                            source={{
+                                                                uri: 'data:image/png;base64,' + signaturePreview,
+                                                            }}
+                                                        // source={require('/storage/emulated/0/Android/data/com.sirdigitization/files/saved_signature/signature.png')}
+                                                        />
+
+                                                    </View>
+
+                                                </View>
+                                            </View>
+                                        </View>
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                flex: 2,
+                                                width: '96%',
+                                                marginTop: 20,
+                                            }}>
+                                            <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                                                <Text style={{ fontWeight: 'normal', color: 'black' }}>
 
                                                 </Text>
                                             </View>
@@ -3270,6 +3341,107 @@ const ApiScreenA40 = () => {
                         </ScrollView>
                     )}
 
+                    {tab == 'Customer Signature' && (
+                        <SafeAreaView
+                            //   showsVerticalScrollIndicator={true}
+                            // showsHorizontalScrollIndicator={false}
+                            style={styles.container3}>
+                            <View style={styles.container3}>
+
+
+                                <SignatureCapture
+                                    style={styles.signature}
+                                    ref={sign}
+                                    onSaveEvent={_onSaveEvent}
+                                    onDragEvent={_onDragEvent}
+                                    showNativeButtons={false}
+                                    showTitleLabel={false}
+                                    viewMode={'portrait'}
+                                />
+
+
+
+                                <View
+                                    style={{
+                                         marginTop: -55,
+                                        // marginLeft: 8,
+
+                                        // marginBottom: 20,
+                                        //    width: '90%',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}>
+                                    <TouchableOpacity
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            //    backgroundColor: '#1565C0',
+                                            //   padding: 15
+                                        }}
+                                        onPress={() => {
+                                            // setUploadingMsg(res.d.Return);
+
+
+                                            resetSign();
+
+                                        }}>
+
+
+                                        <LinearGradient
+                                            colors={['#1565C0', '#64b5f6']}
+                                            style={styles.submit}
+                                        >
+                                            <Text style={[styles.textSign, {
+                                                color: '#fff'
+                                            }]}>Reset</Text>
+                                        </LinearGradient>
+
+
+
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            //    backgroundColor: '#1565C0',
+                                            //  padding: 15
+                                        }}
+                                        onPress={() => {
+                                            // setUploadingMsg(res.d.Return);
+
+
+                                            saveSign();
+
+                                        }}>
+
+                                        <LinearGradient
+                                            colors={['#1565C0', '#64b5f6']}
+                                            style={styles.submit}
+                                        >
+                                            <Text style={[styles.textSign, {
+                                                color: '#fff'
+                                            }]}>Save</Text>
+                                        </LinearGradient>
+
+
+
+                                    </TouchableOpacity>
+                                </View>
+
+
+
+
+
+                            </View>
+
+
+
+                        </SafeAreaView>
+                    )}
+
 
                 </View>
             </View>
@@ -3594,5 +3766,54 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'black'
     },
+
+    textSign: {
+        fontSize: 14,
+        fontWeight: 'bold'
+    },
+    titleStyle: {
+        fontSize: 20,
+        textAlign: 'center',
+        backgroundColor: 'red',
+        margin: 10,
+    },
+
+    signature: {
+        flex: 1,
+        borderColor: 'black',
+        borderWidth: 1,
+        fontSize: 10,
+        height: 535
+    },
+    buttonStyle: {
+        flex: 1,
+
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 50,
+        backgroundColor: 'red',
+        margin: 10,
+    },
+    preview: {
+        width: 335,
+        //height: 204,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: -10,
+        marginLeft: -100
+    },
+    previewText: {
+        color: "red",
+        fontSize: 14,
+        height: 40,
+        lineHeight: 40,
+        paddingLeft: 10,
+        paddingRight: 10,
+        backgroundColor: "#69B2FF",
+        width: 120,
+        textAlign: "center",
+        marginTop: 10,
+    },
+
 
 });

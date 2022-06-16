@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, createRef } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TextInput, Button,
-  ScrollView, Image, ImageBackground,
+  ScrollView, Image, ImageBackground, SafeAreaView,
   TouchableOpacity, Platform,
   PermissionsAndroid,
   ActivityIndicator, Dimensions
@@ -28,7 +28,7 @@ import axios from 'axios';
 import ImageViewConsumer from 'react-native-image-viewing';
 import Geolocation from '@react-native-community/geolocation';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
- 
+
 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -47,6 +47,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Moment from 'moment';
 import { set } from 'react-native-reanimated';
+
+import SignatureCapture from 'react-native-signature-capture';
 //import { obsDiscrepanciesB40 } from "./util/obsDiscrepanciesB40";
 //import "./styles.css";
 
@@ -58,6 +60,27 @@ const ApiScreenB40UnPlanned = () => {
   const [loader, setLoader] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState();
+  const sign = createRef();
+  const [signaturePreview, setSign] = useState(null);
+
+  const saveSign = () => {
+    sign.current.saveImage();
+  };
+  const resetSign = () => {
+    sign.current.resetImage();
+
+    setTimeout(() => {
+      setSign();
+    }, 1000);
+  };
+  const _onSaveEvent = (result) => {
+    alert('Signature Captured Successfully');
+    setSign(result.encoded);
+  }
+  const _onDragEvent = () => {
+    // This callback will be called when the user enters signature
+    console.log('dragged');
+  };
 
   var radio_props = [
     { label: 'Yes', value: 0 },
@@ -83,8 +106,8 @@ const ApiScreenB40UnPlanned = () => {
   const [checkBoxList, setCheckBoxList] = useState([
     {
       name: "Burnt", // label for checkbox item
-      value: 1, 
-      ischeck: false 
+      value: 1,
+      ischeck: false
     },
     {
       name: "Direct Use/Extra Phase",
@@ -103,7 +126,7 @@ const ApiScreenB40UnPlanned = () => {
     },
     {
       name: "N/Break", // label for checkbox item
-      value: 5, 
+      value: 5,
       ischeck: false
     },
     {
@@ -118,28 +141,28 @@ const ApiScreenB40UnPlanned = () => {
     },
     {
       name: "Shunt", // label for checkbox item
-      value: 8,  
+      value: 8,
       ischeck: false
     },
     {
       name: "Sticky",
       value: 9,
- 
+
       ischeck: false
     },
     {
       name: "Smoky", // label for checkbox item
-      value: 10,  
+      value: 10,
       ischeck: false
     },
     {
       name: "Slow",
-      value: 11,  
+      value: 11,
       ischeck: false
     },
     {
       name: "T-Strip/Damaged/Open", // label for checkbox item
-      value: 12,  
+      value: 12,
       ischeck: false
     },
   ])
@@ -179,7 +202,7 @@ const ApiScreenB40UnPlanned = () => {
     { label: 'Panel door', value: 'Panel door' },
 
   ]);
-  
+
 
   const items = [
     {
@@ -237,7 +260,7 @@ const ApiScreenB40UnPlanned = () => {
       name: 'Consumer Detail',
       active: true,
     },
-     
+
     {
       id: 2,
       name: 'Power Meter Detail',
@@ -258,8 +281,8 @@ const ApiScreenB40UnPlanned = () => {
       name: 'Discrepancy and Findings',
       active: false,
     },
-    
-    
+
+
     {
       id: 6,
       name: 'Customer Acknowlegment',
@@ -269,6 +292,11 @@ const ApiScreenB40UnPlanned = () => {
     {
       id: 7,
       name: 'SIR Pictures',
+      active: false,
+    },
+    {
+      id: 8,
+      name: 'Customer Signature',
       active: false,
     },
   ]);
@@ -290,80 +318,80 @@ const ApiScreenB40UnPlanned = () => {
   const [visible1, setIsVisible1] = useState(false);
   const [isSelected, setSelection] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    /* Consumer Detail */
-
- 
-const [	consumerStatus,	setConsumerStatus	]	 = 	useState(	""	);
-const [	industryType,	setIndustryType	]	 = 	useState(	""	);
-const [	tariff,	setTariff	]	 = 	useState(	""	);
-const [	serviceType,	setServiceType	]	 = 	useState(	""	);
-const [	sizeofService,	setSizeofService	]	 = 	useState(	""	);
-const [	fedFromPMTSS,	setFedFromPMTSS	]	 = 	useState(	""	);
-const [	pmtSSCode,	setPMTSSCode	]	 = 	useState(	""	);
-const [	connectedLoad,	setConnectedLoad	]	 = 	useState(	""	);
-const [	contractLoad,	setContractLoad	]	 = 	useState(	""	);
-const [	connectedLoadKW,	setConnectedLoadKW	]	 = 	useState(	""	);
-const [	runningLoadKW,	setRunningLoadKW	]	 = 	useState(	""	);
-/* Conumer Detail ------------ End  */
-
-/* Power Meter ------------ Start */
-
- const [powerKENo,setPowerKENo]=useState("");
- const [powerMeterMake,setPowerMeterMake]=useState("");
- const [powerMC,setPowerMC]=useState("");
- const [powerReading,setPowerReading]=useState("");
- const [powerMDIOnReading,setPowerMDIOnReading]=useState("");
- const [currentReading,setCurrentReading] = useState("");
- const [peakReading,setPeakReading] = useState("");
- 
-
- /* Power Meter ------------ End */
-
- /* Light Meter ------------ Start */
- const [lightKENo,setLightKENo]=useState("");
- const [lightMeterMake,setLightMeterMake]=useState("");
- const [lightMC,setLightMC]=useState("");
- const [lightReading,setLightReading]=useState("");
-
- const [lightMDIOnReading,setLightMDIOnReading]=useState("");
- const [lightConsumerNo,setLightConsumerNo]=useState("");
-
- const [lightPeakReading, setLightPeakReading] = useState("");
- const [lightCurrentReading,setLightCurrentReading]=useState("");
-
- 
- /* Light Meter ------------ End */
- /* Meter Testing Result ------------ Start */
- const [meterTestingResultTC,setMeterTestingResultTC] = useState("");
- const [meterTestingperError,setMeterTestingperError] = useState("");
- const [meterTestingTo,setMeterTestingTo] = useState("");
- const [meterInstalled1,setMeterInstalled1] = useState("");
- const [meterInstalled2,setMeterInstalled2] = useState("");
- const [meterInstalled,setMeterInstalled] = useState("");
-
- const [statusPostalorder, setStatusPostalorder] = useState("");
- const [metertestingResultremarks, setmetertestingResultremarks] = useState("");
- 
- const [fmrNo,setFMRNo] = useState("");
-
-/* Meter Testing Result ------------ End */
+  /* Consumer Detail */
 
 
+  const [consumerStatus, setConsumerStatus] = useState("");
+  const [industryType, setIndustryType] = useState("");
+  const [tariff, setTariff] = useState("");
+  const [serviceType, setServiceType] = useState("");
+  const [sizeofService, setSizeofService] = useState("");
+  const [fedFromPMTSS, setFedFromPMTSS] = useState("");
+  const [pmtSSCode, setPMTSSCode] = useState("");
+  const [connectedLoad, setConnectedLoad] = useState("");
+  const [contractLoad, setContractLoad] = useState("");
+  const [connectedLoadKW, setConnectedLoadKW] = useState("");
+  const [runningLoadKW, setRunningLoadKW] = useState("");
+  /* Conumer Detail ------------ End  */
 
- /* Discrepancy and Findings ------------ Start */
+  /* Power Meter ------------ Start */
 
-const [discrepancyfindingsRemarks,setdiscrepancyfindingsRemarks] = useState("");
-/* Discrepancy and Findings ------------ End */
+  const [powerKENo, setPowerKENo] = useState("");
+  const [powerMeterMake, setPowerMeterMake] = useState("");
+  const [powerMC, setPowerMC] = useState("");
+  const [powerReading, setPowerReading] = useState("");
+  const [powerMDIOnReading, setPowerMDIOnReading] = useState("");
+  const [currentReading, setCurrentReading] = useState("");
+  const [peakReading, setPeakReading] = useState("");
 
- /* Customer Acknowlegment ------------ Start */
 
-const [consumerName,setConsumerName] = useState("");
-const [mobileNo,setMobileNo] = useState("");
-const [consumerRemarks,setConsumerRemarks] = useState("");
-const [consumerRefuseYN,setConsumerRefuseYN] = useState("");
-const [consumerSign,setConsumerSign] = useState("");
+  /* Power Meter ------------ End */
 
-/* Customer Acknowlegment ------------ End */
+  /* Light Meter ------------ Start */
+  const [lightKENo, setLightKENo] = useState("");
+  const [lightMeterMake, setLightMeterMake] = useState("");
+  const [lightMC, setLightMC] = useState("");
+  const [lightReading, setLightReading] = useState("");
+
+  const [lightMDIOnReading, setLightMDIOnReading] = useState("");
+  const [lightConsumerNo, setLightConsumerNo] = useState("");
+
+  const [lightPeakReading, setLightPeakReading] = useState("");
+  const [lightCurrentReading, setLightCurrentReading] = useState("");
+
+
+  /* Light Meter ------------ End */
+  /* Meter Testing Result ------------ Start */
+  const [meterTestingResultTC, setMeterTestingResultTC] = useState("");
+  const [meterTestingperError, setMeterTestingperError] = useState("");
+  const [meterTestingTo, setMeterTestingTo] = useState("");
+  const [meterInstalled1, setMeterInstalled1] = useState("");
+  const [meterInstalled2, setMeterInstalled2] = useState("");
+  const [meterInstalled, setMeterInstalled] = useState("");
+
+  const [statusPostalorder, setStatusPostalorder] = useState("");
+  const [metertestingResultremarks, setmetertestingResultremarks] = useState("");
+
+  const [fmrNo, setFMRNo] = useState("");
+
+  /* Meter Testing Result ------------ End */
+
+
+
+  /* Discrepancy and Findings ------------ Start */
+
+  const [discrepancyfindingsRemarks, setdiscrepancyfindingsRemarks] = useState("");
+  /* Discrepancy and Findings ------------ End */
+
+  /* Customer Acknowlegment ------------ Start */
+
+  const [consumerName, setConsumerName] = useState("");
+  const [mobileNo, setMobileNo] = useState("");
+  const [consumerRemarks, setConsumerRemarks] = useState("");
+  const [consumerRefuseYN, setConsumerRefuseYN] = useState("");
+  const [consumerSign, setConsumerSign] = useState("");
+
+  /* Customer Acknowlegment ------------ End */
 
 
   const SPACING = 10;
@@ -647,7 +675,7 @@ const [consumerSign,setConsumerSign] = useState("");
 
 
 
-   
+
 
   useEffect(() => {
     // getApiData();
@@ -697,7 +725,7 @@ const [consumerSign,setConsumerSign] = useState("");
 
   ]);
 
-  
+
   const [lightmeterdetail, setLightmeterdetail] = useState([
     { id: Date.now(), CurrentType: 'R', AMP: '', VOLT: '', PF: '' },
     { id: Date.now(), CurrentType: 'Y', AMP: '', VOLT: '', PF: '' },
@@ -762,7 +790,7 @@ const [consumerSign,setConsumerSign] = useState("");
 
 
 
- 
+
 
 
 
@@ -1037,7 +1065,7 @@ const [consumerSign,setConsumerSign] = useState("");
 
                             ({ value: value })
                             if (value == 0) {
-                             setConsumerStatus("Active")
+                              setConsumerStatus("Active")
                             }
                             else {
                               setConsumerStatus("In-Active")
@@ -1132,10 +1160,10 @@ const [consumerSign,setConsumerSign] = useState("");
 
                             ({ value: value })
                             if (value == 0) {
-                               setServiceType("O/H")
+                              setServiceType("O/H")
                             }
                             else {
-                               setServiceType("U/G")
+                              setServiceType("U/G")
                             }
                           }
                           }
@@ -1287,7 +1315,7 @@ const [consumerSign,setConsumerSign] = useState("");
 
 
 
-           
+
           {tab == 'Meter Testing Result' && (
             <ScrollView
               showsVerticalScrollIndicator={true}
@@ -1585,7 +1613,7 @@ const [consumerSign,setConsumerSign] = useState("");
                                     setMeterInstalled("FMR")
                                   }
                                   else {
-                                      setMeterInstalled("MTV")
+                                    setMeterInstalled("MTV")
                                   }
                                 }
                                 }
@@ -1600,48 +1628,48 @@ const [consumerSign,setConsumerSign] = useState("");
                     </View>
 
                     <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                <View style={{ flex: 0.5, textAlign: 'right'}}>
-                  <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15,  textAlign: 'left' }}>  Status of Postal Order/ Seal</Text>
-                </View>
-                <View style={{ flex: 0.5 }}>
-                  <DropDownPicker
-                    open={open}
-                    value={value}
-                    items={pitems}
-                    setOpen={setOpen}
-                    setValue={setValue}
-                    setItems={setPItems}
-                    onChangeValue={item => {
-                      console.log("onChangeValue: " + item);
-                      setStatusPostalorder(item);
-                    }}
-                    onSelectItem={item => {// setSIRFormat(item.value);
-                    }}
-                  />
-                </View>
-              </View>
-              <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                <View style={{ flex: 0.5, textAlign: 'right'}}>
-                  <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15,  textAlign: 'left' }}>  Remarks</Text>
-                </View>
-                <View style={{ flex: 0.5 }}>
-                <TextInput
-                              multiline={true}
-                              onChangeText={text => {
-                                setmetertestingResultremarks(text);
-                              }}
-                              placeholder={'Any comment (if required)'}
-                              placeholderTextColor="black"
-                              style={{
-                                height: 150,
-                                width: '100%',
-                                borderWidth: 0.75,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
-                </View>
-              </View>
+                      <View style={{ flex: 0.5, textAlign: 'right' }}>
+                        <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15, textAlign: 'left' }}>  Status of Postal Order/ Seal</Text>
+                      </View>
+                      <View style={{ flex: 0.5 }}>
+                        <DropDownPicker
+                          open={open}
+                          value={value}
+                          items={pitems}
+                          setOpen={setOpen}
+                          setValue={setValue}
+                          setItems={setPItems}
+                          onChangeValue={item => {
+                            console.log("onChangeValue: " + item);
+                            setStatusPostalorder(item);
+                          }}
+                          onSelectItem={item => {// setSIRFormat(item.value);
+                          }}
+                        />
+                      </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
+                      <View style={{ flex: 0.5, textAlign: 'right' }}>
+                        <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15, textAlign: 'left' }}>  Remarks</Text>
+                      </View>
+                      <View style={{ flex: 0.5 }}>
+                        <TextInput
+                          multiline={true}
+                          onChangeText={text => {
+                            setmetertestingResultremarks(text);
+                          }}
+                          placeholder={'Any comment (if required)'}
+                          placeholderTextColor="black"
+                          style={{
+                            height: 150,
+                            width: '100%',
+                            borderWidth: 0.75,
+                            textAlign: 'left',
+                            textAlignVertical: 'top',
+                            color: 'black',
+                          }}></TextInput>
+                      </View>
+                    </View>
 
                     <View style={{ flex: 6, flexDirection: 'row' }}>
                       <View
@@ -1756,31 +1784,31 @@ const [consumerSign,setConsumerSign] = useState("");
                         marginTop: -80,
                         marginLeft: 2,
                       }}>
-                       
 
-                        <View
-                         style={{ flexDirection: 'row', flex: 1, width: '88%'     }}>
-                        <View style={{ flex: 2.5,   flexDirection: 'column'   }}>
+
+                      <View
+                        style={{ flexDirection: 'row', flex: 1, width: '88%' }}>
+                        <View style={{ flex: 2.5, flexDirection: 'column' }}>
 
                           {checkBoxList.map(data => {
                             return (
-                              <View style={{ flexDirection: 'column'  }}>
+                              <View style={{ flexDirection: 'column' }}>
                                 <CheckBox
                                   title={data.name}
-                                  
+
                                   checked={data.ischeck}
-                                  containerStyle={{ backgroundColor:'white',borderColor:'white',padding:.1, fontWeight:'bold'  }}
+                                  containerStyle={{ backgroundColor: 'white', borderColor: 'white', padding: .1, fontWeight: 'bold' }}
                                   onPress={() => onSelectCheckBox(data.name)}
-                                  
+
                                 />
                               </View>
                             )
-                          })}                         
+                          })}
                         </View>
 
                       </View>
 
-                      
+
 
 
 
@@ -1944,298 +1972,71 @@ const [consumerSign,setConsumerSign] = useState("");
             <ScrollView
               showsVerticalScrollIndicator={true}
               showsHorizontalScrollIndicator={false}>
-             
 
-             <View style={styles.container1}>
-              <View style={styles.mainbox}>
-                <View
-                  style={{
-//                    marginTop: 3,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
+
+              <View style={styles.container1}>
+                <View style={styles.mainbox}>
+                  <View
+                    style={{
+                      //                    marginTop: 3,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
                     <View style={styles.footerInputPower}>
-                    <View
-                      style={{
-                        //   flexDirection: 'column',
-                        // flex: 8,
-                        width: '90%',
-                        marginTop: -50,
-                        marginLeft: 2,
-                      }}>
                       <View
                         style={{
-                          flexDirection: 'row',
-                          flex: 2,
-                          width: '96%',
-                        //  marginTop: 20,
+                          //   flexDirection: 'column',
+                          // flex: 8,
+                          width: '90%',
+                          marginTop: -50,
+                          marginLeft: 2,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                            KE No{' '}
-                          </Text>
-                        </View>
-
                         <View
                           style={{
                             flexDirection: 'row',
-                            flex: 1,
-                            width: '88%',
-                            alignSelf: 'center',
+                            flex: 2,
+                            width: '96%',
+                            //  marginTop: 20,
                           }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              KE No{' '}
+                            </Text>
+                          </View>
+
                           <View
                             style={{
-                              flex: 2,
-                              alignItems: 'flex-start',
-                              marginTop: -10,
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
                             }}>
-                            <TextInput
-                              placeholder={'KE No'}
-                              keyboardType={'email-address'}
-                              placeholderTextColor="grey"
-                              onChangeText={text => {
-                                setPowerKENo(text);
-                              }}
+                            <View
                               style={{
-                                //height: 24,
-                                width: '100%',
-                                borderBottomWidth: 0.5,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'KE No'}
+                                keyboardType={'email-address'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setPowerKENo(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
                           </View>
-                        </View>
-                      </View>
-
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flex: 2,
-                          width: '96%',
-                          marginTop: 20,
-                        }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                            Make{' '}
-                          </Text>
                         </View>
 
                         <View
-                          style={{
-                            flexDirection: 'row',
-                            flex: 1,
-                            width: '88%',
-                            alignSelf: 'center',
-                          }}>
-                          <View
-                            style={{
-                              flex: 2,
-                              alignItems: 'flex-start',
-                              marginTop: -10,
-                            }}>
-                            <TextInput
-                              placeholder={'Make'}
-                              keyboardType={'email-address'}
-                              placeholderTextColor="grey"
-                              onChangeText={text => {
-                                setPowerMeterMake(text);
-                              }}
-                              style={{
-                                //height: 24,
-                                width: '100%',
-                                borderBottomWidth: 0.5,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
-                          </View>
-                        </View>
-                      </View>
-
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flex: 2,
-                          width: '96%',
-                          marginTop: 20,
-                        }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Meter CT Ratio{' '}
-                          </Text>
-                        </View>
-
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            flex: 1,
-                            width: '88%',
-                            alignSelf: 'center',
-                          }}>
-                          <View
-                            style={{
-                              flex: 2,
-                              alignItems: 'flex-start',
-                              marginTop: -10,
-                            }}>
-                            <TextInput
-                              // style={styles.inputLoadDetail}
-                              placeholder={'MC'}
-                              keyboardType={'email-address'}
-                              placeholderTextColor="grey"
-                              onChangeText={text => {
-                                setPowerMC(text);
-                              }}
-                              style={{
-                                //height: 24,
-                                width: '100%',
-                                borderBottomWidth: 0.5,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
-                          </View>
-                        </View>
-                      </View>
-
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flex: 2,
-                          width: '96%',
-                          marginTop: 20,
-                        }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Current/off-Peak Reading{' '}
-                          </Text>
-                        </View>
-
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            flex: 1,
-                            width: '88%',
-                            alignSelf: 'center',
-                          }}>
-                          <View
-                            style={{
-                              flex: 2,
-                              alignItems: 'flex-start',
-                              marginTop: -10,
-                            }}>
-                            <TextInput
-                              placeholder={'Current/off-Peak Reading'}
-                              keyboardType={'numeric'}
-                              placeholderTextColor="grey"
-                              onChangeText={text => {
-                                setCurrentReading(text);
-                              }}
-                              style={{
-                                //height: 24,
-                                width: '100%',
-                                borderBottomWidth: 0.5,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
-                          </View>
-                        </View>
-                      </View>
-
-
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flex: 2,
-                          width: '96%',
-                          marginTop: 20,
-                        }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Peak Reading{' '}
-                          </Text>
-                        </View>
-
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            flex: 1,
-                            width: '88%',
-                            alignSelf: 'center',
-                          }}>
-                          <View
-                            style={{
-                              flex: 2,
-                              alignItems: 'flex-start',
-                              marginTop: -10,
-                            }}>
-                            <TextInput
-                              placeholder={'Peak Reading'}
-                              keyboardType={'numeric'}
-                              placeholderTextColor="grey"
-                              onChangeText={text => {
-                                setPeakReading(text);
-                              }}
-                              style={{
-                                //height: 24,
-                                width: '100%',
-                                borderBottomWidth: 0.5,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
-                          </View>
-                        </View>
-                      </View>
-
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flex: 2,
-                          width: '96%',
-                          marginTop: 20,
-                        }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          MDI/MDI-Off{' '}
-                          </Text>
-                        </View>
-
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            flex: 1,
-                            width: '88%',
-                            alignSelf: 'center',
-                          }}>
-                          <View
-                            style={{
-                              flex: 2,
-                              alignItems: 'flex-start',
-                              marginTop: -10,
-                            }}>
-                            <TextInput
-                              placeholder={'MDI/MDI-Off'}
-                              keyboardType={'numeric'}
-                              placeholderTextColor="grey"
-                              onChangeText={text => {
-                                setPowerReading(text);
-                              }}
-                              style={{
-                                //height: 24,
-                                width: '100%',
-                                borderBottomWidth: 0.5,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
-                          </View>
-                        </View>
-                      </View>
-
-                      <View
                           style={{
                             flexDirection: 'row',
                             flex: 2,
@@ -2244,7 +2045,234 @@ const [consumerSign,setConsumerSign] = useState("");
                           }}>
                           <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                             <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                            MDI-On{' '}
+                              Make{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'Make'}
+                                keyboardType={'email-address'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setPowerMeterMake(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              Meter CT Ratio{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                // style={styles.inputLoadDetail}
+                                placeholder={'MC'}
+                                keyboardType={'email-address'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setPowerMC(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              Current/off-Peak Reading{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'Current/off-Peak Reading'}
+                                keyboardType={'numeric'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setCurrentReading(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              Peak Reading{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'Peak Reading'}
+                                keyboardType={'numeric'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setPeakReading(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              MDI/MDI-Off{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'MDI/MDI-Off'}
+                                keyboardType={'numeric'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setPowerReading(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              MDI-On{' '}
                             </Text>
                           </View>
 
@@ -2280,386 +2308,156 @@ const [consumerSign,setConsumerSign] = useState("");
                           </View>
                         </View>
 
+                      </View>
+
+
+
+
+                      <Card>
+                        <DataTable>
+                          <DataTable.Header style={styles.databeHeader}>
+                            <DataTable.Title style={{ flex: 5, color: 'black', textAlign: 'left' }}>
+                              CurrentType
+                            </DataTable.Title>
+                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                              AMP
+                            </DataTable.Title>
+                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                              VOLT
+                            </DataTable.Title>
+                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                              PF
+                            </DataTable.Title>
+                          </DataTable.Header>
+                          {powermeterdetail.map((l, i) => (
+                            <DataTable.Row style={styles.databeBox} key={i}>
+                              <View style={{ flex: 5 }}>
+                                <TextInput
+                                  style={styles.input}
+                                  // onChangeText={t => updateCurrentTypeLoadDetail(t, i)}
+                                  placeholder="Current Type"
+                                  placeholderTextColor="black"
+                                  fontSize={10}
+
+                                  value={l.CurrentType}
+                                />
+                                {/* {l.test} */}
+                              </View>
+                              <View style={{ flex: 5 }}>
+                                <TextInput
+                                  style={styles.input}
+                                  onChangeText={t => updateAmp(t, i)}
+                                  placeholder="Amp"
+                                  keyboardType={'numeric'}
+                                  placeholderTextColor="black"
+                                  fontSize={10}
+                                // value={l.AMP}
+                                />
+                              </View>
+                              <View style={{ flex: 5 }}>
+                                <TextInput
+                                  style={styles.input}
+                                  onChangeText={t => updateVolt(t, i)}
+                                  keyboardType={'numeric'}
+                                  placeholder="Volt"
+                                  placeholderTextColor="black"
+                                  fontSize={10}
+                                //  value={l.VOLT}
+                                />
+                              </View>
+                              <View style={{ flex: 5 }}>
+                                <TextInput
+                                  style={styles.input}
+                                  onChangeText={t => updatePF(t, i)}
+                                  placeholder="P.F"
+                                  placeholderTextColor="black"
+                                  fontSize={10}
+                                // value={l.PF}
+                                />
+                              </View>
+                            </DataTable.Row>
+                          ))}
+                        </DataTable>
+
+                      </Card>
                     </View>
-
-                 
-
-            
-                  <Card>
-                    <DataTable>
-                      <DataTable.Header style={styles.databeHeader}>
-                        <DataTable.Title style={{ flex: 5, color: 'black',textAlign:'left' }}>
-                          CurrentType
-                        </DataTable.Title>
-                        <DataTable.Title style={{ flex: 5, color: 'black' }}>
-                          AMP
-                        </DataTable.Title>
-                        <DataTable.Title style={{ flex: 5, color: 'black' }}>
-                          VOLT
-                        </DataTable.Title>
-                        <DataTable.Title style={{ flex: 5, color: 'black' }}>
-                          PF
-                        </DataTable.Title>
-                      </DataTable.Header>
-                      {powermeterdetail.map((l, i) => (
-                        <DataTable.Row style={styles.databeBox} key={i}>
-                          <View style={{ flex: 5 }}>
-                            <TextInput
-                              style={styles.input}
-                              // onChangeText={t => updateCurrentTypeLoadDetail(t, i)}
-                              placeholder="Current Type"
-                              placeholderTextColor="black"
-                              fontSize={10}
-
-                              value={l.CurrentType}
-                            />
-                            {/* {l.test} */}
-                          </View>
-                          <View style={{ flex: 5 }}>
-                            <TextInput
-                              style={styles.input}
-                              onChangeText={t => updateAmp(t, i)}
-                              placeholder="Amp"
-                              keyboardType={'numeric'}
-                              placeholderTextColor="black"
-                              fontSize={10}
-                            // value={l.AMP}
-                            />
-                          </View>
-                          <View style={{ flex: 5 }}>
-                            <TextInput
-                              style={styles.input}
-                              onChangeText={t => updateVolt(t, i)}
-                              keyboardType={'numeric'}
-                              placeholder="Volt"
-                              placeholderTextColor="black"
-                              fontSize={10}
-                            //  value={l.VOLT}
-                            />
-                          </View>
-                          <View style={{ flex: 5 }}>
-                            <TextInput
-                              style={styles.input}
-                              onChangeText={t => updatePF(t, i)}
-                              placeholder="P.F"
-                              placeholderTextColor="black"
-                              fontSize={10}
-                            // value={l.PF}
-                            />
-                          </View>
-                        </DataTable.Row>
-                      ))}
-                    </DataTable>
-
-                  </Card>
-                </View>
-                </View>
-                  
-
                   </View>
+
+
+                </View>
               </View>
             </ScrollView>
           )}
 
           {tab == 'Light Meter Detail' && (
-           <ScrollView
-           showsVerticalScrollIndicator={true}
-           showsHorizontalScrollIndicator={false}>
-          
+            <ScrollView
+              showsVerticalScrollIndicator={true}
+              showsHorizontalScrollIndicator={false}>
 
-          <View style={styles.container1}>
-           <View style={styles.mainbox}>
-             <View
-               style={{
-//                    marginTop: 3,
-                 alignItems: 'center',
-                 justifyContent: 'center',
-               }}>
-                 <View style={styles.footerInputPower}>
-                 <View
-                   style={{
-                     //   flexDirection: 'column',
-                     // flex: 8,
-                     width: '90%',
-                     marginTop: -50,
-                     marginLeft: 2,
-                   }}>
-                   <View
-                     style={{
-                       flexDirection: 'row',
-                       flex: 2,
-                       width: '96%',
-                     //  marginTop: 20,
-                     }}>
-                     <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                       <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                         KE No{' '}
-                       </Text>
-                     </View>
 
-                     <View
-                       style={{
-                         flexDirection: 'row',
-                         flex: 1,
-                         width: '88%',
-                         alignSelf: 'center',
-                       }}>
-                       <View
-                         style={{
-                           flex: 2,
-                           alignItems: 'flex-start',
-                           marginTop: -10,
-                         }}>
-                         <TextInput
-                           placeholder={'KE No'}
-                           keyboardType={'email-address'}
-                           placeholderTextColor="grey"
-                           onChangeText={text => {
-                             setLightKENo(text);
-                           }}
-                           style={{
-                             //height: 24,
-                             width: '100%',
-                             borderBottomWidth: 0.5,
-                             textAlign: 'left',
-                             textAlignVertical: 'top',
-                             color: 'black',
-                           }}></TextInput>
-                       </View>
-                     </View>
-                   </View>
-
-                   <View
-                     style={{
-                       flexDirection: 'row',
-                       flex: 2,
-                       width: '96%',
-                       marginTop: 20,
-                     }}>
-                     <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                       <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                         Make{' '}
-                       </Text>
-                     </View>
-
-                     <View
-                       style={{
-                         flexDirection: 'row',
-                         flex: 1,
-                         width: '88%',
-                         alignSelf: 'center',
-                       }}>
-                       <View
-                         style={{
-                           flex: 2,
-                           alignItems: 'flex-start',
-                           marginTop: -10,
-                         }}>
-                         <TextInput
-                           placeholder={'Make'}
-                           keyboardType={'email-address'}
-                           placeholderTextColor="grey"
-                           onChangeText={text => {
-                             setLightMeterMake(text);
-                           }}
-                           style={{
-                             //height: 24,
-                             width: '100%',
-                             borderBottomWidth: 0.5,
-                             textAlign: 'left',
-                             textAlignVertical: 'top',
-                             color: 'black',
-                           }}></TextInput>
-                       </View>
-                     </View>
-                   </View>
-
-                   <View
-                     style={{
-                       flexDirection: 'row',
-                       flex: 2,
-                       width: '96%',
-                       marginTop: 20,
-                     }}>
-                     <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                       <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                       Meter CT Ratio{' '}
-                       </Text>
-                     </View>
-
-                     <View
-                       style={{
-                         flexDirection: 'row',
-                         flex: 1,
-                         width: '88%',
-                         alignSelf: 'center',
-                       }}>
-                       <View
-                         style={{
-                           flex: 2,
-                           alignItems: 'flex-start',
-                           marginTop: -10,
-                         }}>
-                         <TextInput
-                           // style={styles.inputLoadDetail}
-                           placeholder={'Meter CT Ratio'}
-                           keyboardType={'email-address'}
-                           placeholderTextColor="grey"
-                           onChangeText={text => {
-                             setLightMC(text);
-                           }}
-                           style={{
-                             //height: 24,
-                             width: '100%',
-                             borderBottomWidth: 0.5,
-                             textAlign: 'left',
-                             textAlignVertical: 'top',
-                             color: 'black',
-                           }}></TextInput>
-                       </View>
-                     </View>
-                   </View>
-
+              <View style={styles.container1}>
+                <View style={styles.mainbox}>
+                  <View
+                    style={{
+                      //                    marginTop: 3,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <View style={styles.footerInputPower}>
                       <View
                         style={{
-                          flexDirection: 'row',
-                          flex: 2,
-                          width: '96%',
-                          marginTop: 20,
+                          //   flexDirection: 'column',
+                          // flex: 8,
+                          width: '90%',
+                          marginTop: -50,
+                          marginLeft: 2,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Current/off-Peak Reading{' '}
-                          </Text>
-                        </View>
-
                         <View
                           style={{
                             flexDirection: 'row',
-                            flex: 1,
-                            width: '88%',
-                            alignSelf: 'center',
+                            flex: 2,
+                            width: '96%',
+                            //  marginTop: 20,
                           }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              KE No{' '}
+                            </Text>
+                          </View>
+
                           <View
                             style={{
-                              flex: 2,
-                              alignItems: 'flex-start',
-                              marginTop: -10,
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
                             }}>
-                            <TextInput
-                              placeholder={'Current/off-Peak Reading'}
-                              keyboardType={'numeric'}
-                              placeholderTextColor="grey"
-                              onChangeText={text => {
-                                setLightCurrentReading(text);
-                              }}
+                            <View
                               style={{
-                                //height: 24,
-                                width: '100%',
-                                borderBottomWidth: 0.5,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'KE No'}
+                                keyboardType={'email-address'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setLightKENo(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
                           </View>
-                        </View>
-                      </View>
-
-
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flex: 2,
-                          width: '96%',
-                          marginTop: 20,
-                        }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                          Peak Reading{' '}
-                          </Text>
                         </View>
 
                         <View
-                          style={{
-                            flexDirection: 'row',
-                            flex: 1,
-                            width: '88%',
-                            alignSelf: 'center',
-                          }}>
-                          <View
-                            style={{
-                              flex: 2,
-                              alignItems: 'flex-start',
-                              marginTop: -10,
-                            }}>
-                            <TextInput
-                              placeholder={'Peak Reading'}
-                              keyboardType={'numeric'}
-                              placeholderTextColor="grey"
-                              onChangeText={text => {
-                                setLightPeakReading(text);
-                              }}
-                              style={{
-                                //height: 24,
-                                width: '100%',
-                                borderBottomWidth: 0.5,
-                                textAlign: 'left',
-                                textAlignVertical: 'top',
-                                color: 'black',
-                              }}></TextInput>
-                          </View>
-                        </View>
-                      </View>
-
-
-
-
-                   <View
-                     style={{
-                       flexDirection: 'row',
-                       flex: 2,
-                       width: '96%',
-                       marginTop: 20,
-                     }}>
-                     <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                       <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                       MDI/MDI-Off{' '}
-                       </Text>
-                     </View>
-
-                     <View
-                       style={{
-                         flexDirection: 'row',
-                         flex: 1,
-                         width: '88%',
-                         alignSelf: 'center',
-                       }}>
-                       <View
-                         style={{
-                           flex: 2,
-                           alignItems: 'flex-start',
-                           marginTop: -10,
-                         }}>
-                         <TextInput
-                           placeholder={'MDI/MDI-Off Reading'}
-                           keyboardType={'numeric'}
-                           placeholderTextColor="grey"
-                           onChangeText={text => {
-                             setLightReading(text);
-                           }}
-                           style={{
-                             //height: 24,
-                             width: '100%',
-                             borderBottomWidth: 0.5,
-                             textAlign: 'left',
-                             textAlignVertical: 'top',
-                             color: 'black',
-                           }}></TextInput>
-                       </View>
-                     </View>
-                   </View>
-
-                   <View
                           style={{
                             flexDirection: 'row',
                             flex: 2,
@@ -2668,7 +2466,237 @@ const [consumerSign,setConsumerSign] = useState("");
                           }}>
                           <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                             <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                            MDI-On Reading{' '}
+                              Make{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'Make'}
+                                keyboardType={'email-address'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setLightMeterMake(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              Meter CT Ratio{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                // style={styles.inputLoadDetail}
+                                placeholder={'Meter CT Ratio'}
+                                keyboardType={'email-address'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setLightMC(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              Current/off-Peak Reading{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'Current/off-Peak Reading'}
+                                keyboardType={'numeric'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setLightCurrentReading(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              Peak Reading{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'Peak Reading'}
+                                keyboardType={'numeric'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setLightPeakReading(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+
+
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              MDI/MDI-Off{' '}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'MDI/MDI-Off Reading'}
+                                keyboardType={'numeric'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setLightReading(text);
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}></TextInput>
+                            </View>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                              MDI-On Reading{' '}
                             </Text>
                           </View>
 
@@ -2713,7 +2741,7 @@ const [consumerSign,setConsumerSign] = useState("");
                           }}>
                           <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                             <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                            Consumer No{' '}
+                              Consumer No{' '}
                             </Text>
                           </View>
 
@@ -2749,88 +2777,88 @@ const [consumerSign,setConsumerSign] = useState("");
                           </View>
                         </View>
 
-                 </View>
+                      </View>
 
-              
 
-         
-               <Card>
-                 <DataTable>
-                   <DataTable.Header style={styles.databeHeader}>
-                     <DataTable.Title style={{ flex: 5, color: 'black',textAlign:'left' }}>
-                       CurrentType
-                     </DataTable.Title>
-                     <DataTable.Title style={{ flex: 5, color: 'black' }}>
-                       AMP
-                     </DataTable.Title>
-                     <DataTable.Title style={{ flex: 5, color: 'black' }}>
-                       VOLT
-                     </DataTable.Title>
-                     <DataTable.Title style={{ flex: 5, color: 'black' }}>
-                       PF
-                     </DataTable.Title>
-                   </DataTable.Header>
-                   {lightmeterdetail.map((l, i) => (
-                     <DataTable.Row style={styles.databeBox} key={i}>
-                       <View style={{ flex: 5 }}>
-                         <TextInput
-                           style={styles.input}
-                           // onChangeText={t => updateCurrentTypeLoadDetail(t, i)}
-                           placeholder="Current Type"
-                           placeholderTextColor="black"
-                           fontSize={10}
 
-                           value={l.CurrentType}
-                         />
-                         {/* {l.test} */}
-                       </View>
-                       <View style={{ flex: 5 }}>
-                         <TextInput
-                           style={styles.input}
-                           onChangeText={t => updateLAmp(t, i)}
-                           placeholder="Amp"
-                           keyboardType={'numeric'}
-                           placeholderTextColor="black"
-                           fontSize={10}
-                         // value={l.AMP}
-                         />
-                       </View>
-                       <View style={{ flex: 5 }}>
-                         <TextInput
-                           style={styles.input}
-                           onChangeText={t => updateLVolt(t, i)}
-                           placeholder="Volt"
-                           keyboardType={'numeric'}
-                           placeholderTextColor="black"
-                           fontSize={10}
-                         //  value={l.VOLT}
-                         />
-                       </View>
-                       <View style={{ flex: 5 }}>
-                         <TextInput
-                           style={styles.input}
-                           onChangeText={t => updateLPF(t, i)}
-                           placeholder="P.F"
-                           placeholderTextColor="black"
-                           fontSize={10}
-                         // value={l.PF}
-                         />
-                       </View>
-                     </DataTable.Row>
-                   ))}
-                 </DataTable>
 
-               </Card>
-             </View>
-             </View>
-               
+                      <Card>
+                        <DataTable>
+                          <DataTable.Header style={styles.databeHeader}>
+                            <DataTable.Title style={{ flex: 5, color: 'black', textAlign: 'left' }}>
+                              CurrentType
+                            </DataTable.Title>
+                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                              AMP
+                            </DataTable.Title>
+                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                              VOLT
+                            </DataTable.Title>
+                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                              PF
+                            </DataTable.Title>
+                          </DataTable.Header>
+                          {lightmeterdetail.map((l, i) => (
+                            <DataTable.Row style={styles.databeBox} key={i}>
+                              <View style={{ flex: 5 }}>
+                                <TextInput
+                                  style={styles.input}
+                                  // onChangeText={t => updateCurrentTypeLoadDetail(t, i)}
+                                  placeholder="Current Type"
+                                  placeholderTextColor="black"
+                                  fontSize={10}
 
-               </View>
-           </View>
-         </ScrollView>
+                                  value={l.CurrentType}
+                                />
+                                {/* {l.test} */}
+                              </View>
+                              <View style={{ flex: 5 }}>
+                                <TextInput
+                                  style={styles.input}
+                                  onChangeText={t => updateLAmp(t, i)}
+                                  placeholder="Amp"
+                                  keyboardType={'numeric'}
+                                  placeholderTextColor="black"
+                                  fontSize={10}
+                                // value={l.AMP}
+                                />
+                              </View>
+                              <View style={{ flex: 5 }}>
+                                <TextInput
+                                  style={styles.input}
+                                  onChangeText={t => updateLVolt(t, i)}
+                                  placeholder="Volt"
+                                  keyboardType={'numeric'}
+                                  placeholderTextColor="black"
+                                  fontSize={10}
+                                //  value={l.VOLT}
+                                />
+                              </View>
+                              <View style={{ flex: 5 }}>
+                                <TextInput
+                                  style={styles.input}
+                                  onChangeText={t => updateLPF(t, i)}
+                                  placeholder="P.F"
+                                  placeholderTextColor="black"
+                                  fontSize={10}
+                                // value={l.PF}
+                                />
+                              </View>
+                            </DataTable.Row>
+                          ))}
+                        </DataTable>
+
+                      </Card>
+                    </View>
+                  </View>
+
+
+                </View>
+              </View>
+            </ScrollView>
           )}
 
-           
+
 
           {tab == 'Customer Acknowlegment' && (
             <ScrollView
@@ -3029,11 +3057,11 @@ const [consumerSign,setConsumerSign] = useState("");
 
                               ({ value: value })
                               if (value == 0) {
-                                 setConsumerRefuseYN("Yes")
+                                setConsumerRefuseYN("Yes")
                               }
                               else {
                                 setConsumerRefuseYN("No")
-                                                               }
+                              }
                             }
 
                             }
@@ -3089,10 +3117,10 @@ const [consumerSign,setConsumerSign] = useState("");
 
                               ({ value: value })
                               if (value == 0) {
-                                 setConsumerSign("Yes")
+                                setConsumerSign("Yes")
                               }
                               else {
-                                  setConsumerSign("No")
+                                setConsumerSign("No")
                               }
                             }
 
@@ -3138,6 +3166,52 @@ const [consumerSign,setConsumerSign] = useState("");
                             </TouchableOpacity>
 
                           </View>
+                        </View>
+                      </View>
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 2,
+                        width: '96%',
+                        marginTop: 20,
+                      }}>
+                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          Signature {''}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          //    flexDirection: 'row',
+                          flex: 1,
+                          // width: '88%',
+                          alignSelf: 'center',
+                          marginLeft: -10,
+                        }}>
+                        <View
+                          style={{
+                            flex: 2,
+                            alignItems: 'flex-start',
+                            marginLeft: -10,
+                          }}>
+
+                          <View style={styles.preview}>
+
+                            <Image
+                              resizeMode={"contain"}
+                              style={{ width: 114, height: 114 }}
+                              //source={{ base64: signaturePreview}}
+                              source={{
+                                uri: 'data:image/png;base64,' + signaturePreview,
+                              }}
+                            // source={require('/storage/emulated/0/Android/data/com.sirdigitization/files/saved_signature/signature.png')}
+                            />
+
+                          </View>
+
                         </View>
                       </View>
                     </View>
@@ -3504,6 +3578,107 @@ const [consumerSign,setConsumerSign] = useState("");
             </ScrollView>
           )}
 
+          {tab == 'Customer Signature' && (
+            <SafeAreaView
+              //   showsVerticalScrollIndicator={true}
+              // showsHorizontalScrollIndicator={false}
+              style={styles.container3}>
+              <View style={styles.container3}>
+
+
+                <SignatureCapture
+                  style={styles.signature}
+                  ref={sign}
+                  onSaveEvent={_onSaveEvent}
+                  onDragEvent={_onDragEvent}
+                  showNativeButtons={false}
+                  showTitleLabel={false}
+                  viewMode={'portrait'}
+                />
+
+
+
+                <View
+                  style={{
+                   marginTop: -55,
+                    // marginLeft: 8,
+
+                    // marginBottom: 20,
+                    //    width: '90%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      //    backgroundColor: '#1565C0',
+                      //   padding: 15
+                    }}
+                    onPress={() => {
+                      // setUploadingMsg(res.d.Return);
+
+
+                      resetSign();
+
+                    }}>
+
+
+                    <LinearGradient
+                      colors={['#1565C0', '#64b5f6']}
+                      style={styles.submit}
+                    >
+                      <Text style={[styles.textSign, {
+                        color: '#fff'
+                      }]}>Reset</Text>
+                    </LinearGradient>
+
+
+
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      //    backgroundColor: '#1565C0',
+                      //  padding: 15
+                    }}
+                    onPress={() => {
+                      // setUploadingMsg(res.d.Return);
+
+
+                      saveSign();
+
+                    }}>
+
+                    <LinearGradient
+                      colors={['#1565C0', '#64b5f6']}
+                      style={styles.submit}
+                    >
+                      <Text style={[styles.textSign, {
+                        color: '#fff'
+                      }]}>Save</Text>
+                    </LinearGradient>
+
+
+
+                  </TouchableOpacity>
+                </View>
+
+
+
+
+
+              </View>
+
+
+
+            </SafeAreaView>
+          )}
+
 
         </View>
       </View>
@@ -3609,7 +3784,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 70,
     width: 400,
-   // height: 200,
+    // height: 200,
 
   },
 
@@ -3761,5 +3936,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black'
   },
+
+  textSign: {
+    fontSize: 14,
+    fontWeight: 'bold'
+  },
+  titleStyle: {
+    fontSize: 20,
+    textAlign: 'center',
+    backgroundColor: 'red',
+    margin: 10,
+  },
+
+  signature: {
+    flex: 1,
+    borderColor: 'black',
+    borderWidth: 1,
+    fontSize: 10,
+    height: 535
+  },
+  buttonStyle: {
+    flex: 1,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    backgroundColor: 'red',
+    margin: 10,
+  },
+  preview: {
+    width: 335,
+    //height: 204,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: -10,
+    marginLeft: -100
+  },
+  previewText: {
+    color: "red",
+    fontSize: 14,
+    height: 40,
+    lineHeight: 40,
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: "#69B2FF",
+    width: 120,
+    textAlign: "center",
+    marginTop: 10,
+  },
+
 
 });
