@@ -20,6 +20,7 @@ import {
     Colors,
 } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
+import AsyncStorage from '@react-native-community/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
@@ -28,15 +29,7 @@ import axios from 'axios';
 import ImageViewConsumer from 'react-native-image-viewing';
 import Geolocation from '@react-native-community/geolocation';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-//import CheckBox from '@react-native-community/checkbox';
 
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-
-
-//import DatePicker from 'react-native-datepicker';
-//import CheckboxGroup1 from 'react-native-checkbox-group';
 import {
     launchCamera,
     launchImageLibrary,
@@ -49,9 +42,8 @@ import Moment from 'moment';
 import { set } from 'react-native-reanimated';
 import SignatureCapture from 'react-native-signature-capture';
 
-
 let current = 100;
-const ApiScreenA40 = () => {
+const ApiScreenA40 = ({ navigation }) => {
     const scrollRef = useRef(null);
     const [pos, setPos] = React.useState(0);
     const [tab, setTab] = useState('Consumer Detail');
@@ -64,14 +56,20 @@ const ApiScreenA40 = () => {
     };
     const resetSign = () => {
         sign.current.resetImage();
+        setSignModalVisible(!isSignModalVisible);
 
         setTimeout(() => {
             setSign();
+            setIsSignature("N");
         }, 1000);
     };
     const _onSaveEvent = (result) => {
-        alert('Signature Captured Successfully');
+        // alert('Signature Captured Successfully');
         setSign(result.encoded);
+        let consSign = result.encoded;
+        setIsSignature("Y");
+        setConsumerSignature([{ consSign }]);
+        setSignModalVisible(!isSignModalVisible);
     }
     const _onDragEvent = () => {
         // This callback will be called when the user enters signature
@@ -99,6 +97,7 @@ const ApiScreenA40 = () => {
     ];
 
 
+    const [checkBoxselectedList, setcheckBoxSelectedList] = useState([])
     const [selectedList, setSelectedList] = useState([])
     const [checkBoxList, setCheckBoxList] = useState([
         {
@@ -130,6 +129,8 @@ const ApiScreenA40 = () => {
     ])
 
     let onSelectCheckBox = (name, id) => {
+        setcheckBoxSelectedList([{ name }, ...checkBoxselectedList]);
+
         setCheckBoxList(
             checkBoxList.map((li, index) =>
                 li.name == name
@@ -198,6 +199,7 @@ const ApiScreenA40 = () => {
     ];
 
     const [selectedItems, setSelectedItems] = useState([]);
+    const [isSelecteditems, setIsSelecteditems] = useState("N");
 
     let onSelectedItemsChange = selectedItems => {
         console.log("selectedItems", selectedItems);
@@ -205,6 +207,7 @@ const ApiScreenA40 = () => {
             return;
         } else {
             setSelectedItems(selectedItems);
+            setIsSelecteditems("Y");
         }
     };
 
@@ -250,11 +253,7 @@ const ApiScreenA40 = () => {
             active: false,
         },
 
-        {
-            id: 8,
-            name: 'Customer Signature',
-            active: false,
-        },
+
     ]);
 
 
@@ -262,6 +261,7 @@ const ApiScreenA40 = () => {
     const [filePath, setFilePath] = useState([]);
     const [images, setImages] = useState([]);
     const [filePath1, setFilePath1] = useState([]);
+    const [consumerImages, setConsumerImages] = useState([]);
     const [images1, setImages1] = useState([]);
     const [indexSelected, setIndexSelected] = useState(0);
     const [isImage, setIsImage] = useState("N");
@@ -322,7 +322,6 @@ const ApiScreenA40 = () => {
     const [meterInstalled, setMeterInstalled] = useState("");
     const [meterInstalled3, setMeterInstalled3] = useState("");
 
-
     const [fmrNo, setFMRNo] = useState("");
 
     /* Meter Testing Result ------------ End */
@@ -338,11 +337,36 @@ const ApiScreenA40 = () => {
 
     const [consumerName, setConsumerName] = useState("");
     const [mobileNo, setMobileNo] = useState("");
+    const [consumerNameCNIC, setconsumerNamecNIC] = useState("");
     const [consumerRemarks, setConsumerRemarks] = useState("");
     const [consumerRefuseYN, setConsumerRefuseYN] = useState("");
     const [consumerSign, setConsumerSign] = useState("");
-
+    const [ispostalOrderSeal, setIspostalOrderSeal] = useState("N");
+    const [ismeteringEquipment, setIsmeteringEquipment] = useState("N");
     /* Customer Acknowlegment ------------ End */
+
+    const [SIR, setSIR] = useState("900000000335");
+    const [cosnumerno, setCosnumerno] = useState("LA414951");
+
+    const [clusterIBC, setClusterIBC] = useState("C1 / F.B.Area");
+    const [consumernameBilling, setConsumernameBilling] = useState("Syed M. Shoaib");
+
+
+    const [accountno, setAccountno] = useState("400001061656");
+    const [address, setAddress] = useState("Flat No. D-8, Anarkali Flat, Block-16, F.B.Area");
+
+    const [assigndate, setAssigndate] = useState("20.02.2022");
+    const [assignto, setAssignto] = useState("80012790 - Syed M. Shoaib");
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+    const [isAuthModalVisible, setAuthModalVisible] = useState(false);
+    const [isSignModalVisible, setSignModalVisible] = useState(false);
+    const [error, setError] = useState('');
+    const [uploadingMsg, setUploadingMsg] = useState('');
+
+    const [consumerSignature, setConsumerSignature] = useState([]);
+    const [isSignature, setIsSignature] = useState("N");
 
 
     const SPACING = 10;
@@ -602,8 +626,8 @@ const ApiScreenA40 = () => {
             animated: true
         });
     };
-    const [latitude1, setlatitude] = useState("");
-    const [longitude1, setlongitude] = useState("");
+    const [latitude, setlatitude] = useState("");
+    const [longitude, setlongitude] = useState("");
 
 
     const getUserCurrentLocation = async () => {
@@ -781,6 +805,8 @@ const ApiScreenA40 = () => {
                     //setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
                     setFilePath1([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }]);
                     setImages1({ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data });
+                    setConsumerImages([{ uri: response.path, url: response.path, fileName: 'consumerImage.jpg', base64: response.data }]);
+
                     //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
 
                 }
@@ -974,24 +1000,6 @@ const ApiScreenA40 = () => {
         setMeteringEquipment(newArray);
     };
 
-
-    const updateLAmp = (text, index) => {
-        let newArray = [...lightmeterdetail];
-        newArray[index] = { ...newArray[index], AMP: text };
-        setLightmeterdetail(newArray);
-    };
-    const updateLVolt = (text, index) => {
-        let newArray = [...lightmeterdetail];
-        newArray[index] = { ...newArray[index], VOLT: text };
-        setLightmeterdetail(newArray);
-    };
-    const updateLPF = (text, index) => {
-        let newArray = [...lightmeterdetail];
-        newArray[index] = { ...newArray[index], PF: text };
-        setLightmeterdetail(newArray);
-    };
-
-
     const onAddmore = () => {
         setTableList([
             ...tableList,
@@ -1011,6 +1019,21 @@ const ApiScreenA40 = () => {
 
 
 
+    const updateLAmp = (text, index) => {
+        let newArray = [...lightmeterdetail];
+        newArray[index] = { ...newArray[index], AMP: text };
+        setLightmeterdetail(newArray);
+    };
+    const updateLVolt = (text, index) => {
+        let newArray = [...lightmeterdetail];
+        newArray[index] = { ...newArray[index], VOLT: text };
+        setLightmeterdetail(newArray);
+    };
+    const updateLPF = (text, index) => {
+        let newArray = [...lightmeterdetail];
+        newArray[index] = { ...newArray[index], PF: text };
+        setLightmeterdetail(newArray);
+    };
 
 
 
@@ -1095,16 +1118,7 @@ const ApiScreenA40 = () => {
                                 }}>
                                 {'Above 40KW'}
                             </Text>
-
                         </View>
-
-
-
-
-
-
-
-
 
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <View
@@ -1113,7 +1127,7 @@ const ApiScreenA40 = () => {
                                     paddingLeft: 10,
                                     //   flexDirection: 'row',
                                     //  justifyContent: 'space-between',
-                                    // paddingVertical: 10,
+                                    paddingVertical: 10,
                                 }}>
                                 <Text
                                     style={{
@@ -1123,7 +1137,7 @@ const ApiScreenA40 = () => {
                                         color: 'black', //'#FFFFFF',
                                         //     marginBottom: 4,
                                     }}>
-                                    {'SIR No: 900000000335'}
+                                    {'SIR No: ' + SIR}
                                 </Text>
 
                                 <Text
@@ -1132,7 +1146,7 @@ const ApiScreenA40 = () => {
                                         color: 'black',
                                         fontSize: 13,
                                     }}>
-                                    {'Consumer No: LA414951'}
+                                    {'Consumer No: ' + cosnumerno}
                                 </Text>
 
                                 <Text
@@ -1141,7 +1155,7 @@ const ApiScreenA40 = () => {
                                         fontSize: 13,
                                         color: 'black',
                                     }}>
-                                    {'Name: Syed M. Shoaib'}
+                                    {'Name: ' + consumernameBilling}
                                 </Text>
 
                                 <Text
@@ -1150,7 +1164,7 @@ const ApiScreenA40 = () => {
                                         fontSize: 13,
                                         color: 'black',
                                     }}>
-                                    {'Address: Flat No. D-8, Anarkali Flat, Block-16, F.B.Area'}
+                                    {'Address: ' + address}
                                 </Text>
 
                                 <Text
@@ -1159,7 +1173,7 @@ const ApiScreenA40 = () => {
                                         fontSize: 13,
                                         color: 'black',
                                     }}>
-                                    {'Assign Date: 20.02.2022'}
+                                    {'Assign Date: ' + assigndate}
                                 </Text>
                                 <Text
                                     style={{
@@ -1167,7 +1181,7 @@ const ApiScreenA40 = () => {
                                         fontSize: 13,
                                         color: 'black',
                                     }}>
-                                    {'Assign To: 80012790 - Syed M. Shoaib'}
+                                    {'Assign To: ' + assignto}
                                 </Text>
                             </View>
                         </View>
@@ -1178,10 +1192,10 @@ const ApiScreenA40 = () => {
                             <View
                                 style={{
                                     // flex: 0.45,
-                                    // paddingTop: 5,
+                                    paddingTop: 5,
                                     //   flexDirection: 'row',
                                     //  justifyContent: 'space-between',
-                                    // paddingVertical: 10,
+                                    paddingVertical: 10,
                                 }}>
                                 <Text
                                     style={{
@@ -1192,7 +1206,7 @@ const ApiScreenA40 = () => {
                                         color: 'black', //'#FFFFFF',
                                         //     marginBottom: 4,
                                     }}>
-                                    {'Cluster / IBC: C1 / F.B.Area'}
+                                    {'Cluster / IBC: ' + clusterIBC}
                                 </Text>
 
                                 <Text
@@ -1202,7 +1216,7 @@ const ApiScreenA40 = () => {
                                         color: 'black',
                                         fontSize: 13,
                                     }}>
-                                    {'Account No: 400001061656'}
+                                    {'Account No: ' + accountno}
                                 </Text>
                             </View>
                         </View>
@@ -1761,10 +1775,11 @@ const ApiScreenA40 = () => {
                                 <View style={styles.mainbox}>
                                     <View
                                         style={{
-                                            //                    marginTop: 3,
+                                            //                    marginTop: 3,  //footerInputPower2
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                         }}>
+
                                         <View style={styles.footerInputPower2}>
 
                                             <DataTable>
@@ -1805,125 +1820,129 @@ const ApiScreenA40 = () => {
                                                 </DataTable.Header>
                                                 {meteringEquipment.map((l, i) => (
                                                     <DataTable.Row style={styles.databeBox} key={i}>
-                                                        <View >
-                                                            <TextInput
-                                                                style={{ width: 130, borderRightColor: 'black', borderRightWidth: 1., borderLeftColor: 'black', borderLeftWidth: 1, marginLeft: -20, textAlign: 'center' }}
-                                                                // onChangeText={t => updateCurrentTypeLoadDetail(t, i)}
-                                                                placeholder="Register"
-                                                                editable={false}
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                                color='black'
-                                                                value={l.Register}
-                                                            />
+                                                    <View >
+                                                        <TextInput
+                                                            style={{ width: 130, borderRightColor: 'black', borderRightWidth: 1., borderLeftColor: 'black', borderLeftWidth: 1, marginLeft: -20, textAlign: 'center' }}
+                                                            // onChangeText={t => updateCurrentTypeLoadDetail(t, i)}
+                                                            placeholder="Register"
+                                                            editable={false}
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            color='black'
+                                                            value={l.Register}
+                                                        />
 
-                                                        </View>
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 124, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateKENo(t, i)}
-                                                                placeholder="KE No"
-                                                                keyboardType={'email-address'}
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateReading(t, i)}
-                                                                placeholder="Reading"
-                                                                keyboardType={'email-address'}
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateMF(t, i)}
-                                                                placeholder="M.F"
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateMDI(t, i)}
-                                                                placeholder="MDI"
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
+                                                    </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 124, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateKENo(t, i)}
+                                                            placeholder="KE No"
+                                                            keyboardType={'email-address'}
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.KENo}
+                                                        />
+                                                    </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateReading(t, i)}
+                                                            placeholder="Reading"
+                                                            keyboardType={'email-address'}
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.Reading}
+                                                        />
+                                                    </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateMF(t, i)}
+                                                            placeholder="M.F"
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.MF}
+                                                        />
+                                                    </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateMDI(t, i)}
+                                                            placeholder="MDI"
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.MDI}
+                                                        />
+                                                    </View>
 
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 120, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateMake(t, i)}
-                                                                placeholder="Make"
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateMC(t, i)}
-                                                                placeholder="MC"
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 120, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateMake(t, i)}
+                                                            placeholder="Make"
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.Make}
+                                                        />
+                                                    </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateMC(t, i)}
+                                                            placeholder="MC"
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.MC}
+                                                        />
+                                                    </View>
 
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateMeterCTratio1(t, i)}
-                                                                placeholder="Meter CT ratio"
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1, color:'black'}}
+                                                            onChangeText={t => updateMeterCTratio1(t, i)}
+                                                            placeholder="Meter CT ratio"
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.MeterCTratio1}
+                                                        />
+                                                    </View>
 
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 120, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateMeterCTratio2(t, i)}
-                                                                placeholder="Meter CT ratio"
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 120, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateMeterCTratio2(t, i)}
+                                                            placeholder="Meter CT ratio"
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.MeterCTratio2}
+                                                        />
+                                                    </View>
 
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateBlngMode(t, i)}
-                                                                placeholder="Blng Mode"
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateBlngMode(t, i)}
+                                                            placeholder="Blng Mode"
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.BlngMode}
+                                                        />
+                                                    </View>
 
-                                                        <View style={meteringEquipCellvalue}>
-                                                            <TextInput
-                                                                style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1 }}
-                                                                onChangeText={t => updateRemarks(t, i)}
-                                                                placeholder="Remarks"
-                                                                placeholderTextColor="black"
-                                                                fontSize={12}
-                                                            />
-                                                        </View>
-                                                    </DataTable.Row>
+                                                    <View style={meteringEquipCellvalue}>
+                                                        <TextInput
+                                                            style={{ width: 122, borderRightColor: 'black', borderRightWidth: 1, color:'black' }}
+                                                            onChangeText={t => updateRemarks(t, i)}
+                                                            placeholder="Remarks"
+                                                            placeholderTextColor="black"
+                                                            fontSize={12}
+                                                            value={l.Remarks}
+                                                        />
+                                                    </View>
+                                                </DataTable.Row>
                                                 ))}
-
                                             </DataTable>
-
-
-
-
-
                                         </View>
                                     </View>
 
@@ -2189,6 +2208,7 @@ const ApiScreenA40 = () => {
                                                                 keyboardType={'email-address'}
                                                                 placeholderTextColor="black"
                                                                 fontSize={10}
+                                                                value={l.MainCover}
                                                             />
                                                         </View>
                                                         <View style={dataCell3}>
@@ -2199,6 +2219,7 @@ const ApiScreenA40 = () => {
                                                                 keyboardType={'email-address'}
                                                                 placeholderTextColor="black"
                                                                 fontSize={10}
+                                                                value={l.TerminalCover}
                                                             />
                                                         </View>
                                                         <View style={dataCell3}>
@@ -2208,6 +2229,7 @@ const ApiScreenA40 = () => {
                                                                 placeholder="At B/CT Chamber"
                                                                 placeholderTextColor="black"
                                                                 fontSize={10}
+                                                                value={l.Chamber}
                                                             />
                                                         </View>
                                                         <View style={dataCell4}>
@@ -2217,6 +2239,7 @@ const ApiScreenA40 = () => {
                                                                 placeholder="PT Fuse And PT Side"
                                                                 placeholderTextColor="black"
                                                                 fontSize={10}
+                                                                value={l.PTfuse}
                                                             />
                                                         </View>
 
@@ -2227,6 +2250,7 @@ const ApiScreenA40 = () => {
                                                                 placeholder="Panel Door"
                                                                 placeholderTextColor="black"
                                                                 fontSize={10}
+                                                                value={l.PanelDoor}
                                                             />
                                                         </View>
                                                         <View style={dataCell6}>
@@ -2236,6 +2260,7 @@ const ApiScreenA40 = () => {
                                                                 placeholder="Main Cover Plate"
                                                                 placeholderTextColor="black"
                                                                 fontSize={10}
+                                                                value={l.MainCoverPlate}
                                                             />
                                                         </View>
                                                     </DataTable.Row>
@@ -2651,7 +2676,7 @@ const ApiScreenA40 = () => {
                                                 //   flexDirection: 'column',
                                                 // flex: 8,
                                                 width: '90%',
-                                                marginTop: -80,
+                                                marginTop: -100,
                                                 marginLeft: 2,
                                             }}>
                                             <View
@@ -2727,10 +2752,55 @@ const ApiScreenA40 = () => {
                                                         <TextInput
                                                             placeholder={'Mobile No'}
                                                             keyboardType={'numeric'}
+                                                            maxLength={11}
                                                             placeholderTextColor="grey"
                                                             onChangeText={text => {
                                                                 setMobileNo(text);
                                                             }}
+                                                            style={{
+                                                                //height: 24,
+                                                                width: '100%',
+                                                                borderBottomWidth: 0.5,
+                                                                textAlign: 'left',
+                                                                textAlignVertical: 'top',
+                                                                color: 'black',
+                                                            }}></TextInput>
+                                                    </View>
+                                                </View>
+                                            </View>
+
+
+                                            <View style={{
+                                                flexDirection: 'row',
+                                                flex: 2,
+                                                width: '96%',
+                                                marginTop: 20,
+                                            }}>
+                                                <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                                                    <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                                                        CNIC #{' '}
+                                                    </Text>
+                                                </View>
+
+                                                <View
+                                                    style={{
+                                                        flexDirection: 'row',
+                                                        flex: 1,
+                                                        width: '88%',
+                                                        alignSelf: 'center',
+                                                    }}>
+                                                    <View
+                                                        style={{
+                                                            flex: 2,
+                                                            alignItems: 'flex-start',
+                                                            marginTop: -10,
+                                                        }}>
+                                                        <TextInput
+                                                            placeholder={'Enter CNIC #'}
+                                                            keyboardType={'numeric'}
+                                                            maxLength={13}
+                                                            placeholderTextColor='grey'
+                                                            onChangeText={(text) => { setconsumerNamecNIC(text) }}
                                                             style={{
                                                                 //height: 24,
                                                                 width: '100%',
@@ -2772,7 +2842,7 @@ const ApiScreenA40 = () => {
                                                             placeholder={'Any comment (if required)'}
                                                             placeholderTextColor="black"
                                                             style={{
-                                                                height: 150,
+                                                                height: 100,
                                                                 width: '100%',
                                                                 borderWidth: 0.75,
                                                                 textAlign: 'left',
@@ -2789,7 +2859,7 @@ const ApiScreenA40 = () => {
                                                 flexDirection: 'row',
                                                 flex: 2,
                                                 width: '96%',
-                                                marginTop: 20,
+                                                marginTop: 10,
                                             }}>
                                             <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                                                 <Text style={{ fontWeight: 'normal', color: 'black' }}>
@@ -2849,7 +2919,7 @@ const ApiScreenA40 = () => {
                                                 flexDirection: 'row',
                                                 flex: 2,
                                                 width: '96%',
-                                                marginTop: 20,
+                                                marginTop: 10,
                                             }}>
                                             <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                                                 <Text style={{ fontWeight: 'normal', color: 'black' }}>
@@ -2906,6 +2976,7 @@ const ApiScreenA40 = () => {
 
 
 
+
                                         <View style={[styles.container1]}>
                                             <View style={{ flexDirection: 'row', flex: 0.2, width: '96%' }}>
                                                 <View style={{ flex: 1, alignItems: 'flex-start' }}>
@@ -2922,8 +2993,10 @@ const ApiScreenA40 = () => {
                                                         />
                                                     </TouchableOpacity>
 
+
+
                                                     <ImageViewConsumer
-                                                        images={[images1]}
+                                                        images={images1} // images1[0].uri //images1
                                                         imageIndex={0}
                                                         visible={visible1}
 
@@ -2931,17 +3004,59 @@ const ApiScreenA40 = () => {
                                                     />
                                                     <View style={{ flex: 2.5 }}>
 
+
                                                         <TouchableOpacity onPress={() => setIsVisible1(true)} >
+
+
+
                                                             <Image
                                                                 source={{ uri: images1.uri }}/// source={{uri: filePath.uri}}
                                                                 style={styles.imageStyle}
                                                             />
+
+
 
                                                         </TouchableOpacity>
 
                                                     </View>
                                                 </View>
                                             </View>
+                                        </View>
+
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            flex: 2,
+                                            width: '96%',
+                                            marginTop: 10,
+                                        }}>
+                                            <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                                                <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                                                    Consumer Signature {''}
+                                                </Text>
+                                            </View>
+
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row',
+                                                    flex: 1,
+                                                    width: '88%',
+                                                    alignSelf: 'center',
+                                                }}>
+                                                <TouchableOpacity onPress={() => {
+                                                    setSignModalVisible(true);
+                                                }}>
+                                                    <View
+                                                        style={{
+                                                            flex: 2,
+                                                            alignItems: 'flex-start',
+                                                            //  marginTop: -10,
+                                                        }}>
+                                                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'blue' }}>
+                                                            Take Signature </Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </View>
+
                                         </View>
 
                                         <View
@@ -2952,9 +3067,7 @@ const ApiScreenA40 = () => {
                                                 marginTop: 20,
                                             }}>
                                             <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                                                <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                                                    Signature {''}
-                                                </Text>
+
                                             </View>
 
                                             <View
@@ -2983,50 +3096,47 @@ const ApiScreenA40 = () => {
                                                             }}
                                                         // source={require('/storage/emulated/0/Android/data/com.sirdigitization/files/saved_signature/signature.png')}
                                                         />
+                                                        {isSignature == 'Y' ?
+                                                            (<TouchableOpacity
+                                                                onPress={() => {
 
+                                                                    setTimeout(() => {
+                                                                        setSign();
+                                                                        setIsSignature("N");
+                                                                    }, 1000);
+
+                                                                }}
+                                                                style={{
+                                                                    width: 200,
+                                                                    height: 16,
+                                                                    // borderRadius: 13,
+                                                                    zIndex: 100,
+                                                                    backgroundColor: 'red',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                }}>
+                                                                <Text
+                                                                    style={{
+                                                                        color: 'white',
+                                                                        fontSize: 12,
+                                                                        fontWeight: 'bold',
+                                                                    }}>
+                                                                    Reset
+                                                                </Text>
+                                                            </TouchableOpacity>)
+                                                            : null}
                                                     </View>
 
                                                 </View>
                                             </View>
                                         </View>
-                                        <View
-                                            style={{
-                                                flexDirection: 'row',
-                                                flex: 2,
-                                                width: '96%',
-                                                marginTop: 20,
-                                            }}>
-                                            <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                                                <Text style={{ fontWeight: 'normal', color: 'black' }}>
 
-                                                </Text>
-                                            </View>
 
-                                            <View
-                                                style={{
-                                                    flexDirection: 'row',
-                                                    flex: 1,
-                                                    width: '88%',
-                                                    alignSelf: 'center',
-                                                }}>
-                                                <View
-                                                    style={{
-                                                        flex: 2,
-                                                        alignItems: 'flex-start',
-                                                        marginTop: -10,
-                                                    }}>
-
-                                                </View>
-                                            </View>
-                                        </View>
                                     </View>
                                 </View>
                             </View>
                         </ScrollView>
                     )}
-
-
-
 
                     {tab == 'SIR Pictures' && (
                         <ScrollView
@@ -3049,16 +3159,6 @@ const ApiScreenA40 = () => {
                                                 marginLeft: 2,
                                             }}>
                                         </View>
-
-
-
-
-
-
-
-
-
-
                                         <LinearGradient
                                             colors={['#1565C0', '#64b5f6']}
                                             style={styles.signIn}
@@ -3245,6 +3345,7 @@ const ApiScreenA40 = () => {
                                                                 }}
                                                                 onPress={() => {
                                                                     setimageview(false);
+
                                                                 }}>
                                                                 <View></View>
                                                                 <View
@@ -3295,8 +3396,6 @@ const ApiScreenA40 = () => {
                                                     //   padding: 15
                                                 }}
                                                 onPress={() => {
-                                                    // setUploadingMsg(res.d.Return);
-
 
                                                     setAuthModalVisible(!isAuthModalVisible);
 
@@ -3352,12 +3451,105 @@ const ApiScreenA40 = () => {
                         </ScrollView>
                     )}
 
-                    {tab == 'Customer Signature' && (
+
+
+                </View>
+
+
+                <Modal
+                    style={{ alignItems: 'center', justifyContent: 'center' }}
+                    isVisible={isModalVisible}>
+                    <View
+                        style={{
+                            width: '80%',
+                            height: 250,
+                            backgroundColor: 'white',
+                            borderRadius: 10,
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            paddingHorizontal: 10,
+                            paddingVertical: 20,
+                        }}>
+                        <Text style={{ color: 'red', fontSize: 24, fontWeight: 'bold' }}>
+                            Error
+                        </Text>
+
+                        <Text style={{ color: 'red', fontSize: 16, textAlign: 'center' }}>
+                            {error ? error : ''}
+                        </Text>
+
+                        <Button
+                            title="Close"
+                            color="red"
+                            onPress={() => {
+                                setModalVisible(!isModalVisible);
+                                setError('');
+                            }}
+                        />
+                    </View>
+                </Modal>
+
+
+                <Modal
+                    style={{ alignItems: 'center', justifyContent: 'center', width: '100%', marginLeft: 1 }}
+                    isVisible={isSignModalVisible}>
+                    <View
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'white',
+                            borderRadius: 10,
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            paddingHorizontal: 10,
+                            // paddingVertical: 20,
+                        }}>
                         <SafeAreaView
-                            //   showsVerticalScrollIndicator={true}
-                            // showsHorizontalScrollIndicator={false}
+
                             style={styles.container3}>
                             <View style={styles.container3}>
+
+                                <View
+                                    style={{
+                                        width: '100%',
+                                        height: 50,
+                                        // backgroundColor: 'green',
+                                        // alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}>
+                                    <TouchableOpacity
+                                        style={{
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            flexDirection: 'row',
+                                        }}
+                                        onPress={() => {
+                                            //setimageview(false);
+
+                                            resetSign();
+                                        }}>
+                                        <View></View>
+                                        <View
+                                            style={{
+                                                backgroundColor: '#1565C0',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                width: 30,
+                                                height: 30,
+                                                borderRadius: 15,
+                                                right: -1,
+                                            }}>
+                                            <Text
+                                                style={{
+                                                    color: 'white',
+                                                    fontSize: 16,
+                                                    fontWeight: 'bold',
+                                                }}>
+                                                X
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
 
 
                                 <SignatureCapture
@@ -3372,46 +3564,22 @@ const ApiScreenA40 = () => {
 
 
 
+
+
+
+
                                 <View
                                     style={{
-                                          marginTop: -55,
+                                        //  marginTop: 45,
                                         // marginLeft: 8,
 
                                         // marginBottom: 20,
-                                        //    width: '90%',
+                                        //   width: '90%',
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                         justifyContent: 'space-between',
                                     }}>
-                                    <TouchableOpacity
-                                        style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            //    backgroundColor: '#1565C0',
-                                            //   padding: 15
-                                        }}
-                                        onPress={() => {
-                                            // setUploadingMsg(res.d.Return);
 
-
-                                            resetSign();
-
-                                        }}>
-
-
-                                        <LinearGradient
-                                            colors={['#1565C0', '#64b5f6']}
-                                            style={styles.submit}
-                                        >
-                                            <Text style={[styles.textSign, {
-                                                color: '#fff'
-                                            }]}>Reset</Text>
-                                        </LinearGradient>
-
-
-
-                                    </TouchableOpacity>
                                     <TouchableOpacity
                                         style={{
                                             flexDirection: 'row',
@@ -3421,40 +3589,294 @@ const ApiScreenA40 = () => {
                                             //  padding: 15
                                         }}
                                         onPress={() => {
-                                            // setUploadingMsg(res.d.Return);
-
-
                                             saveSign();
-
                                         }}>
-
                                         <LinearGradient
                                             colors={['#1565C0', '#64b5f6']}
-                                            style={styles.submit}
+                                            style={styles.signatureSubmit}
                                         >
                                             <Text style={[styles.textSign, {
                                                 color: '#fff'
-                                            }]}>Save</Text>
+                                            }]}>Ok</Text>
                                         </LinearGradient>
-
-
-
                                     </TouchableOpacity>
                                 </View>
-
-
-
-
-
                             </View>
-
-
-
                         </SafeAreaView>
-                    )}
+                    </View>
+                </Modal>
 
 
-                </View>
+                <Modal
+                    style={{ alignItems: 'center', justifyContent: 'center' }}
+                    isVisible={isSuccessModalVisible}>
+                    <View
+                        style={{
+                            width: '80%',
+                            height: 250,
+                            backgroundColor: 'white',
+                            borderRadius: 10,
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            paddingHorizontal: 10,
+                            paddingVertical: 20,
+                        }}>
+                        <Text style={{ color: 'rgba(93,45,145,255)', fontSize: 24, fontWeight: 'bold' }}>
+                            Success
+                        </Text>
+
+                        <Text style={{ color: 'green', fontSize: 16, textAlign: 'center' }}>
+                            {uploadingMsg == '' ? 'Saved Successfully' : uploadingMsg}
+                        </Text>
+
+                        <Button
+                            title="Close"
+                            color="green"
+                            onPress={() => {
+                                setSuccessModalVisible(!isSuccessModalVisible);
+                                setError('');
+                                // setTimeout(() => {
+                                navigation.goBack();
+                                // }, 1000);
+                            }}
+                        />
+                    </View>
+                </Modal>
+                <Modal
+                    style={{ alignItems: 'center', justifyContent: 'center' }}
+                    isVisible={isAuthModalVisible}>
+                    <View
+                        style={{
+                            width: '80%',
+                            height: 200,
+                            backgroundColor: 'white',
+                            borderRadius: 10,
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            paddingHorizontal: 10,
+                            paddingVertical: 20,
+                        }}>
+                        <Text style={{ color: 'green', fontSize: 24, fontWeight: 'bold' }}>
+                            Are you sure?
+                        </Text>
+
+
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                width: '70%',
+                                height: 50,
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                            }}>
+                            <Button
+                                title=" Yes "
+                                color="green"
+                                onPress={() => {
+
+
+                                    var postalOrderSealfill=[];
+                                    var meteringEquipmentfill=[];
+                  
+                                    postalOrderSeal.map((l, i) => {
+                  
+                                    
+                                      if (l.Meter!= "" || l.MainCover!="" || l.TerminalCover!= "" ||
+                                          l.Chamber!= "" || l.PTfuse!="" || l.PanelDoor!= "" || l.MainCoverPlate!= "")
+                                   
+                                      {
+                                        setIspostalOrderSeal("Y");
+                                       // updateLAmp(l.AMP, i);
+                                       postalOrderSealfill=([{Meter: l.Meter, MainCover:l.MainCover, TerminalCover: l.TerminalCover, 
+                                        Chamber: l.Chamber, PTfuse: l.PTfuse, PanelDoor: l.PanelDoor, MainCoverPlate: l.MainCoverPlate}, ...postalOrderSealfill]);
+                                      }
+                                      
+                                     })
+                                     console.log("lightmeterdetailfill", postalOrderSealfill);
+                                     //setLightmeterdetail(lightmeterdetailfill);
+                                     
+                                     meteringEquipment.map((l, i) => {
+                  
+                                       if (l.KENo!= "" || l.Reading!="" || l.MF!= "" || l.MDI!= "" || l.Make!="" || l.MC!= "" ||
+                                            l.MeterCTratio1!= "" || l.MeterCTratio2!="" || l.BlngMode!= "" || l.Remarks!= "" )
+                                    
+                                       {
+                                        setIsmeteringEquipment("Y");
+                                     
+                                        meteringEquipmentfill=([{Register: l.Register, KENo:l.KENo, Reading: l.Reading, 
+                                            MF: l.MF, MDI: l.MDI, Make: l.Make, MC: l.MC, MeterCTratio1: l.MeterCTratio1,
+                                            MeterCTratio2: l.MeterCTratio2, BlngMode: l.BlngMode, Remarks: l.Remarks}, ...meteringEquipmentfill]);
+                                       }
+                                       
+                                      })
+
+
+                                    AsyncStorage.getItem('SIRDigitization')
+                                        .then(items => {
+                                            var data1 = [];
+
+                                            data1 = items ? JSON.parse(items) : [];
+
+                                            data1 = [
+                                                ...data1,
+                                                {
+                                                    CaseType: "Un-Planned",
+                                                    SIRType: "Above 40",
+                                                    Status: "Pending",
+                                                    SDate: Moment(Date.now()).format('YYYY-MM-DD'),
+                                                    SanctionLoad: null,
+                                                    MeterTesting: null,
+                                                    Agediff: null,
+                                                    MeterPer: null,
+                                                    MeterSlow: null,
+                                                    ConnectedLoad: connectedLoad,
+                                                    RunningLoad: null,
+                                                    Make: null,
+                                                    Amperes: currentAmp,
+                                                    Volts: voltageKV,
+                                                    MeterConstant: null,
+                                                    SecuritySlipNo: null,
+                                                    MultiplyingFactor: null,
+                                                    MeterNo: null,
+                                                    CurrentReading: null,
+                                                    PeakReading: null,
+                                                    SystemMake: null,
+                                                    SystemAmperes: null,
+                                                    SystemVolts: null,
+                                                    SystemMeterConstant: null,
+                                                    SystemSecuritySlipNo: null,
+                                                    SystemMultiplyingFactor: null,
+                                                    SystemMeterNo: null,
+                                                    SystemCurrentReading: null,
+                                                    SystemPeakReading: null,
+                                                    ConsumerSign: consumerSign,
+                                                    ConsumerRefuseYN: consumerRefuseYN,
+                                                    ConsumerRemarks: consumerRemarks,
+                                                    MobileNo: mobileNo,
+                                                    ConsumerName: consumerName,
+                                                    ConsumerCNIC: consumerNameCNIC,
+                                                    ServiceType: serviceType,
+                                                    Tariff: tariff,
+                                                    PremiseType: null,
+                                                    PremiseCategory: null,
+                                                    Remarks: discrepancyfindingsRemarks,
+                                                    isDiscrepancyitems: isSelecteditems,
+                                                    Discrepancyitems: selectedItems,
+                                                    longitude: longitude,
+                                                    latitude: latitude,
+                                                    IsSignature: isSignature,
+                                                    ConsumerSignature: consumerSignature,
+                                                    SIRImageFlag: isImage,
+                                                    SIRImages: images,
+                                                    ConsumerImageFlag: IsImage1,
+                                                    ConsumerImages: consumerImages,
+                                                    UniqueId: Date.now(),
+                                                    SIRNo: SIR,
+                                                    ConsumerNo: cosnumerno,
+                                                    ClusterIBC: clusterIBC,
+                                                    ConsumerNameBilling: consumernameBilling,
+                                                    AccountNo: accountno,
+                                                    Address: address,
+                                                    AssignDate: assigndate,
+                                                    AssignTo: assignto,
+                                                    DiscrepancyRecord: null,
+                                                    ApplianceDetail: null,
+                                                    ConsumerStatus: consumerStatus,
+                                                    IndustryType: industryType,
+                                                    ServiceType: serviceType,
+                                                    SizeofService: sizeofService,
+                                                    FedFromPMTSS: fedFromPMTSS,
+                                                    PmtSSCode: pmtSSCode,
+                                                    MeterTestingResultTC: null,
+                                                    MeterTestingperError: null,
+                                                    ContractLoad: contractLoad,
+                                                    ConnectedLoadKW: connectedLoadKW,
+                                                    RunningLoadKW: runningLoadKW,
+                                                    Metertestingto: null,
+                                                    Meterinstalled1: meterInstalled1,
+                                                    Meterinstalled2: meterInstalled2,
+                                                    Meterinstalled: meterInstalled,
+                                                    Statuspostalorder: null,
+                                                    Metertestingresultremarks: null,
+                                                    Fmrno: null,
+                                                    Date1: null,
+                                                    FindingItems: checkBoxselectedList,
+                                                    Powerkeno: null,
+                                                    Powermetermake: null,
+                                                    Powermc: null,
+                                                    Powerreading: null,
+                                                    Powermdionreading: null,
+                                                    Powermeterdetail: null,
+                                                    Lightkeno: null,
+                                                    Lightmetermake: null,
+                                                    Lightmc: null,
+                                                    Lightreading: null,
+                                                    Lightmdionreading: null,
+                                                    Lightpeakreading: null,
+                                                    Lightcurrentreading: null,
+                                                    Lightconsumerno: null,
+                                                    Lightmeterdetail: null,
+                                                    LightmeterdetailFlag:"N",
+                                                    PowermeterdetailFlag:"N",
+                                                    PostalOrderSeal : postalOrderSeal,                                         
+                                                    PowerFactor : powerFactor ,
+                                                    Kto : kto,               
+                                                    PerError : perError,                   
+                                                    PowerCalculated : powerCalculated,                   
+                                                    PowerObserved : powerObserved,               
+                                                    MeteringEquipment : meteringEquipment,            
+                                                    MeterInstalled3 : meterInstalled3,  
+                                                    PostalOrderSealFlag: ispostalOrderSeal,
+                                                    MeteringEquipmentFlag: ismeteringEquipment,                 
+
+                                                    
+
+
+
+
+
+                                                },
+                                            ];
+
+
+
+                                            AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1))
+
+                                            // console.log("data1", data1);
+
+                                        });
+
+
+
+
+
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'HomeScreen' }],
+                                    });
+
+
+
+
+
+                                    setAuthModalVisible(!isAuthModalVisible);
+                                    setSuccessModalVisible(!isSuccessModalVisible);
+                                }}
+                            // }
+                            />
+
+                            <Button
+                                title=" No "
+                                color="red"
+                                onPress={() => {
+                                    setAuthModalVisible(!isAuthModalVisible);
+                                    // setError('');
+                                    // navigation.goBack();
+                                }}
+                            />
+                        </View>
+                    </View>
+                </Modal>
             </View>
         </ScrollView>
     );
@@ -3480,6 +3902,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
     },
+
+    container3: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
+
 
 
     sub_container: {
@@ -3524,7 +3952,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 2,
         marginVertical: 3,
         width: 400,
-        height: 170,
+        height: 180,
         marginTop: 10,
         justifyContent: 'center',
         // borderWidth: .5,
@@ -3550,6 +3978,18 @@ const styles = StyleSheet.create({
 
     },
 
+    footerInputPower: {
+        flex: 3,
+        backgroundColor: 'white',
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        paddingHorizontal: 15,
+        paddingVertical: 70,
+        width: 400,
+        // height: 200,
+
+    },
+
     footerInputMeterInstalled: {
         //  flex: 3,
         backgroundColor: 'white',
@@ -3559,18 +3999,6 @@ const styles = StyleSheet.create({
         paddingVertical: 70,
         width: 1500,
         marginLeft: 8
-        // height: 200,
-
-    },
-
-    footerInputPower: {
-        flex: 3,
-        backgroundColor: 'white',
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-        paddingHorizontal: 15,
-        paddingVertical: 70,
-        width: 400,
         // height: 200,
 
     },
@@ -3735,6 +4163,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10
     },
+
+
+    signatureSubmit: {
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10
+    },
+
+
     textSign: {
         fontSize: 14,
         fontWeight: 'bold'

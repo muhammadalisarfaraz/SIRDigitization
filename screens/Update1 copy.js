@@ -19,7 +19,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Modal from 'react-native-modal';
-import RNFetchBlob from 'rn-fetch-blob';
+ 
 const base64 = require('base-64');
 import Swipeable from 'react-native-swipeable';
 import { useNavigation } from '@react-navigation/native';

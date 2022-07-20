@@ -5,16 +5,18 @@
  * @format
  * @flow
  */
+ 
+
 
  import React, { useEffect } from 'react';
- import { View, ActivityIndicator } from 'react-native';
+ import { View, ActivityIndicator , LogBox } from 'react-native';
  import { 
    NavigationContainer, 
    DefaultTheme as NavigationDefaultTheme,
    DarkTheme as NavigationDarkTheme
  } from '@react-navigation/native';
  import { createDrawerNavigator } from '@react-navigation/drawer';
- 
+ import Moment from 'moment';
  import { 
    Provider as PaperProvider, 
    DefaultTheme as PaperDefaultTheme,
@@ -23,18 +25,13 @@
  
  import { DrawerContent } from './screens/DrawerContent';
  
- import MainTabScreen from './screens/MainTabScreen';
- /*
- 
+ import MainTabScreen from './screens/MainTabScreen'; 
  import ApiScreenB40 from './screens/ApiScreenB40';
+ import ApiScreenB40Display from './screens/ApiScreenB40Display'
+
  
- */
- 
- import ApiScreenB40 from './screens/ApiScreenB40';
- import ApiScreenA40 from './screens/ApiScreenA40';
-
-
-
+ import ApiScreenA40 from './screens/ApiScreenA40'; 
+ import ApiScreenA40Display from './screens/ApiScreenA40Display'
  
 
  import ApiScreenB40UnPlanned from './screens/ApiScreenB40UnPlanned';
@@ -44,14 +41,19 @@
  import BookmarkScreen from './screens/BookmarkScreen';
  
  import HomeScreen from './screens/HomeScreen';
+// Ordinary Planned / UnPlanned / Display Start
  import ApiScreen from './screens/ApiScreen';
  import ApiScreenUnPlanned from './screens/ApiScreenUnPlanned';
+ import ApiScreenDisplay from './screens/ApiScreenDisplay';
+// Ordinary Planned / UnPlanned / Display End
+
+
+ import SavedPlannedCases from './screens/SavedPlannedCases';
+ 
  import HomeScreenUnPlanned from './screens/HomeScreenUnPlanned';
  import SupportScreen from './screens/SupportScreen';
- import { obsDiscrepanciesB40 } from "./util/obsDiscrepanciesB40";
  import SafetyHazardCase from './screens/SafetyHazardCase';
- import ConsumerDetail from './screens/ConsumerDetail';
- import Update1 from './screens/Update1';
+  import Update1 from './screens/Update1';
  import SafetyHazardDetail from './screens/SafetyHazardDetail';
  import SafetyHazardEditRecordDetails from './screens/SafetyHazardEditRecordDetails';
  
@@ -62,14 +64,20 @@
  import RootStackScreen from './screens/RootStackScreen';
  
  import AsyncStorage from '@react-native-community/async-storage';
+ import BackgroundGeolocation, {
+  Location,
+  Subscription
+} from "react-native-background-geolocation";
  
  const Drawer = createDrawerNavigator();
  
  const App = () => {
      const [isLoading, setIsLoading] = React.useState(true);
-  const [userToken, setUserToken] = React.useState(null); 
- 
+  const [userToken, setUserToken] = React.useState(null);  
    const [isDarkTheme, setIsDarkTheme] = React.useState(false);
+   const [location, setLocation] = React.useState('');
+
+  
  
    const initialLoginState = {
      isLoading: true,
@@ -87,7 +95,7 @@
        text: '#333333'
      }
    }
-   
+
    const CustomDarkTheme = {
      ...NavigationDarkTheme,
      ...PaperDarkTheme,
@@ -102,7 +110,10 @@
    const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
  
    const loginReducer = (prevState, action) => {
-     switch( action.type ) {
+      console.log("action.type", action.type);
+      console.log("prevState", prevState);
+      console.log("action.token", action.token);
+      switch( action.type ) {
        case 'RETRIEVE_TOKEN': 
          return {
            ...prevState,
@@ -168,8 +179,12 @@
        setIsDarkTheme( isDarkTheme => !isDarkTheme );
      }
    }), []);
+   
  
    useEffect(() => {
+
+
+
      setTimeout(async() => {
        setIsLoading(false);
        let userToken;
@@ -181,8 +196,78 @@
        }
       console.log('user token: ', userToken);
        dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
-     }, 1000);
+     }, 3000);
+
+  
+     
+
+     const onLocation = BackgroundGeolocation.onLocation((location) => {
+      console.log('[onLocation]', location.coords.latitude);
+      // storeData('latitude', location.coords.latitude)
+      // storeData('longitude', location.coords.longitude)
+      let cDdate = new Date();
+      cDdate=Moment(cDdate).format("DD-MM-YYYY") ;
+    // console.log("cDdate", cDdate);
+      AsyncStorage.getItem('SIRDigitizationLocation')
+      .then(items => {
+      var data1 = [];
+
+      data1 = items ? JSON.parse(items) : [];
+
+      data1 = [
+        ...data1,
+        {
+
+          latitude : location.coords.latitude,
+          longitude: location.coords.longitude,
+          EntryDate: cDdate
+        }]
+
+        AsyncStorage.setItem('SIRDigitizationLocation', JSON.stringify(data1))
+        console.log("data1", data1);
+      })
+
+      setLocation(JSON.stringify(location, null, 2));
+    })
+
+    const onMotionChange = BackgroundGeolocation.onMotionChange((event) => {
+      console.log('[onMotionChange]', event);
+    });
+
+    const onActivityChange = BackgroundGeolocation.onActivityChange((event) => {
+      console.log('[onMotionChange]', event);
+    })
+
+    const onProviderChange = BackgroundGeolocation.onProviderChange((event) => {
+      console.log('[onProviderChange]', event);
+    })
+ 
+    BackgroundGeolocation.ready({
+      desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
+      distanceFilter: 10,
+      stopTimeout: 5,
+      debug: true, 
+      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+      stopOnTerminate: false, 
+      startOnBoot: true,       
+      batchSync: false,  
+      autoSync: true,        
+    }).then((state) => {
+      // setEnabled(state.enabled)
+      console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
+      if (!state.enabled) { 
+        BackgroundGeolocation.start()
+      }
+    
+    });
+
+    
+
    }, []);
+ 
+   useEffect(() => {
+    BackgroundGeolocation.start();
+}, []);
  
    if( loginState.isLoading ) {
      return(
@@ -201,7 +286,7 @@
            <Drawer.Screen name="SupportScreen" component={SupportScreen} />
            <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
            <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
-           <Drawer.Screen name="ConsumerDetail" component={ConsumerDetail} />
+           
          
          
            <Drawer.Screen name="Safety Hazard Case" component={SafetyHazardCase} />
@@ -210,26 +295,30 @@
            <Drawer.Screen name="Edit Safety Hazard" component={SafetyHazardEditRecordDetails} />
            <Drawer.Screen name="Posted Safety Hazards" component={SafetyHazardPosted} />
            
-           <Drawer.Screen name="Ordinary Un-Planned" component={ApiScreenUnPlanned} />
+           
            <Drawer.Screen name="Un-Planned SIR" component={HomeScreenUnPlanned} />
-
-
+           
+           
            
            <Drawer.Screen name="SIR Digitization Ordinary" component={ApiScreen} />
-          {/* <Drawer.Screen name="Site Inspection Report" component={ApiScreenB40} />
-       */}
-       <Drawer.Screen name="Site Inspection Report" component={ApiScreenB40} />
-       <Drawer.Screen name="Below 40 Un-Planned" component={ApiScreenB40UnPlanned} />
-       <Drawer.Screen name="Site Inspection Above 40" component={ApiScreenA40} />
-       <Drawer.Screen name="Above 40 Un-Planned" component={ApiScreenA40UnPlanned} />
-       
+           <Drawer.Screen name="Ordinary Un-Planned" component={ApiScreenUnPlanned} />
+           <Drawer.Screen name="Planned Saved SIR" component={SavedPlannedCases} />
 
+           <Drawer.Screen name="SIR Ordinary View" component={ApiScreenDisplay} />
+           <Drawer.Screen name="SIR Below 40 View" component={ApiScreenB40Display} />
+           <Drawer.Screen name="SIR Above 40 View" component={ApiScreenA40Display} />
+           
+        
+           <Drawer.Screen name="Site Inspection Report" component={ApiScreenB40} />
+           <Drawer.Screen name="Below 40 Un-Planned" component={ApiScreenB40UnPlanned} />
+           <Drawer.Screen name="Site Inspection Above 40" component={ApiScreenA40} />
+           <Drawer.Screen name="Above 40 Un-Planned" component={ApiScreenA40UnPlanned} />
            <Drawer.Screen name="HomeScreen" component={HomeScreen} />
            
-         </Drawer.Navigator>
+          </Drawer.Navigator>
        )
      :
-       <RootStackScreen/>
+           <RootStackScreen/>
      }
      </NavigationContainer>
      </AuthContext.Provider>

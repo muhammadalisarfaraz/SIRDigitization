@@ -15,8 +15,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
 import Swipeable from 'react-native-swipeable';
 import { FlatList } from 'react-native-gesture-handler';
-import RNFetchBlob from 'rn-fetch-blob';
-import DropDownPicker from 'react-native-dropdown-picker';
+ import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
 
 const HomeScreen = ({ navigation }) => {
@@ -72,58 +71,7 @@ const HomeScreen = ({ navigation }) => {
 
 
 
-  function getPendingOrders() {
-    AsyncStorage.getItem('User')
-      .then(items => {
-        var data = items ? JSON.parse(items) : {};
-        console.log(JSON.stringify(data));
-        setUser(data);
-        RNFetchBlob.config({
-          trusty: true,
-        })
-          .fetch(
-            'GET',
-            'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZDCRC_SRV/DCRCListSet?$filter=%20ImDate%20eq%20%2701.03.2022%27%20and%20ImIbc%20eq%20%27130%27%20and%20ImGang%20eq%20%27GANG%20E%27%20and%20ImUser%20eq%20%2700011830%27%20and%20ImHistory%20eq%20%27%27&$format=json',
-            {
-              //               Authorization: 'Basic ' + base64.encode('mm02:sapsap3'),
-              'Content-Type': 'application/json; charset=utf-8',
-            },
-          )
-          .then(res => res.json())
-          .then(res => {
-            let pendingOrder = res.d.results;
-
-            console.log("pendingOrder", pendingOrder);
-            // let data = pendingOrder.filter(x => x.Reverted == 'P');
-            //data.sort((a, b) => b.SDate - a.SDate);
-            setPendingOrders(pendingOrder);
-            console.log("pendingOrders", pendingOrders);
-            setLoader(false);
-          })
-          .catch(error => {
-            setPendingOrders('');
-            setLoader(false);
-            //            alert('Something went wrong! Please check internet connectivity.');
-            //alert("error", error);
-          });
-      })
-      .catch(error => {
-        setPendingOrders('');
-        setLoader(false);
-        alert(error);
-      });
-
-
-
-
-
-
-    setLoader(true);
-    setPendingOrders('');
-
-
-  }
-
+   
 
   return (
     <View style={styles.container}>

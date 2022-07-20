@@ -34,8 +34,7 @@ import DatePicker from 'react-native-datepicker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import InputSpinner from 'react-native-input-spinner';
 
-import RNFetchBlob from 'rn-fetch-blob';
-const base64 = require('base-64');
+ const base64 = require('base-64');
 
 import Swiper from 'react-native-swiper';
 import {FlatList} from 'react-native-gesture-handler';
@@ -56,58 +55,8 @@ function PinGeneration({navigation}) {
     </TouchableOpacity>
   );
   useEffect(() => {
-    getPendingOrders();
-  }, []);
-  function getPendingOrders() {
-    AsyncStorage.getItem('User')
-      .then(items => {
-        var data = items ? JSON.parse(items) : {};
-        console.log(JSON.stringify(data));
-        setUser(data);
-        RNFetchBlob.config({
-          trusty: true,
-        })
-          .fetch(
-            'GET',
-            'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/GET_PENDING_ORDERSet?$filter=ImUser%20eq%20%27' +
-              data.ImUser +
-              '%27%20and%20ImLoggedId%20eq%20%27A%27&&$format=json',
-            {
-             //  Authorization: 'Basic ' + base64.encode('mm02:sapsap3'),
-              'Content-Type': 'application/json; charset=utf-8',
-            },
-          )
-          .then(res => res.json())
-          .then(res => {
-            let pendingOrder = res.d.results;
-            pendingOrder.sort((a, b) => b.SDate - a.SDate);
-            //PerformaId
-            // pendingOrder.sort((a, b) => b.PerformaId - a.PerformaId);
-            // pendingOrder.Reverted();
-
-            setPendingOrders(pendingOrder);
-            console.log(pendingOrders);
-            setLoader(false);
-          })
-          .catch(error => {
-            setPendingOrders('');
-            setLoader(false);
-            alert('Something went wrong! Please check internet connectivity.');
-          });
-      })
-      .catch(error => {
-        setPendingOrders('');
-        setLoader(false);
-        alert('Something went wrong! Please check internet connectivity.');
-      });
-    setLoader(true);
-    setPendingOrders('');
-    console.log(
-      'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/GET_PENDING_ORDERSet?$filter=ImUser%20eq%20%27' +
-        user.ImUser +
-        '%27%20and%20ImLoggedId%20eq%20%27A%27&&$format=json',
-    );
-  }
+   }, []);
+   
 
   return (
     <View style={styles.container}>

@@ -4,20 +4,19 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
-  Alert,ActivityIndicator
+  Alert, ActivityIndicator
 } from 'react-native';
- 
+import Moment from 'moment';
 
- 
+
 import AsyncStorage from '@react-native-community/async-storage';
  
-import RNFetchBlob from 'rn-fetch-blob';
 //import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
- 
 
-function SupportScreen ({navigation}) {
 
-//  const { colors } = useTheme();
+function SupportScreen({ navigation }) {
+
+  //  const { colors } = useTheme();
 
   //const theme = useTheme();
   const [loader, setLoader] = useState(false);
@@ -28,80 +27,85 @@ function SupportScreen ({navigation}) {
   const [refresh, setRefresh] = useState(false);
   const [pendingOrders, setPendingOrders] = useState([]);
   const [user, setUser] = useState('');
+
+  const [currentDate, setCurrentDate] = useState('');
+
   useEffect(() => {
+    console.log('Ali');
     console.log('test');
-  console.log('test');
-   // console.log('test');
-  //  getPendingOrders();
-  });
+    console.log('test');
+    // console.log('test');
+    //  getPendingOrders();
 
-  
-
-
-    return (
-      <View style={styles.container}>
-    
+    var date = new Date()
+    date =Moment(date).format("DD-MM-YYYY") ;
+    setCurrentDate(date); 
+  }, []);
 
 
 
-        <View style={{ padding: 5 }}>
+
+  return (
+    <View style={styles.container}>
+
+     <View style={{ padding: 3 }}>
       </View>
       <View style={styles.footerMaster}>
 
-      <View style={{ flex: 1, flexDirection: 'row' }}>
-              <View
-                style={{
-                  // flex: 0.45,
-                  paddingLeft: 5,
-                  //   flexDirection: 'row',
-                  //  justifyContent: 'space-between',
-                  paddingVertical: 5,
-                }}>
-                <Text
-                  style={{
-                    marginTop: -15,
-                    fontSize: 13,
-                    // fontWeight: 'bold',
-                    color: 'black', //'#FFFFFF',
-                    //     marginBottom: 4,
-                  }}>
-                  {'Data / Time:'  + Date.now}
-                </Text>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View
+            style={{
+              // flex: 0.45,
+              paddingLeft: 5,
+              //   flexDirection: 'row',
+              //  justifyContent: 'space-between',
+              paddingVertical: 5,
+            }}>
+            <Text
+              style={{
+                marginTop: -15,
+                fontSize: 13,
+                // fontWeight: 'bold',
+                color: 'black', //'#FFFFFF',
+                //     marginBottom: 4,
+              }}>
+              {'Data / Time:' + currentDate}
+            </Text>
 
-                <Text
-                  style={{
-                    marginTop: 15,
-                    color: 'black',
-                    fontSize: 13,
-                  }}>
-                  {'User Name: Syed M. Shoaib'}
-                </Text>
+            <Text
+              style={{
+                marginTop: 15,
+                color: 'black',
+                fontSize: 13,
+              }}>
+              {'User Name: Syed M. Shoaib'}
+            </Text>
 
-                <Text
-                  style={{
-                    marginTop: 15,
-                    fontSize: 13,
-                    color: 'black',
-                     
-                  }}>
-                  {'IBC: North Nazimabad'}
-                </Text>
+            <Text
+              style={{
+                marginTop: 15,
+                fontSize: 13,
+                color: 'black',
 
-                
-              </View>
-            </View>
+              }}>
+              {'IBC: North Nazimabad'}
+            </Text>
 
-            </View>
-      
-            <View style={{ padding: 5 }}>
+
+          </View>
+        </View>
+
       </View>
-   
+
+      <View style={{ padding: 5 }}>
+      </View>
+
       <View style={styles.footer}>
 
-      
 
 
- <View
+
+        <View
           style={{
             right: 0,
             top: 0,
@@ -116,9 +120,9 @@ function SupportScreen ({navigation}) {
               fontSize: 16,
               fontWeight: 'bold',
               fontStyle: 'italic',
-              color:'black'
+              color: 'black'
             }}>
-            Welcome 
+            Welcome
           </Text>
           <TouchableOpacity
             // onPress={this._onPress}
@@ -128,353 +132,373 @@ function SupportScreen ({navigation}) {
         </View>
 
         <View
-              style={{
-                height: 30,
-                width: '32%',
-                color: '#1565C0' ,
-                flexDirection: 'row',
-                //alignItems:'flex-start',
-               //justifyContent: 'left',
-              }}>
-              
-             
-               <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
-              {/* <Icon name="thumb-up" size={30} color="brown" />  */} 
-            
-              </Text>
-              <Text style={{ marginLeft:5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
-                  Planned SIR
-            
-              </Text>
-             
-            </View>
+          style={{
+            height: 30,
+            width: '32%',
+            color: '#1565C0',
+            flexDirection: 'row',
+            //alignItems:'flex-start',
+            //justifyContent: 'left',
+          }}>
 
-            <View style={{ padding: 15,marginBottom:10 }}>
+
+          <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+            {/* <Icon name="thumb-up" size={30} color="brown" />  */}
+
+          </Text>
+          <Text style={{ marginLeft: 5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+            Planned SIR
+
+          </Text>
+
         </View>
-      
-          <View
+
+        <View style={{ padding: 15, marginBottom: 10 }}>
+        </View>
+
+        <View
+          style={{
+            height: 40,
+            width: '96%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginLeft:-5,
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                // routes: [{name: 'HomeScreen'}],
+                //  routes: [{name: 'SIR Digitization Ordinary'}],
+                ///      routes: [{name: 'Site Inspection Report'}],  
+                routes: [{ name: 'HomeScreen' }],
+              });
+            }}
             style={{
-              height: 40,
-              width: '96%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.reset({
-                  index: 0,
-                 // routes: [{name: 'HomeScreen'}],
-               //  routes: [{name: 'SIR Digitization Ordinary'}],
-         ///      routes: [{name: 'Site Inspection Report'}],  
-         routes: [{name: 'HomeScreen'}], 
-                });
-              }}
-                style={{
-                //  height: 22,
-                  width: '23%',
-                 // backgroundColor: '#E349EC',
+              //  height: 22,
+              width: '23%',
+              // backgroundColor: '#E349EC',
               //    alignItems: 'center',
-                //  justifyContent: 'center',
-                }}>                
+              //  justifyContent: 'center',
+            }}>
             <View
               style={{
                 height: 22,
-               // width: '95%',
+                // width: '95%',
                 backgroundColor: '#E349EC',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
 
-                
+
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
                 Assigned
               </Text>
-             </View></TouchableOpacity>
-            <View
-              style={{
-                height: 22,
-                width: '23%',
-                backgroundColor: '#944BF8',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-           <TouchableOpacity
+            </View></TouchableOpacity>
+          <View
+            style={{
+              height: 22,
+              width: '23%',
+              backgroundColor: '#944BF8',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft:2,
+            }}>
+            <TouchableOpacity
               onPress={() => {
                 navigation.reset({
                   index: 0,
-                  
-                
-         
-                  routes: [{name: 'Site Inspection Report'}], 
+
+
+
+                  routes: [{ name: 'Site Inspection Report' }],
                 });
               }}
-                style={{
+              style={{
                 //  height: 22,
-                  width: '55%',
-                 // backgroundColor: '#E349EC',
-              //    alignItems: 'center',
+                width: '55%',
+                // backgroundColor: '#E349EC',
+                //    alignItems: 'center',
                 //  justifyContent: 'center',
-                }}>     
+              }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
                 Saved
               </Text></TouchableOpacity>
-            </View>
-            <View
-              style={{
-                height: 22,
-                width: '30%',
-                backgroundColor: '#3636D3',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-
-
-<TouchableOpacity
-              onPress={() => {
-                navigation.reset({
-                  index: 0,              
-                
-                  routes: [{name: 'Site Inspection Above 40'}], 
-                });
-              }}
-                style={{
-                //  height: 22,
-                 // width: '90%',
-                 // backgroundColor: '#E349EC',
-              //    alignItems: 'center',
-                //  justifyContent: 'center',
-                }}>     
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-              Un-Attempted
-              </Text></TouchableOpacity>
-              
-            </View>
-            <View
-              style={{
-                height: 22,
-                width: '20%',
-                backgroundColor: '#3636D3',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-                Post
-              </Text>
-            </View>
-         
           </View>
-          <View style={{ padding: 15,marginBottom:10 }}>
-        </View>
-          <View
-              style={{
-                //height: 50,
-               // width: '32%',
-                color: '#1565C0' ,
-                flexDirection: 'row',
-                //alignItems:'flex-start',
-               //justifyContent: 'left',
-              }}>
-              
-             
-               <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
-             {/*  <Icon name="thumb-down" size={30} color="brown" />   */}
-            
-              </Text>
-              <Text style={{ marginLeft:5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
-                 Un-Planned SIR
-            
-              </Text>
-             
-            </View>
-            <View style={{ padding: 15,marginBottom:10 }}>
-        </View>
-            
           <View
             style={{
-              height: 40,
-              width: '96%',
-              flexDirection: 'row',
+              height: 22,
+              width: '30%',
+              backgroundColor: '#3636D3',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
+              marginLeft:2,
             }}>
-           <TouchableOpacity
-             onPress={() => {
-              navigation.reset({
-                index: 0,
-               // routes: [{name: 'HomeScreen'}],
-               routes: [{name: 'Un-Planned SIR'}],
-              });
-            }}
+
+            <TouchableOpacity
+              onPress={() => {
+                navigation.reset({
+                  index: 0,
+
+                  routes: [{ name: 'Site Inspection Above 40' }],
+                });
+              }}
               style={{
-              //  height: 22,
-                width: '23%',
-               // backgroundColor: '#E349EC',
-            //    alignItems: 'center',
-              //  justifyContent: 'center',
-              }}>  
-               
-               <View
-              style={{
-                height: 22,
-               // width: '23%',
-                backgroundColor: '#E349EC',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-                Assigned  
-              </Text>
-            </View></TouchableOpacity>
-            <View
-              style={{
-                height: 22,
-                width: '23%',
-                backgroundColor: '#944BF8',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-                Saved
-              </Text>
-            </View>
-            <View
-              style={{
-                height: 22,
-                width: '30%',
-                backgroundColor: '#3636D3',
-                alignItems: 'center',
-                justifyContent: 'center',
+                //  height: 22,
+                // width: '90%',
+                // backgroundColor: '#E349EC',
+                //    alignItems: 'center',
+                //  justifyContent: 'center',
               }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
                 Un-Attempted
-              </Text>
-            </View>
+              </Text></TouchableOpacity>
+
+          </View>
+          <View
+            style={{
+              height: 22,
+              width: '30%',
+              backgroundColor: '#3636D3',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft:2,
+            }}>
+
+            <TouchableOpacity
+              onPress={() => {
+                navigation.reset({
+                  index: 0,
+
+                  routes: [{ name: 'Planned Saved SIR' }],
+                });
+              }}
+              style={{
+                //  height: 22,
+               // width: '90%',
+                // backgroundColor: '#E349EC',
+                //    alignItems: 'center',
+                //  justifyContent: 'center',
+              }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+                Post
+              </Text></TouchableOpacity>
+
+          </View>
+
+        </View>
+        <View style={{ padding: 15, marginBottom: 10 }}>
+        </View>
+        <View
+          style={{
+            //height: 50,
+            // width: '32%',
+            color: '#1565C0',
+            flexDirection: 'row',
+            //alignItems:'flex-start',
+            //justifyContent: 'left',
+          }}>
+
+
+          <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+            {/*  <Icon name="thumb-down" size={30} color="brown" />   */}
+
+          </Text>
+          <Text style={{ marginLeft: 5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+            Un-Planned SIR
+
+          </Text>
+
+        </View>
+        <View style={{ padding: 15, marginBottom: 10 }}>
+        </View>
+
+        <View
+          style={{
+            height: 40,
+            width: '96%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                // routes: [{name: 'HomeScreen'}],
+                routes: [{ name: 'Un-Planned SIR' }],
+              });
+            }}
+            style={{
+              //  height: 22,
+              width: '23%',
+              // backgroundColor: '#E349EC',
+              //    alignItems: 'center',
+              //  justifyContent: 'center',
+            }}>
+
             <View
               style={{
                 height: 22,
-                width: '20%',
-                backgroundColor: '#3636D3',
+                // width: '23%',
+                backgroundColor: '#E349EC',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+                Assigned
+              </Text>
+            </View></TouchableOpacity>
+          <View
+            style={{
+              height: 22,
+              width: '23%',
+              backgroundColor: '#944BF8',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+              Saved
+            </Text>
+          </View>
+          <View
+            style={{
+              height: 22,
+              width: '30%',
+              backgroundColor: '#3636D3',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+              Un-Attempted
+            </Text>
+          </View>
+          <View
+            style={{
+              height: 22,
+              width: '20%',
+              backgroundColor: '#3636D3',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+              Post
+            </Text>
+          </View>
+
+        </View>
+
+        <View style={{ padding: 15, marginBottom: 10 }}></View>
+
+        <View
+          style={{
+            //height: 50,
+            // width: '32%',
+            color: '#1565C0',
+            flexDirection: 'row',
+            //alignItems:'flex-start',
+            //justifyContent: 'left',
+          }}>
+
+
+          <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+            {/*  <FontAwesome name="ambulance" size={30} color="brown" />   */}
+
+          </Text>
+          <Text style={{ marginLeft: 5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+            Safety Hazard Cases
+
+          </Text>
+
+        </View>
+
+        <View style={{ padding: 15, marginBottom: 10 }}>
+        </View>
+        <View
+          style={{
+            height: 40,
+            width: '96%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 25
+          }}>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                // routes: [{name: 'HomeScreen'}],
+                routes: [{ name: 'Saved Safety Hazard' }],
+              });
+            }}
+            style={{
+              //  height: 22,
+              width: '40%',
+              // backgroundColor: '#E349EC',
+              //    alignItems: 'center',
+              //  justifyContent: 'center',
+            }}>
+
+            <View
+              style={{
+                height: 22,
+                // width: '23%',
+                backgroundColor: '#E349EC',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+                Saved
+              </Text>
+            </View></TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                // routes: [{name: 'HomeScreen'}],
+                routes: [{ name: 'Posted Safety Hazards' }],
+              });
+            }}
+            style={{
+              //  height: 22,
+              width: '40%',
+              // backgroundColor: '#E349EC',
+              //    alignItems: 'center',
+              //  justifyContent: 'center',
+            }}>
+
+            <View
+              style={{
+                height: 22,
+                // width: '23%',
+                backgroundColor: '#E349EC',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
                 Post
               </Text>
-            </View>
-         
-          </View>
-
-          <View style={{ padding: 15,marginBottom:10 }}></View>
-
-          <View
-              style={{
-                //height: 50,
-               // width: '32%',
-                color: '#1565C0' ,
-                flexDirection: 'row',
-                //alignItems:'flex-start',
-               //justifyContent: 'left',
-              }}>
-              
-             
-               <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
-             {/*  <FontAwesome name="ambulance" size={30} color="brown" />   */}
-            
-              </Text>
-              <Text style={{ marginLeft:5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
-                Safety Hazard Cases
-            
-              </Text>
-             
-            </View>
-
-            <View style={{ padding: 15,marginBottom:10 }}>
-        </View>
-          <View
-            style={{
-              height: 40,
-              width: '96%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-             padding:25
-            }}>
-               
-               <TouchableOpacity
-             onPress={() => {
-              navigation.reset({
-                index: 0,
-               // routes: [{name: 'HomeScreen'}],
-               routes: [{name: 'Saved Safety Hazard'}],
-              });
-            }}
-              style={{
-              //  height: 22,
-                width: '40%',
-               // backgroundColor: '#E349EC',
-            //    alignItems: 'center',
-              //  justifyContent: 'center',
-              }}>  
-               
-               <View
-              style={{
-                height: 22,
-               // width: '23%',
-                backgroundColor: '#E349EC',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-                Saved  
-              </Text>
             </View></TouchableOpacity>
 
-            <TouchableOpacity
-             onPress={() => {
-              navigation.reset({
-                index: 0,
-               // routes: [{name: 'HomeScreen'}],
-               routes: [{name: 'Posted Safety Hazards'}],
-              });
-            }}
-              style={{
-              //  height: 22,
-                width: '40%',
-               // backgroundColor: '#E349EC',
-            //    alignItems: 'center',
-              //  justifyContent: 'center',
-              }}>  
-               
-               <View
-              style={{
-                height: 22,
-               // width: '23%',
-                backgroundColor: '#E349EC',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-              Post  
-              </Text>
-            </View></TouchableOpacity>
-            
-           
-         
-          </View>
 
-           
-          <View style={{ padding: 15,marginBottom:10 }}></View>
-        
+
         </View>
-  
 
-     
-            
-      
+
+        <View style={{ padding: 15, marginBottom: 10 }}></View>
+
       </View>
-    );
-  };
+
+
+
+
+
+    </View>
+  );
+};
 
 
 
@@ -544,20 +568,20 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderBottomEndRadius: 10,
     borderBottomStartRadius: 10,
-   
+
     paddingHorizontal: 20,
     paddingVertical: 30
   },
   text_header: {
     color: '#fff',
     fontWeight: 'bold',
-  //  fontSize: 30,
+    //  fontSize: 30,
     textAlign: 'center',
 
   },
   text_footer: {
     color: '#05375a',
-    
+
   },
   action: {
     flexDirection: 'row',
@@ -625,5 +649,5 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
- 
+
 export default SupportScreen;

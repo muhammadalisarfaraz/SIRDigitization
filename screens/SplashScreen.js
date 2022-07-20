@@ -11,8 +11,7 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 import Moment from 'moment';
-import RNFetchBlob from 'rn-fetch-blob';
-
+ 
 const SplashScreen = ({ navigation }) => {
   const width = new Animated.Value(360);
   const height = new Animated.Value(600);

@@ -16,8 +16,7 @@ import {
   Picker,
   ScrollView,
 } from 'react-native';
-import RNFetchBlob from 'rn-fetch-blob';
-import Modal from 'react-native-modal';
+ import Modal from 'react-native-modal';
 import Moment from 'moment';
 
 const base64 = require('base-64');
@@ -1872,98 +1871,7 @@ function UpdateDetails1({navigation, route}) {
                 onPress={() => {
                   setPinModalVisible(true);
 
-                  // RNFetchBlob.config({
-                  //   trusty: true,
-                  // })
-                  //   .fetch(
-                  //     'POST',
-                  //     'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/CREATE_WOSet',
-                  //     {
-                  //       Authorization: 'Basic ' + base64.encode('mm02:sapsap3'),
-                  //       'Content-Type': 'application/json',
-                  //       // Accept: 'application/json',
-                  //     },
-                  //     JSON.stringify({
-                  //       d: {
-                  //         LoggedId: 'SALMAN',
-                  //         DtsId: 'DTS-000001',
-                  //         FdrId: 'FDR-1234',
-                  //         Pqc: '100003',
-                  //         PqcName: 'A.G.E.Industries (Pvt) Ltd.',
-                  //         ProjId: '2',
-                  //         ProjectName: 'LT ABC',
-                  //         SubProj: 'OMR',
-                  //         AeName: 'Salman',
-                  //         FdrName: 'Test Feeder',
-                  //         PmtName: 'Test PMT',
-                  //         CaseId: '1234',
-                  //         GridName: 'Test Grid',
-                  //         SDate: '20200529',
-                  //         CDate: '20200601',
-                  //         Return: '',
-                  //         WO_MATERIALSSet: [
-                  //           {
-                  //             Matnr: '10001454',
-                  //             Maktx: 'SMARTPHONE',
-                  //             Meins: 'EA',
-                  //             Type: 'X',
-                  //             GrRcpt: 'Services',
-                  //             ReqQty: '2',
-                  //           },
-                  //           {
-                  //             Matnr: '10001455',
-                  //             Maktx: 'VCB Trolley 400 Amps',
-                  //             Meins: 'EA',
-                  //             Type: '',
-                  //             GrRcpt: '',
-                  //             ReqQty: '9',
-                  //           },
-                  //         ],
-                  //         WO_MAPPINGSSet: [
-                  //           {
-                  //             Consumer: '123456789',
-                  //             Matnr: '402299',
-                  //           },
-                  //           {
-                  //             Consumer: '987654321',
-                  //             Matnr: '402401',
-                  //           },
-                  //         ],
-                  //       },
-                  //     }),
-                  //   )
-                  //   .then(res => res.json())
-                  //   .then(res => {
-                  //     setError('Unable to Upload');
-                  //     setModalVisible(true);
-                  //     // alert(JSON.stringify(res));
-                  //     // setLoader(false);
-                  //     // // setItems(res.values);
-                  //     // let SubProject = res.d.results;
-                  //     // let arr = [];
-                  //     // for (var i = 0; i < SubProject.length; i++) {
-                  //     //   arr.push({
-                  //     //     id: i,
-                  //     //     name: SubProject[i].SubProj,
-                  //     //     projid: SubProject[i].ProjId,
-                  //     //     uri: SubProject[i].__metadata.uri,
-                  //     //     type: SubProject[i].__metadata.type,
-                  //     //     orgid: SubProject[i].__metadata.id,
-                  //     //   });
-                  //     // }
-                  //     // // alert(JSON.stringify(SubProject));
-                  //     // // console.log(JSON.stringify(SubProject))
-                  //     // AsyncStorage.setItem('SubProject', JSON.stringify(arr));
-                  //   })
-                  //   .catch(error => {
-                  //     // setLoader(false);
-                  //     // alert(
-                  //     //   'Something went wrong! Please check internet connectivity.    ' +
-                  //     //     JSON.stringify(error),
-                  //     // );
-                  //     setError('Unable to Upload');
-                  //     setModalVisible(true);
-                  //   });
+                  
                 }}>
                 <Text style={{fontSize: 16, color: 'white'}}>Send to PQC</Text>
               </TouchableOpacity>
@@ -2329,103 +2237,7 @@ function UpdateDetails1({navigation, route}) {
                       },
                     }),
                   );
-                  if (selectedAprrover) {
-                    RNFetchBlob.config({
-                      trusty: true,
-                    })
-                      .fetch(
-                        'POST',
-                        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/CREATE_WOSet',
-                        {
-                          // Authorization:
-                          // 'Basic ' + base64.encode('mm02:sapsap3'),
-                          'Content-Type': 'application/json',
-                          Accept: 'application/json',
-                          'X-CSRFToken': '',
-                          'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        JSON.stringify({
-                          d: {
-                            LoggedId: User.ImUser,
-                            DtsId: selectedValue.dts_id,
-                            FdrId: selectedValue.feeder_id,
-                            Pqc: selectedPQC.v_id,
-                            PqcName: selectedPQC.name,
-                            ProjId: selectedProject.projid,
-                            ProjectName: selectedProject.name,
-                            SubProj: selectedsub.spcode,
-                            AeName: User.ImUser,
-                            FdrName: selectedValue.feeder_desc,
-                            ApproverId: selectedAprrover.name,
-                            Wbs: selectedWBS.name,
-                            PmtName: PMT,
-                            CaseId: '1234',
-                            GridName: 'Test Grid',
-                            SDate: Moment(Date.now())
-                              .format('YYYY-MM-DD')
-                              .split('-')
-                              .join(''),
-                            CDate: Moment(date)
-                              .format('YYYY-MM-DD')
-                              .split('-')
-                              .join(''),
-                            Return: '',
-                            WO_MATERIALSSet: tableData,
-                            WO_MAPPINGSSet: meterData,
-                          },
-                        }),
-                      )
-                      .then(res => res.json())
-                      .then(res => {
-                        // alert(JSON.stringify(res));
-                        console.log(res);
-                        setUploadingMsg(res.d.Return);
-                        setUploading(false);
-                        setSuccessModalVisible(!isSuccessModalVisible);
-                        setError('');
-                        route.params.delete();
-                        route.params.refresher();
-
-                        // setTimeout(() => {
-                        //   navigation.goBack();
-                        // }, 1000);
-                        // setError('Unable to Upload');
-                        // setModalVisible(true);
-                        // setLoader(false);
-                        // // setItems(res.values);
-                        // let SubProject = res.d.results;
-                        // let arr = [];
-                        // for (var i = 0; i < SubProject.length; i++) {
-                        //   arr.push({
-                        //     id: i,
-                        //     name: SubProject[i].SubProj,
-                        //     projid: SubProject[i].ProjId,
-                        //     uri: SubProject[i].__metadata.uri,
-                        //     type: SubProject[i].__metadata.type,
-                        //     orgid: SubProject[i].__metadata.id,
-                        //   });
-                        // }
-                        // // alert(JSON.stringify(SubProject));
-                        // // console.log(JSON.stringify(SubProject))
-                        // AsyncStorage.setItem('SubProject', JSON.stringify(arr));
-                      })
-                      .catch(error => {
-                        // setLoader(false);
-                        // setError('Unable to Upload');
-                        setUploadingMsg('');
-
-                        console.log(error);
-                        setModalVisible(true);
-                        alert(
-                          'Something went wrong! Please check internet connectivity.    ' +
-                            JSON.stringify(error),
-                        );
-                      });
-                  } else {
-                    setUploading(false);
-                    setUploadingMsg('');
-                    setError('Select Approver');
-                  }
+                  
                 }}
                 // }
               />

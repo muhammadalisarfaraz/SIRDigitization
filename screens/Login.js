@@ -17,8 +17,7 @@ import {
   Alert,
   Platform
 } from 'react-native';
-import RNFetchBlob from 'rn-fetch-blob';
-import Modal from 'react-native-modal';
+ import Modal from 'react-native-modal';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 //import Config from 'react-native-config';
@@ -86,118 +85,7 @@ function Login({ navigation }) {
 
     //var apiURLN=Config.API_LoginURL;
     // console.log("apiURLN", apiURLN);
-    RNFetchBlob.config({
-      trusty: true,
-    })
-      .fetch(
-        'GET',
-        // apiURLN + name.toLowerCase() + '&Password=' + userPassword.toLowerCase(),
-        'https://rbapi.ke.com.pk/api/login/GetCheckLoginAPI?UserName=' + name.toLowerCase() + '&Password=' + userPassword.toLowerCase(),
-
-        {
-          //  Authorization: 'Basic ' + base64.encode('mm02:sapsap3'),
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      )
-      .then(res => res.json())
-      .then(resp => {
-        console.log("res", resp);
-        loader();
-        var response = resp;
-        console.log(response.statusCode);
-        if (response.statusCode == false) {
-          setError(response.statusText);
-          setModalVisible(true);
-          return;
-        }
-        else {
-
-          let arr = [];
-
-          arr.push({
-
-            statusCode: response.statusCode,
-            statusText: response.statusText,
-            name: name.trim(),
-            userPassword: userPassword.trim(),
-            RBArea: resp._lm[0].Area,
-            RoleName: resp._lm[0].RoleName,
-            IBC: resp._lm[0].IBC,
-            loginDate: Moment(Date.now()).format('DD-MM-YYYY'),
-            PlanDateTime: resp._lm[0].PlanDateTime,
-            UserStatus: resp._lm[0].UserStatus,
-            MobileID: UniqueId,
-
-          });
-          // console.log(arr);
-
-          AsyncStorage.setItem('User', JSON.stringify(arr));
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Menu' }],
-          });
-
-        }
-      })
-      .catch(error => {
-        //   alert(error);
-
-        setError(error);
-        console.log("error", error);
-
-        AsyncStorage.getItem('User')
-          .then(items => {
-            var data = JSON.parse(items);
-            // console.log("ali", data);
-            //  console.log("data[0].name", data[0].name.toLowerCase());
-
-            // console.log("name.toLowerCase()", name.toLowerCase());
-            //  console.log("data[0].userPassword", data[0].userPassword.toLowerCase());
-            //    console.log("userPassword.toLowerCase()", userPassword.toLowerCase());
-            var nameTemp = data[0].name.toLowerCase();
-            nameTemp = nameTemp.trim();
-            var passwordTemp = data[0].userPassword.toLowerCase();
-            passwordTemp = passwordTemp.trim();
-            var sUser = name.toLowerCase();
-            sUser = sUser.trim()
-            var sPassword = userPassword.toLowerCase();
-            sPassword = sPassword.trim();
-
-
-
-            if (nameTemp == sUser && passwordTemp == sPassword) {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Menu' }],
-              });
-              loader();
-            }
-            else {
-              setError('User Name or Password Incorrect');
-
-              setModalVisible(true);
-              loader();
-
-              return;
-
-
-
-            }
-
-
-          })
-          .catch(() => {
-            setError('Something went wrong. ' + error);
-
-            setModalVisible(true);
-            loader();
-          });
-
-      });
-
-
-
-
+    
     // AsyncStorage.setItem('User', JSON.stringify(name));
   };
   const handleValidUser = (val) => {

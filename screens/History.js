@@ -35,7 +35,7 @@ import DatePicker from 'react-native-datepicker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import InputSpinner from 'react-native-input-spinner';
 
-import RNFetchBlob from 'rn-fetch-blob';
+ 
 const base64 = require('base-64');
 
 import Swiper from 'react-native-swiper';
@@ -85,52 +85,8 @@ function History({navigation}) {
     </TouchableOpacity>
   );
   useEffect(() => {
-    getPendingOrders();
-  }, []);
-  function getPendingOrders() {
-    setLoader(true);
-    setPendingOrders('');
-    AsyncStorage.getItem('User')
-      .then(items => {
-        var data = items ? JSON.parse(items) : {};
-        console.log(JSON.stringify(data));
-        setUser(data);
-        RNFetchBlob.config({
-          trusty: true,
-        })
-          .fetch(
-            'GET',
-            'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/GET_ORDERS_HISTSet?$filter=User%20eq%20%27' +
-              data.ImUser +
-              '%27%20and%20UserType%20eq%20%27A%27%20and%20FromDate%20eq%20%2720200101%27%20and%20ToDate%20eq%20%2799991231%27&&$format=json',
-            {
-             //  Authorization: 'Basic ' + base64.encode('mm02:sapsap3'),
-              'Content-Type': 'application/json; charset=utf-8',
-            },
-          )
-          .then(res => res.json())
-          .then(res => {
-            let pendingOrder = res.d.results;
-            pendingOrder.sort((a, b) => b.SDate - a.SDate);
-            pendingOrder.sort((a, b) => b.Aufnr - a.Aufnr);
-            setPendingOrders(pendingOrder);
-            setTemptableData(pendingOrder);
-
-            console.log(pendingOrders);
-            setLoader(false);
-          })
-          .catch(error => {
-            setPendingOrders('');
-            setLoader(false);
-            alert('Something went wrong! Please check internet connectivity.');
-          });
-      })
-      .catch(error => {
-        setPendingOrders('');
-        setLoader(false);
-        alert('Something went wrong! Please check internet connectivity.');
-      });
-  }
+   }, []);
+   
 
   return (
     <View style={styles.container}>

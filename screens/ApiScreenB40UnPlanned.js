@@ -9,7 +9,6 @@ import {
   PermissionsAndroid,
   ActivityIndicator, Dimensions
 } from 'react-native';
-
 import { CheckBox } from 'react-native-elements'
 import {
   Provider,
@@ -20,6 +19,7 @@ import {
   DataTable,
 } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
+import AsyncStorage from '@react-native-community/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
@@ -28,38 +28,26 @@ import axios from 'axios';
 import ImageViewConsumer from 'react-native-image-viewing';
 import Geolocation from '@react-native-community/geolocation';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-
-
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DropDownPicker from 'react-native-dropdown-picker';
-
-
-//import DatePicker from 'react-native-datepicker';
-//import CheckboxGroup1 from 'react-native-checkbox-group';
+import DropDownPicker from 'react-native-dropdown-picker'; 
 import {
   launchCamera,
   launchImageLibrary,
-  //ImagePicker,
   Select
 } from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Moment from 'moment';
 import { set } from 'react-native-reanimated';
-
 import SignatureCapture from 'react-native-signature-capture';
-//import { obsDiscrepanciesB40 } from "./util/obsDiscrepanciesB40";
-//import "./styles.css";
 
 let current = 100;
-const ApiScreenB40UnPlanned = () => {
+const ApiScreenB40  = ({ navigation }) => {
   const scrollRef = useRef(null);
   const [pos, setPos] = React.useState(0);
   const [tab, setTab] = useState('Consumer Detail');
   const [loader, setLoader] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState();
   const sign = createRef();
   const [signaturePreview, setSign] = useState(null);
 
@@ -68,14 +56,20 @@ const ApiScreenB40UnPlanned = () => {
   };
   const resetSign = () => {
     sign.current.resetImage();
+    setSignModalVisible(!isSignModalVisible);
 
     setTimeout(() => {
       setSign();
+      setIsSignature("N");
     }, 1000);
   };
   const _onSaveEvent = (result) => {
-    alert('Signature Captured Successfully');
+    // alert('Signature Captured Successfully');
     setSign(result.encoded);
+    let consSign = result.encoded;
+    setIsSignature("Y");
+    setConsumerSignature([{ consSign }]);
+    setSignModalVisible(!isSignModalVisible);
   }
   const _onDragEvent = () => {
     // This callback will be called when the user enters signature
@@ -102,6 +96,7 @@ const ApiScreenB40UnPlanned = () => {
     { label: 'MTV', value: 1 }
   ];
 
+  const [checkBoxselectedList, setcheckBoxSelectedList] = useState([])
   const [selectedList, setSelectedList] = useState([])
   const [checkBoxList, setCheckBoxList] = useState([
     {
@@ -168,8 +163,11 @@ const ApiScreenB40UnPlanned = () => {
   ])
 
   let onSelectCheckBox = (name, id) => {
+    setcheckBoxSelectedList([{name}, ...checkBoxselectedList]);
+    
     setCheckBoxList(
       checkBoxList.map((li, index) =>
+   
         li.name == name
           ? {
             ...li,
@@ -179,15 +177,18 @@ const ApiScreenB40UnPlanned = () => {
           : {
             ...li,
           },
+          
       ),
+      
     );
     setSelectedList(checkBoxList.filter(val => {
+     
+      
       return val.ischeck == true;
     })
     )
 
   };
-
 
 
   var radio_propsConsumerDetail = [
@@ -202,6 +203,8 @@ const ApiScreenB40UnPlanned = () => {
     { label: 'Panel door', value: 'Panel door' },
 
   ]);
+
+
 
 
   const items = [
@@ -244,6 +247,8 @@ const ApiScreenB40UnPlanned = () => {
   ];
 
   const [selectedItems, setSelectedItems] = useState([]);
+  
+  const [isSelecteditems, setIsSelecteditems] = useState("N");
 
   let onSelectedItemsChange = selectedItems => {
     console.log("selectedItems", selectedItems);
@@ -251,6 +256,7 @@ const ApiScreenB40UnPlanned = () => {
       return;
     } else {
       setSelectedItems(selectedItems);
+      setIsSelecteditems("Y");
     }
   };
 
@@ -260,45 +266,43 @@ const ApiScreenB40UnPlanned = () => {
       name: 'Consumer Detail',
       active: true,
     },
+     
 
     {
-      id: 2,
+      id: 3,
       name: 'Power Meter Detail',
       active: false,
     },
     {
-      id: 3,
+      id: 4,
       name: 'Light Meter Detail',
       active: false,
     },
     {
-      id: 4,
+      id: 5,
       name: 'Meter Testing Result',
       active: false,
     },
     {
-      id: 5,
+      id: 6,
       name: 'Discrepancy and Findings',
       active: false,
     },
 
 
     {
-      id: 6,
+      id: 7,
       name: 'Customer Acknowlegment',
       active: false,
     },
 
     {
-      id: 7,
+      id: 8,
       name: 'SIR Pictures',
       active: false,
     },
-    {
-      id: 8,
-      name: 'Customer Signature',
-      active: false,
-    },
+
+    
   ]);
 
 
@@ -307,6 +311,7 @@ const ApiScreenB40UnPlanned = () => {
   const [images, setImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
   const [images1, setImages1] = useState([]);
+  const [consumerImages, setConsumerImages] = useState([]);
   const [indexSelected, setIndexSelected] = useState(0);
   const [isImage, setIsImage] = useState("N");
   const [IsImage1, setIsImage1] = useState("N");
@@ -318,6 +323,9 @@ const ApiScreenB40UnPlanned = () => {
   const [visible1, setIsVisible1] = useState(false);
   const [isSelected, setSelection] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState();
   /* Consumer Detail */
 
 
@@ -344,7 +352,6 @@ const ApiScreenB40UnPlanned = () => {
   const [currentReading, setCurrentReading] = useState("");
   const [peakReading, setPeakReading] = useState("");
 
-
   /* Power Meter ------------ End */
 
   /* Light Meter ------------ Start */
@@ -352,12 +359,10 @@ const ApiScreenB40UnPlanned = () => {
   const [lightMeterMake, setLightMeterMake] = useState("");
   const [lightMC, setLightMC] = useState("");
   const [lightReading, setLightReading] = useState("");
-
   const [lightMDIOnReading, setLightMDIOnReading] = useState("");
-  const [lightConsumerNo, setLightConsumerNo] = useState("");
-
   const [lightPeakReading, setLightPeakReading] = useState("");
   const [lightCurrentReading, setLightCurrentReading] = useState("");
+  const [lightConsumerNo, setLightConsumerNo] = useState("");
 
 
   /* Light Meter ------------ End */
@@ -368,11 +373,10 @@ const ApiScreenB40UnPlanned = () => {
   const [meterInstalled1, setMeterInstalled1] = useState("");
   const [meterInstalled2, setMeterInstalled2] = useState("");
   const [meterInstalled, setMeterInstalled] = useState("");
-
+  const [fmrNo, setFMRNo] = useState("");
   const [statusPostalorder, setStatusPostalorder] = useState("");
   const [metertestingResultremarks, setmetertestingResultremarks] = useState("");
 
-  const [fmrNo, setFMRNo] = useState("");
 
   /* Meter Testing Result ------------ End */
 
@@ -387,11 +391,36 @@ const ApiScreenB40UnPlanned = () => {
 
   const [consumerName, setConsumerName] = useState("");
   const [mobileNo, setMobileNo] = useState("");
+  const [consumerNameCNIC, setconsumerNamecNIC] = useState("");
   const [consumerRemarks, setConsumerRemarks] = useState("");
   const [consumerRefuseYN, setConsumerRefuseYN] = useState("");
   const [consumerSign, setConsumerSign] = useState("");
 
   /* Customer Acknowlegment ------------ End */
+
+  const [SIR, setSIR] = useState("900000000335");
+  const [cosnumerno, setCosnumerno] = useState("LA414951");
+
+  const [clusterIBC, setClusterIBC] = useState("C1 / F.B.Area");
+  const [consumernameBilling, setConsumernameBilling] = useState("Syed M. Shoaib");
+
+
+  const [accountno, setAccountno] = useState("400001061656");
+  const [address, setAddress] = useState("Flat No. D-8, Anarkali Flat, Block-16, F.B.Area");
+
+  const [assigndate, setAssigndate] = useState("20.02.2022");
+  const [assignto, setAssignto] = useState("80012790 - Syed M. Shoaib");
+
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [isAuthModalVisible, setAuthModalVisible] = useState(false);
+  const [isSignModalVisible, setSignModalVisible] = useState(false);
+  const [error, setError] = useState('');
+  const [uploadingMsg, setUploadingMsg] = useState('');
+ 
+  const [consumerSignature, setConsumerSignature] = useState([]);
+  const [isSignature, setIsSignature] = useState("N");
 
 
   const SPACING = 10;
@@ -479,8 +508,8 @@ const ApiScreenB40UnPlanned = () => {
       animated: true
     });
   };
-  const [latitude1, setlatitude] = useState("");
-  const [longitude1, setlongitude] = useState("");
+  const [latitude, setlatitude] = useState("");
+  const [longitude, setlongitude] = useState("");
 
 
   const getUserCurrentLocation = async () => {
@@ -658,7 +687,7 @@ const ApiScreenB40UnPlanned = () => {
           //setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
           setFilePath1([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }]);
           setImages1({ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data });
-          //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+          setConsumerImages([{ uri: response.path, url: response.path, fileName: 'consumerImage.jpg', base64: response.data }]);
 
         }
         else {
@@ -672,6 +701,8 @@ const ApiScreenB40UnPlanned = () => {
       });
     }
   };
+
+
 
 
 
@@ -714,6 +745,7 @@ const ApiScreenB40UnPlanned = () => {
     { id: Date.now(), LoadDetail: '1 Ton', Quantity: '', Rating: '1200 W', TotalWatts: '' },
 
   ]);
+  const [ispowermeterdetail, setIspowermeterdetail] = useState("N");
 
   const [powermeterdetail, setPowermeterDetail] = useState([
     {
@@ -724,6 +756,7 @@ const ApiScreenB40UnPlanned = () => {
     { id: Date.now(), CurrentType: 'N', AMP: '', VOLT: '', PF: '' },
 
   ]);
+  const [islightmeterdetail, setIslightmeterdetail] = useState("N");
 
 
   const [lightmeterdetail, setLightmeterdetail] = useState([
@@ -733,6 +766,8 @@ const ApiScreenB40UnPlanned = () => {
     { id: Date.now(), CurrentType: 'N', AMP: '', VOLT: '', PF: '' },
 
   ]);
+
+
 
   const onAddmore = () => {
     setTableList([
@@ -787,7 +822,6 @@ const ApiScreenB40UnPlanned = () => {
     newArray[index] = { ...newArray[index], PF: text };
     setLightmeterdetail(newArray);
   };
-
 
 
 
@@ -849,41 +883,7 @@ const ApiScreenB40UnPlanned = () => {
       <View>
         {/* <Animatable.View animation="fadeInRightBig"> */}
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          <View style={styles.footer}>
-
-
-            <View
-              style={{
-                flex: .50,
-                paddingLeft: 10,
-                //   flexDirection: 'row',
-                alignSelf: 'center',
-                alignContent: 'center',
-
-                //   paddingVertical: 10,
-              }}>
-              <Text
-                style={{
-                  // marginLeft: 5,
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  // fontWeight: 'bold',
-                  color: 'black', //'#FFFFFF',
-                  //     marginBottom: 4,
-                }}>
-                {'Below 40KW Un-Planned'}
-              </Text>
-
-            </View>
-
-
-
-
-
-
-
-
-
+        <View style={styles.footer}>
             <View style={{ flex: 1, flexDirection: 'row' }}>
               <View
                 style={{
@@ -891,7 +891,7 @@ const ApiScreenB40UnPlanned = () => {
                   paddingLeft: 10,
                   //   flexDirection: 'row',
                   //  justifyContent: 'space-between',
-                  // paddingVertical: 10,
+                  paddingVertical: 10,
                 }}>
                 <Text
                   style={{
@@ -901,7 +901,7 @@ const ApiScreenB40UnPlanned = () => {
                     color: 'black', //'#FFFFFF',
                     //     marginBottom: 4,
                   }}>
-                  {'SIR No: 900000000335'}
+                  {'SIR No: ' + SIR}
                 </Text>
 
                 <Text
@@ -910,7 +910,7 @@ const ApiScreenB40UnPlanned = () => {
                     color: 'black',
                     fontSize: 13,
                   }}>
-                  {'Consumer No: LA414951'}
+                  {'Consumer No: ' + cosnumerno}
                 </Text>
 
                 <Text
@@ -919,7 +919,7 @@ const ApiScreenB40UnPlanned = () => {
                     fontSize: 13,
                     color: 'black',
                   }}>
-                  {'Name: Syed M. Shoaib'}
+                  {'Name: ' + consumernameBilling}
                 </Text>
 
                 <Text
@@ -928,7 +928,7 @@ const ApiScreenB40UnPlanned = () => {
                     fontSize: 13,
                     color: 'black',
                   }}>
-                  {'Address: Flat No. D-8, Anarkali Flat, Block-16, F.B.Area'}
+                  {'Address: ' + address}
                 </Text>
 
                 <Text
@@ -937,7 +937,7 @@ const ApiScreenB40UnPlanned = () => {
                     fontSize: 13,
                     color: 'black',
                   }}>
-                  {'Assign Date: 20.02.2022'}
+                  {'Assign Date: ' + assigndate}
                 </Text>
                 <Text
                   style={{
@@ -945,7 +945,7 @@ const ApiScreenB40UnPlanned = () => {
                     fontSize: 13,
                     color: 'black',
                   }}>
-                  {'Assign To: 80012790 - Syed M. Shoaib'}
+                  {'Assign To: ' + assignto}
                 </Text>
               </View>
             </View>
@@ -956,10 +956,10 @@ const ApiScreenB40UnPlanned = () => {
               <View
                 style={{
                   // flex: 0.45,
-                  // paddingTop: 5,
+                  paddingTop: 5,
                   //   flexDirection: 'row',
                   //  justifyContent: 'space-between',
-                  // paddingVertical: 10,
+                  paddingVertical: 10,
                 }}>
                 <Text
                   style={{
@@ -970,7 +970,7 @@ const ApiScreenB40UnPlanned = () => {
                     color: 'black', //'#FFFFFF',
                     //     marginBottom: 4,
                   }}>
-                  {'Cluster / IBC: C1 / F.B.Area'}
+                  {'Cluster / IBC: ' + clusterIBC}
                 </Text>
 
                 <Text
@@ -980,7 +980,7 @@ const ApiScreenB40UnPlanned = () => {
                     color: 'black',
                     fontSize: 13,
                   }}>
-                  {'Account No: 400001061656'}
+                  {'Account No: ' + accountno}
                 </Text>
               </View>
             </View>
@@ -1315,7 +1315,7 @@ const ApiScreenB40UnPlanned = () => {
 
 
 
-
+           
           {tab == 'Meter Testing Result' && (
             <ScrollView
               showsVerticalScrollIndicator={true}
@@ -1627,6 +1627,7 @@ const ApiScreenB40UnPlanned = () => {
                       </View>
                     </View>
 
+
                     <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
                       <View style={{ flex: 0.5, textAlign: 'right' }}>
                         <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15, textAlign: 'left' }}>  Status of Postal Order/ Seal</Text>
@@ -1746,8 +1747,6 @@ const ApiScreenB40UnPlanned = () => {
                           </View>
                           <TouchableOpacity onPress={showDatePicker}>
                             <Icon name="calendar" size={30} color="blue" />
-
-
                           </TouchableOpacity>
                           <DateTimePickerModal
                             isVisible={isDatePickerVisible}
@@ -1784,8 +1783,6 @@ const ApiScreenB40UnPlanned = () => {
                         marginTop: -80,
                         marginLeft: 2,
                       }}>
-
-
                       <View
                         style={{ flexDirection: 'row', flex: 1, width: '88%' }}>
                         <View style={{ flex: 2.5, flexDirection: 'column' }}>
@@ -1807,22 +1804,6 @@ const ApiScreenB40UnPlanned = () => {
                         </View>
 
                       </View>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                       <View
                         style={{
                           flexDirection: 'row',
@@ -2109,7 +2090,7 @@ const ApiScreenB40UnPlanned = () => {
                               }}>
                               <TextInput
                                 // style={styles.inputLoadDetail}
-                                placeholder={'MC'}
+                                placeholder={'Meter CT Ratio'}
                                 keyboardType={'email-address'}
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
@@ -2126,7 +2107,6 @@ const ApiScreenB40UnPlanned = () => {
                             </View>
                           </View>
                         </View>
-
                         <View
                           style={{
                             flexDirection: 'row',
@@ -2227,7 +2207,7 @@ const ApiScreenB40UnPlanned = () => {
                           }}>
                           <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                             <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                              MDI/MDI-Off{' '}
+                              MDI/MDI-Off Reading{' '}
                             </Text>
                           </View>
 
@@ -2245,7 +2225,7 @@ const ApiScreenB40UnPlanned = () => {
                                 marginTop: -10,
                               }}>
                               <TextInput
-                                placeholder={'MDI/MDI-Off'}
+                                placeholder={'MDI/MDI-Off Reading'}
                                 keyboardType={'numeric'}
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
@@ -2272,7 +2252,7 @@ const ApiScreenB40UnPlanned = () => {
                           }}>
                           <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                             <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                              MDI-On{' '}
+                              MDI-On Reading{' '}
                             </Text>
                           </View>
 
@@ -2290,7 +2270,7 @@ const ApiScreenB40UnPlanned = () => {
                                 marginTop: -10,
                               }}>
                               <TextInput
-                                placeholder={'MDI-On'}
+                                placeholder={'MDI-On Reading'}
                                 keyboardType={'numeric'}
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
@@ -2351,18 +2331,18 @@ const ApiScreenB40UnPlanned = () => {
                                   keyboardType={'numeric'}
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                // value={l.AMP}
+                                 value={l.AMP}
                                 />
                               </View>
                               <View style={{ flex: 5 }}>
                                 <TextInput
                                   style={styles.input}
                                   onChangeText={t => updateVolt(t, i)}
-                                  keyboardType={'numeric'}
                                   placeholder="Volt"
+                                  keyboardType={'numeric'}
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                //  value={l.VOLT}
+                                  value={l.VOLT}
                                 />
                               </View>
                               <View style={{ flex: 5 }}>
@@ -2372,7 +2352,7 @@ const ApiScreenB40UnPlanned = () => {
                                   placeholder="P.F"
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                // value={l.PF}
+                                value={l.PF}
                                 />
                               </View>
                             </DataTable.Row>
@@ -2548,6 +2528,7 @@ const ApiScreenB40UnPlanned = () => {
                           </View>
                         </View>
 
+
                         <View
                           style={{
                             flexDirection: 'row',
@@ -2639,9 +2620,6 @@ const ApiScreenB40UnPlanned = () => {
                           </View>
                         </View>
 
-
-
-
                         <View
                           style={{
                             flexDirection: 'row',
@@ -2651,7 +2629,7 @@ const ApiScreenB40UnPlanned = () => {
                           }}>
                           <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
                             <Text style={{ fontWeight: 'normal', color: 'black' }}>
-                              MDI/MDI-Off{' '}
+                              MDI/MDI-Off Reading{' '}
                             </Text>
                           </View>
 
@@ -2820,7 +2798,7 @@ const ApiScreenB40UnPlanned = () => {
                                   keyboardType={'numeric'}
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                // value={l.AMP}
+                                 value={l.AMP}
                                 />
                               </View>
                               <View style={{ flex: 5 }}>
@@ -2831,7 +2809,7 @@ const ApiScreenB40UnPlanned = () => {
                                   keyboardType={'numeric'}
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                //  value={l.VOLT}
+                                   value={l.VOLT}
                                 />
                               </View>
                               <View style={{ flex: 5 }}>
@@ -2841,7 +2819,7 @@ const ApiScreenB40UnPlanned = () => {
                                   placeholder="P.F"
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                // value={l.PF}
+                                  value={l.PF}
                                 />
                               </View>
                             </DataTable.Row>
@@ -2858,7 +2836,7 @@ const ApiScreenB40UnPlanned = () => {
             </ScrollView>
           )}
 
-
+          {/** 
 
           {tab == 'Customer Acknowlegment' && (
             <ScrollView
@@ -2957,6 +2935,49 @@ const ApiScreenB40UnPlanned = () => {
                               onChangeText={text => {
                                 setMobileNo(text);
                               }}
+                              style={{
+                                //height: 24,
+                                width: '100%',
+                                borderBottomWidth: 0.5,
+                                textAlign: 'left',
+                                textAlignVertical: 'top',
+                                color: 'black',
+                              }}></TextInput>
+                          </View>
+                        </View>
+                      </View>
+
+                      <View style={{
+                        flexDirection: 'row',
+                        flex: 2,
+                        width: '96%',
+                        marginTop: 20,
+                      }}>
+                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                            CNIC #{' '}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 1,
+                            width: '88%',
+                            alignSelf: 'center',
+                          }}>
+                          <View
+                            style={{
+                              flex: 2,
+                              alignItems: 'flex-start',
+                              marginTop: -10,
+                            }}>
+                            <TextInput
+                              placeholder={'Enter CNIC #'}
+                              keyboardType={'numeric'}
+                              maxLength={13}
+                              placeholderTextColor='grey'
+                              onChangeText={(text) => { setconsumerNamecNIC(text) }}
                               style={{
                                 //height: 24,
                                 width: '100%',
@@ -3576,14 +3597,901 @@ const ApiScreenB40UnPlanned = () => {
                 </View>
               </View>
             </ScrollView>
+          )}      
+          */}
+
+
+{tab == 'Customer Acknowlegment' && (
+            <ScrollView
+              showsVerticalScrollIndicator={true}
+              showsHorizontalScrollIndicator={false}>
+              <View style={styles.container1}>
+                <View
+                  style={{
+                    marginTop: 3,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <View style={styles.footerInput}>
+                    <View
+                      style={{
+                        //   flexDirection: 'column',
+                        // flex: 8,
+                        width: '90%',
+                        marginTop: -100,
+                        marginLeft: 2,
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flex: 2,
+                          width: '96%',
+                          marginTop: 20,
+                        }}>
+                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                            Consumer Name{' '}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 1,
+                            width: '88%',
+                            alignSelf: 'center',
+                          }}>
+                          <View
+                            style={{
+                              flex: 2,
+                              alignItems: 'flex-start',
+                              marginTop: -10,
+                            }}>
+                            <TextInput
+                              placeholder={'Consumer Name'}
+                              keyboardType={'email-address'}
+                              placeholderTextColor="grey"
+                              onChangeText={text => {
+                                setConsumerName(text);
+                              }}
+                              style={{
+                                //height: 24,
+                                width: '100%',
+                                borderBottomWidth: 0.5,
+                                textAlign: 'left',
+                                textAlignVertical: 'top',
+                                color: 'black',
+                              }}></TextInput>
+                          </View>
+                        </View>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flex: 2,
+                          width: '96%',
+                          marginTop: 20,
+                        }}>
+                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                            Mobile No{' '}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 1,
+                            width: '88%',
+                            alignSelf: 'center',
+                          }}>
+                          <View
+                            style={{
+                              flex: 2,
+                              alignItems: 'flex-start',
+                              marginTop: -10,
+                            }}>
+                            <TextInput
+                              placeholder={'Mobile No'}
+                              keyboardType={'numeric'}
+                              placeholderTextColor="grey"
+                              maxLength={11}
+                              onChangeText={text => {
+                                setMobileNo(text);
+                              }}
+                              style={{
+                                //height: 24,
+                                width: '100%',
+                                borderBottomWidth: 0.5,
+                                textAlign: 'left',
+                                textAlignVertical: 'top',
+                                color: 'black',
+                              }}></TextInput>
+                          </View>
+                        </View>
+                      </View>
+
+
+                      <View style={{
+                        flexDirection: 'row',
+                        flex: 2,
+                        width: '96%',
+                        marginTop: 20,
+                      }}>
+                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                            CNIC #{' '}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 1,
+                            width: '88%',
+                            alignSelf: 'center',
+                          }}>
+                          <View
+                            style={{
+                              flex: 2,
+                              alignItems: 'flex-start',
+                              marginTop: -10,
+                            }}>
+                            <TextInput
+                              placeholder={'Enter CNIC #'}
+                              keyboardType={'numeric'}
+                              maxLength={13}
+                              placeholderTextColor='grey'
+                              onChangeText={(text) => { setconsumerNamecNIC(text) }}
+                              style={{
+                                //height: 24,
+                                width: '100%',
+                                borderBottomWidth: 0.5,
+                                textAlign: 'left',
+                                textAlignVertical: 'top',
+                                color: 'black',
+                              }}></TextInput>
+                          </View>
+                        </View>
+                      </View>
+
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flex: 2,
+                          width: '96%',
+                          marginTop: 20,
+                        }}>
+                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                            Consumer Remarks{' '}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 1,
+                            width: '88%',
+                            alignSelf: 'center',
+                          }}>
+                          <View style={{ flex: 2, alignItems: 'flex-start' }}>
+                            <TextInput
+                              multiline={true}
+                              onChangeText={text => {
+                                setConsumerRemarks(text);
+                              }}
+                              placeholder={'Any comment (if required)'}
+                              placeholderTextColor="black"
+                              style={{
+                                height: 100,
+                                width: '100%',
+                                borderWidth: 0.75,
+                                textAlign: 'left',
+                                textAlignVertical: 'top',
+                                color: 'black',
+                              }}></TextInput>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 2,
+                        width: '96%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          Refuse to Sign on Notice{' '}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flex: 1,
+                          width: '88%',
+                          alignSelf: 'center',
+                        }}>
+                        <View
+                          style={{
+                            flex: 2,
+                            alignItems: 'flex-start',
+                            marginTop: -10,
+                          }}>
+                          <RadioForm
+                            radio_props={radio_props}
+                            initial={radio_props}
+                            buttonColor={'#1565C0'}
+                            formHorizontal={true}
+                            // borderWidth={5}
+                            buttonInnerColor={'#1565C0'}
+                            selectedButtonColor={'#1565C0'}
+
+                            // labelColor={'#50C900'}
+
+                            borderWidth={1}
+                            //  buttonOuterColor={this.state.value3Index === i ? '#2196f3' : '#000'}
+                            buttonSize={13}
+                            buttonOuterSize={20}
+                            //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
+                            buttonWrapStyle={{ marginLeft: 10 }}
+                            onPress={(value) => {
+
+                              ({ value: value })
+                              if (value == 0) {
+                                setConsumerRefuseYN("Yes")
+                              }
+                              else {
+                                setConsumerRefuseYN("No")
+                              }
+                            }
+
+                            }
+                          />
+                        </View>
+                      </View>
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 2,
+                        width: '96%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          Signed / Delivered Notice{' '}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flex: 1,
+                          width: '88%',
+                          alignSelf: 'center',
+                        }}>
+                        <View
+                          style={{
+                            flex: 2,
+                            alignItems: 'flex-start',
+                            marginTop: -10,
+                          }}>
+                          <RadioForm
+                            radio_props={radio_propsS}
+                            initial={radio_propsS}
+                            buttonColor={'#1565C0'}
+                            formHorizontal={true}
+                            // borderWidth={5}
+                            buttonInnerColor={'#1565C0'}
+                            selectedButtonColor={'#1565C0'}
+
+                            // labelColor={'#50C900'}
+
+                            borderWidth={1}
+                            //  buttonOuterColor={this.state.value3Index === i ? '#2196f3' : '#000'}
+                            buttonSize={13}
+                            buttonOuterSize={20}
+                            //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
+                            buttonWrapStyle={{ marginLeft: 10 }}
+                            onPress={(value) => {
+
+                              ({ value: value })
+                              if (value == 0) {
+                                setConsumerSign("Yes")
+                              }
+                              else {
+                                setConsumerSign("No")
+                              }
+                            }
+
+                            }
+                          />
+                        </View>
+                      </View>
+                    </View>
+
+
+
+
+                    <View style={[styles.container1]}>
+                      <View style={{ flexDirection: 'row', flex: 0.2, width: '96%' }}>
+                        <View style={{ flex: 1, alignItems: 'flex-start' }}>
+
+                          <Text style={styles.text_left}>Picture (Optional)</Text>
+
+                        </View>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
+
+                          <TouchableOpacity onPress={() => captureImage('photo', '1')} >
+                            <Image
+                              source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
+                              style={styles.imageStyle}
+                            />
+                          </TouchableOpacity>
+
+
+
+                          <ImageViewConsumer
+                            images={images1} // images1[0].uri //images1
+                            imageIndex={0}
+                            visible={visible1}
+
+                            onRequestClose={() => setIsVisible1(false)}
+                          />
+                          <View style={{ flex: 2.5 }}>
+
+
+                            <TouchableOpacity onPress={() => setIsVisible1(true)} >
+
+
+
+                              <Image
+                                source={{ uri: images1.uri }}/// source={{uri: filePath.uri}}
+                                style={styles.imageStyle}
+                              />
+
+
+
+                            </TouchableOpacity>
+
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+
+                    <View style={{
+                      flexDirection: 'row',
+                      flex: 2,
+                      width: '96%',
+                      marginTop: 10,
+                    }}>
+                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          Consumer Signature {''}
+                        </Text>
+                      </View>
+
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flex: 1,
+                          width: '88%',
+                          alignSelf: 'center',
+                        }}>
+                        <TouchableOpacity onPress={() => {
+                          setSignModalVisible(true);
+                        }}>
+                          <View
+                            style={{
+                              flex: 2,
+                              alignItems: 'flex-start',
+                              //  marginTop: -10,
+                            }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'blue' }}>
+                              Take Signature </Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 2,
+                        width: '96%',
+                        marginTop: 20,
+                      }}>
+                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+
+                      </View>
+
+                      <View
+                        style={{
+                          //    flexDirection: 'row',
+                          flex: 1,
+                          // width: '88%',
+                          alignSelf: 'center',
+                          marginLeft: -10,
+                        }}>
+                        <View
+                          style={{
+                            flex: 2,
+                            alignItems: 'flex-start',
+                            marginLeft: -10,
+                          }}>
+
+                          <View style={styles.preview}>
+
+                            <Image
+                              resizeMode={"contain"}
+                              style={{ width: 114, height: 114 }}
+                              //source={{ base64: signaturePreview}}
+                              source={{
+                                uri: 'data:image/png;base64,' + signaturePreview,
+                              }}
+                            // source={require('/storage/emulated/0/Android/data/com.sirdigitization/files/saved_signature/signature.png')}
+                            />
+                            {isSignature == 'Y' ?
+                              (<TouchableOpacity
+                                onPress={() => {
+
+                                  setTimeout(() => {
+                                    setSign();
+                                    setIsSignature("N");
+                                  }, 1000);
+
+                                }}
+                                style={{
+                                  width: 200,
+                                  height: 16,
+                                  // borderRadius: 13,
+                                  zIndex: 100,
+                                  backgroundColor: 'red',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text
+                                  style={{
+                                    color: 'white',
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                  }}>
+                                  Reset
+                                </Text>
+                              </TouchableOpacity>)
+                              : null}
+                          </View>
+
+                        </View>
+                      </View>
+                    </View>
+
+
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
           )}
 
-          {tab == 'Customer Signature' && (
+          {tab == 'SIR Pictures' && (
+            <ScrollView
+              showsVerticalScrollIndicator={true}
+              showsHorizontalScrollIndicator={false}>
+              <View style={styles.container1}>
+                <View
+                  style={{
+                    marginTop: 3,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <View style={styles.footerInput}>
+                    <View
+                      style={{
+                        //   flexDirection: 'column',
+                        // flex: 8,
+                        width: '90%',
+                        marginTop: -70,
+                        marginLeft: 2,
+                      }}>
+                    </View>
+                    <LinearGradient
+                      colors={['#1565C0', '#64b5f6']}
+                      style={styles.signIn}
+                    >
+                      <Text style={[styles.textSign, {
+                        color: '#fff'
+                      }]}> Photos of Surveyed Meter</Text>
+                    </LinearGradient>
+
+
+                    <View
+                      style={{
+                        width: '100%',
+                        // padding: 20,
+                        flexDirection: 'row',
+                        alignSelf: 'center',
+                        alignItems: 'center',
+                        // justifyContent: 'space-between',
+                      }}>
+                      <View style={{ flex: 2, alignItems: 'center' }}>
+                        <TouchableOpacity
+                          activeOpacity={0.5}
+                          onPress={() => chooseFile('photo')}>
+                          <Image
+                            source={require('../assets/Gallery.png')}// source={{uri: filePath.uri}}
+                            style={styles.imageStyle}
+                          />
+                        </TouchableOpacity>
+                        <Text
+                          style={{
+                            fontSize: 11,
+                            marginTop: 4,
+                            textAlign: 'center',
+                            width: 120,
+                            textAlignVertical: 'center',
+                            color: '#1565C0'
+
+                          }}>
+                          tap the picture from gallery
+                        </Text>
+
+                      </View>
+                      <View style={{ flex: 2, alignItems: 'center' }}>
+                        <TouchableOpacity
+                          style={{ marginTop: 15 }}
+                          onPress={() => captureImage('photo')
+                          }>
+                          <Image
+                            source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
+                            style={styles.imageStyle}
+                          />
+
+                        </TouchableOpacity>
+                        <Text
+                          style={{
+                            fontSize: 11,
+                            marginTop: 4,
+                            textAlign: 'center',
+                            width: 120,
+                            textAlignVertical: 'center',
+                            color: '#1565C0'
+                          }}>
+                          tap the camera to take a picture
+                        </Text>
+                      </View>
+
+                    </View>
+
+                    <View
+                      style={{
+                        flex: 2, alignItems: 'center',
+                        justifyContent: 'center',
+                        // height: 50,
+                        flexDirection: 'row',
+                        marginVertical: 10,
+                        marginLeft: 85,
+                        // paddingHorizontal: 110,  
+                      }}>
+
+
+                      <Carousel
+
+                        ref={carouselRef}
+                        layout='default'
+                        data={images}
+
+                        sliderWidth={width}
+                        itemWidth={width}
+
+                        renderItem={({ item, index }) => {
+                          return (
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  onTouchThumbnail(index);
+                                  setindexer1(index);
+                                  setimageview(true);
+
+                                }}
+                                activeOpacity={0.9}
+                              >
+
+                                <Image
+                                  source={{ uri: item.uri }}
+                                  style={{ height: 200, width: 200 }}></Image>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => {
+
+                                  setTimeout(() => {
+                                    // setRefresh(true);
+                                    setImagedeletionLoader(true);
+
+                                    //console.log("images", images);
+                                    var arr = images;
+                                    arr.splice(index, 1);
+                                    // console.log(index)
+                                    //console.log("index", index);
+                                    //console.log("arr)", arr);
+
+                                    setImages(arr);
+                                    setImagedeletionLoader(false);
+                                  }, 2000);
+
+
+
+
+                                }}
+                                style={{
+                                  width: 200,
+                                  height: 16,
+                                  // borderRadius: 13,
+                                  zIndex: 100,
+                                  backgroundColor: 'red',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text
+                                  style={{
+                                    color: 'white',
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                  }}>
+                                  Remove
+                                </Text>
+                              </TouchableOpacity>
+
+                            </View>
+                          )
+                        }}
+
+                        // sliderWidth={150}
+                        //itemWidth={120}
+                        onSnapToItem={index => onSelect(index)}
+
+                      />
+
+                    </View>
+
+
+                    <Modal visible={imageview} transparent={true}
+                      closeOnClick={true}
+                    >
+
+
+
+
+                      <ImageViewer
+                        renderHeader={() => {
+                          return (
+                            <View
+                              style={{
+                                width: '100%',
+                                height: 50,
+                                // backgroundColor: 'green',
+                                // alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <TouchableOpacity
+                                style={{
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  flexDirection: 'row',
+                                }}
+                                onPress={() => {
+                                  setimageview(false);
+
+                                }}>
+                                <View></View>
+                                <View
+                                  style={{
+                                    backgroundColor: 'red',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 15,
+                                    right: 5,
+                                  }}>
+                                  <Text
+                                    style={{
+                                      color: 'white',
+                                      fontSize: 16,
+                                      fontWeight: 'bold',
+                                    }}>
+                                    X
+                                  </Text>
+                                </View>
+                              </TouchableOpacity>
+                            </View>
+                          );
+                        }}
+                        imageUrls={images}
+                        index={indexer1}
+                      />
+                    </Modal>
+
+                    <View
+                      style={{
+                        marginTop: 50,
+                        // marginLeft: 8,
+
+                        // marginBottom: 20,
+                        //    width: '90%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      <TouchableOpacity
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          //    backgroundColor: '#1565C0',
+                          //   padding: 15
+                        }}
+                        onPress={() => {
+
+                          setAuthModalVisible(!isAuthModalVisible);
+
+                        }}>
+
+
+                        <LinearGradient
+                          colors={['#1565C0', '#64b5f6']}
+                          style={styles.submit}
+                        >
+                          <Text style={[styles.textSign, {
+                            color: '#fff'
+                          }]}>Cancel</Text>
+                        </LinearGradient>
+
+
+
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          //    backgroundColor: '#1565C0',
+                          //  padding: 15
+                        }}
+                        onPress={() => {
+                          // setUploadingMsg(res.d.Return);
+
+
+                          setAuthModalVisible(!isAuthModalVisible);
+
+                        }}>
+
+                        <LinearGradient
+                          colors={['#1565C0', '#64b5f6']}
+                          style={styles.submit}
+                        >
+                          <Text style={[styles.textSign, {
+                            color: '#fff'
+                          }]}>Submit</Text>
+                        </LinearGradient>
+
+
+
+                      </TouchableOpacity>
+                    </View>
+
+
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+          )}
+          
+
+
+        </View>
+
+
+        <Modal
+          style={{ alignItems: 'center', justifyContent: 'center' }}
+          isVisible={isModalVisible}>
+          <View
+            style={{
+              width: '80%',
+              height: 250,
+              backgroundColor: 'white',
+              borderRadius: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              paddingVertical: 20,
+            }}>
+            <Text style={{ color: 'red', fontSize: 24, fontWeight: 'bold' }}>
+              Error
+            </Text>
+
+            <Text style={{ color: 'red', fontSize: 16, textAlign: 'center' }}>
+              {error ? error : ''}
+            </Text>
+
+            <Button
+              title="Close"
+              color="red"
+              onPress={() => {
+                setModalVisible(!isModalVisible);
+                setError('');
+              }}
+            />
+          </View>
+        </Modal>
+
+
+        <Modal
+          style={{ alignItems: 'center', justifyContent: 'center', width: '100%', marginLeft: 1 }}
+          isVisible={isSignModalVisible}>
+          <View
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              // paddingVertical: 20,
+            }}>
             <SafeAreaView
-              //   showsVerticalScrollIndicator={true}
-              // showsHorizontalScrollIndicator={false}
+ 
               style={styles.container3}>
               <View style={styles.container3}>
+
+              <View
+                              style={{
+                                width: '100%',
+                                height: 50,
+                                // backgroundColor: 'green',
+                                // alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <TouchableOpacity
+                                style={{
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  flexDirection: 'row',
+                                }}
+                                onPress={() => {
+                                  //setimageview(false);
+
+                                  resetSign();
+                                }}>
+                                <View></View>
+                                <View
+                                  style={{
+                                    backgroundColor: '#1565C0',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 15,
+                                    right: -1,
+                                  }}>
+                                  <Text
+                                    style={{
+                                      color: 'white',
+                                      fontSize: 16,
+                                      fontWeight: 'bold',
+                                    }}>
+                                    X
+                                  </Text>
+                                </View>
+                              </TouchableOpacity>
+                            </View>
 
 
                 <SignatureCapture
@@ -3595,49 +4503,25 @@ const ApiScreenB40UnPlanned = () => {
                   showTitleLabel={false}
                   viewMode={'portrait'}
                 />
+                
+
+
+
 
 
 
                 <View
                   style={{
-                   marginTop: -55,
+                    //  marginTop: 45,
                     // marginLeft: 8,
 
                     // marginBottom: 20,
-                    //    width: '90%',
+                    //   width: '90%',
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}>
-                  <TouchableOpacity
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      //    backgroundColor: '#1565C0',
-                      //   padding: 15
-                    }}
-                    onPress={() => {
-                      // setUploadingMsg(res.d.Return);
 
-
-                      resetSign();
-
-                    }}>
-
-
-                    <LinearGradient
-                      colors={['#1565C0', '#64b5f6']}
-                      style={styles.submit}
-                    >
-                      <Text style={[styles.textSign, {
-                        color: '#fff'
-                      }]}>Reset</Text>
-                    </LinearGradient>
-
-
-
-                  </TouchableOpacity>
                   <TouchableOpacity
                     style={{
                       flexDirection: 'row',
@@ -3646,47 +4530,298 @@ const ApiScreenB40UnPlanned = () => {
                       //    backgroundColor: '#1565C0',
                       //  padding: 15
                     }}
-                    onPress={() => {
-                      // setUploadingMsg(res.d.Return);
-
-
+                    onPress={() => {  
                       saveSign();
-
                     }}>
-
                     <LinearGradient
                       colors={['#1565C0', '#64b5f6']}
-                      style={styles.submit}
+                      style={styles.signatureSubmit}
                     >
                       <Text style={[styles.textSign, {
                         color: '#fff'
-                      }]}>Save</Text>
+                      }]}>Ok</Text>
                     </LinearGradient>
-
-
-
                   </TouchableOpacity>
                 </View>
-
-
-
-
-
               </View>
-
-
-
             </SafeAreaView>
-          )}
+          </View>
+        </Modal>
 
 
-        </View>
+        <Modal
+          style={{ alignItems: 'center', justifyContent: 'center' }}
+          isVisible={isSuccessModalVisible}>
+          <View
+            style={{
+              width: '80%',
+              height: 250,
+              backgroundColor: 'white',
+              borderRadius: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              paddingVertical: 20,
+            }}>
+            <Text style={{ color: 'rgba(93,45,145,255)', fontSize: 24, fontWeight: 'bold' }}>
+              Success
+            </Text>
+
+            <Text style={{ color: 'green', fontSize: 16, textAlign: 'center' }}>
+              {uploadingMsg == '' ? 'Saved Successfully' : uploadingMsg}
+            </Text>
+
+            <Button
+              title="Close"
+              color="green"
+              onPress={() => {
+                setSuccessModalVisible(!isSuccessModalVisible);
+                setError('');
+                // setTimeout(() => {
+                navigation.goBack();
+                // }, 1000);
+              }}
+            />
+          </View>
+        </Modal>
+        <Modal
+          style={{ alignItems: 'center', justifyContent: 'center' }}
+          isVisible={isAuthModalVisible}>
+          <View
+            style={{
+              width: '80%',
+              height: 200,
+              backgroundColor: 'white',
+              borderRadius: 10,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              paddingVertical: 20,
+            }}>
+            <Text style={{ color: 'green', fontSize: 24, fontWeight: 'bold' }}>
+              Are you sure?
+            </Text>
+
+
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '70%',
+                height: 50,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Button
+                title=" Yes "
+                color="green"
+                onPress={() => {
+
+
+                  var lightmeterdetailfill=[];
+                  var powermeterdetailfill=[];
+
+                  lightmeterdetail.map((l, i) => {
+
+                  
+                    if (l.AMP!= "" || l.VOLT!="" || l.PF!= "")
+                 
+                    {
+                      setIslightmeterdetail("Y");
+                     // updateLAmp(l.AMP, i);
+                      lightmeterdetailfill=([{CurrentType: l.CurrentType, AMP:l.AMP, VOLT: l.VOLT, PF: l.PF}, ...lightmeterdetailfill]);
+                    }
+                    
+                   })
+                   console.log("lightmeterdetailfill", lightmeterdetailfill);
+                   //setLightmeterdetail(lightmeterdetailfill);
+                   
+                   powermeterdetail.map((l, i) => {
+
+                     if (l.AMP!= "" || l.VOLT!="" || l.PF!= "")
+                  
+                     {
+                      setIspowermeterdetail("Y");
+                   
+                     powermeterdetailfill=([{CurrentType: l.CurrentType, AMP:l.AMP, VOLT: l.VOLT, PF: l.PF}, ...powermeterdetailfill]);
+                     }
+                     
+                    })
+
+
+                  AsyncStorage.getItem('SIRDigitization')
+                    .then(items => {
+                      var data1 = [];
+
+                      data1 = items ? JSON.parse(items) : [];
+
+                      data1 = [
+                        ...data1,
+                        {
+                          CaseType: "Un-Planned",
+                          SIRType: "Below 40",
+                          Status: "Pending",
+                          SDate: Moment(Date.now()).format('YYYY-MM-DD'),
+                          SanctionLoad: null,
+                          MeterTesting: null,
+                          Agediff: null,
+                          MeterPer: null,
+                          MeterSlow: null,
+                          ConnectedLoad: connectedLoad,
+                          RunningLoad: null,
+                          Make: null,
+                          Amperes: null,
+                          Volts: null,
+                          MeterConstant: null,
+                          SecuritySlipNo: null,
+                          MultiplyingFactor: null,
+                          MeterNo: null,
+                          CurrentReading: currentReading,
+                          PeakReading: peakReading,
+                          SystemMake: null,
+                          SystemAmperes: null,
+                          SystemVolts: null,
+                          SystemMeterConstant: null,
+                          SystemSecuritySlipNo: null,
+                          SystemMultiplyingFactor: null,
+                          SystemMeterNo: null,
+                          SystemCurrentReading: null,
+                          SystemPeakReading: null,
+                          ConsumerSign: consumerSign,
+                          ConsumerRefuseYN: consumerRefuseYN,
+                          ConsumerRemarks: consumerRemarks,
+                          MobileNo: mobileNo,
+                          ConsumerName: consumerName,
+                          ConsumerCNIC: consumerNameCNIC,
+                          ServiceType: serviceType,
+                          Tariff: tariff,
+                          PremiseType: null,
+                          PremiseCategory: null,
+                          Remarks: discrepancyfindingsRemarks,
+                          isDiscrepancyitems: isSelecteditems,
+                          Discrepancyitems: selectedItems,
+                          longitude: longitude,
+                          latitude: latitude,
+                          IsSignature: isSignature,
+                          ConsumerSignature: consumerSignature,
+                          SIRImageFlag: isImage,
+                          SIRImages: images,
+                          ConsumerImageFlag: IsImage1,
+                          ConsumerImages: consumerImages,
+                          UniqueId: Date.now(),
+                          SIRNo: SIR,
+                          ConsumerNo: cosnumerno,
+                          ClusterIBC: clusterIBC,
+                          ConsumerNameBilling: consumernameBilling,
+                          AccountNo: accountno,
+                          Address: address,
+                          AssignDate: assigndate,
+                          AssignTo: assignto,
+                          DiscrepancyRecord: apiRes,
+                          ApplianceDetail: null,
+                          ConsumerStatus: consumerStatus,
+                          IndustryType: industryType,
+                          ServiceType: serviceType,
+                          SizeofService: sizeofService,
+                          FedFromPMTSS: fedFromPMTSS,
+                          PmtSSCode: pmtSSCode,
+                          MeterTestingResultTC: meterTestingResultTC,
+                          MeterTestingperError: meterTestingperError,
+                          ContractLoad: contractLoad,
+                          ConnectedLoadKW: connectedLoadKW,
+                          RunningLoadKW: runningLoadKW,
+                          Metertestingto: meterTestingTo,
+                          Meterinstalled1: meterInstalled1,
+                          Meterinstalled2: meterInstalled2,
+                          Meterinstalled: meterInstalled,
+                          Statuspostalorder: statusPostalorder,
+                          Metertestingresultremarks: metertestingResultremarks,
+                          Fmrno: fmrNo,
+                          Date1: date1,
+                          FindingItems: checkBoxselectedList,
+                          Powerkeno: powerKENo,
+                          Powermetermake: powerMeterMake,
+                          Powermc: powerMC,
+                          Powerreading: powerReading,
+                          Powermdionreading: powerMDIOnReading,
+                          PowermeterdetailFlag: ispowermeterdetail,
+                          Powermeterdetail: powermeterdetailfill,
+                          Lightkeno: lightKENo,
+                          Lightmetermake: lightMeterMake,
+                          Lightmc: lightMC,
+                          Lightreading: lightReading,
+                          Lightmdionreading: lightMDIOnReading,
+                          Lightpeakreading: lightPeakReading,
+                          Lightcurrentreading: lightCurrentReading,
+                          Lightconsumerno: lightConsumerNo,
+                          LightmeterdetailFlag: islightmeterdetail,
+                          Lightmeterdetail: lightmeterdetailfill,
+                          PostalOrderSeal: null,
+                          PowerFactor: null,
+                          Kto: null,
+                          PerError: null,
+                          PowerCalculated: null,
+                          PowerObserved: null,
+                          MeteringEquipment: null,
+                          MeterInstalled3: null,
+                          PostalOrderSealFlag: "N",
+                          MeteringEquipmentFlag: "N", 
+
+
+
+                        },
+                      ];
+
+
+
+                      AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1))
+
+                      // console.log("data1", data1);
+
+                    });
+
+
+
+
+
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'HomeScreen' }],
+                  });
+
+
+
+
+
+                  setAuthModalVisible(!isAuthModalVisible);
+                  setSuccessModalVisible(!isSuccessModalVisible);
+                }}
+              // }
+              />
+
+              <Button
+                title=" No "
+                color="red"
+                onPress={() => {
+                  setAuthModalVisible(!isAuthModalVisible);
+                  // setError('');
+                  // navigation.goBack();
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
+
+
+
+
+
+     
       </View>
     </ScrollView>
   );
 };
 
-export default ApiScreenB40UnPlanned;
+export default ApiScreenB40;
 
 const styles = StyleSheet.create({
   container: {
@@ -3706,6 +4841,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
+
+  container3: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+
 
 
   sub_container: {
@@ -3894,6 +5035,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10
   },
+
+  signatureSubmit: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10
+  },
+
+
   textSign: {
     fontSize: 14,
     fontWeight: 'bold'

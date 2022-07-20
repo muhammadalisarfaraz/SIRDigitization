@@ -24,8 +24,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import CheckBox from '@react-native-community/checkbox';
 import Modal from 'react-native-modal';
-import RNFetchBlob from 'rn-fetch-blob';
-const base64 = require('base-64');
+ const base64 = require('base-64');
 import Swipeable from 'react-native-swipeable';
 import Collapsible from 'react-native-collapsible'; 
 import openMap from 'react-native-open-maps';
