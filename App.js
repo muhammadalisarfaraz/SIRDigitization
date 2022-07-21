@@ -141,6 +141,13 @@ const App = () => {
           userToken: action.token,
           isLoading: false,
         };
+        case 'SUPPORT':
+          return {
+            ...prevState,
+            userName: action.id,
+            userToken: action.token,
+            isLoading: false,
+          };
     }
   };
 
@@ -183,7 +190,7 @@ const App = () => {
 
   useEffect(() => {
 
-
+ 
 
     setTimeout(async () => {
       setIsLoading(false);
@@ -195,12 +202,18 @@ const App = () => {
         console.log(e);
       }
       console.log('user token: ', userToken);
+<<<<<<< Updated upstream
       dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
     }, 3000);
 
 <<<<<<< HEAD
      const onLocation = BackgroundGeolocation.onLocation((location) => {
 =======
+=======
+      dispatch({ type: 'SUPPORT' });
+    }, 1000);
+ 
+>>>>>>> Stashed changes
 
 
 
@@ -259,9 +272,9 @@ const App = () => {
     }).then((state) => {
       // setEnabled(state.enabled)
       console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
-      if (!state.enabled) {
-        BackgroundGeolocation.start()
-      }
+    //  if (!state.enabled) {
+      //  BackgroundGeolocation.start()
+     // }
 
     });
       return () => {
@@ -342,10 +355,10 @@ const App = () => {
 
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     BackgroundGeolocation.start();
   }, []);
-
+*/
   if (loginState.isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -360,7 +373,7 @@ const App = () => {
           {loginState.userToken !== null ? (
             <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
               <Drawer.Screen name="SIR Digitization" component={MainTabScreen} />
-              <Drawer.Screen name="SupportScreen" component={SupportScreen} />
+             {/* <Drawer.Screen name="SupportScreen" component={SupportScreen} />
 
               <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
               <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
@@ -392,9 +405,9 @@ const App = () => {
               <Drawer.Screen name="Site Inspection Above 40" component={ApiScreenA40} />
               <Drawer.Screen name="Above 40 Un-Planned" component={ApiScreenA40UnPlanned} />
               <Drawer.Screen name="HomeScreen" component={HomeScreen} />
-
+          */}
             </Drawer.Navigator>
-          )
+           )
             :
             <RootStackScreen />
           }

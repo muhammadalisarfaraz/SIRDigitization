@@ -22,7 +22,18 @@ const MainTabScreen = () => (
       initialRouteName="Notifications"
       activeColor="#fff"
     >
-     
+         
+    <Tab.Screen
+        name="Home"
+        component={HomeStackScreen}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarColor: '#1565C0',
+          tabBarIcon: ({ color }) => (
+            <Icon name="ios-home" color={color} size={26} />
+          ),
+        }}
+      />
       <Tab.Screen
          name="Notifications"
          component={DetailsStackScreen}
@@ -34,18 +45,7 @@ const MainTabScreen = () => (
           ),
         }}
       />
-     
-      <Tab.Screen
-        name="Home"
-        component={HomeStackScreen}
-        options={{
-          tabBarLabel: 'Home',
-          tabBarColor: '#1565C0',
-          tabBarIcon: ({ color }) => (
-            <Icon name="ios-home" color={color} size={26} />
-          ),
-        }}
-      />
+ 
      
       <Tab.Screen
         name="SafetyHazardCase"

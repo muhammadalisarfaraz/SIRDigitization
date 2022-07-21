@@ -7875,6 +7875,11 @@ react-native-paper@^4.12.3:
   dependencies:
     "iconv-lite" "0.4.24"
 
+"whatwg-fetch-timeout@^2.0.2-timeout":
+  "integrity" "sha512-1y8WJdP1DaBXbAp9Ez8Um2Ft7iTVopOwUgnyiJPYIsWir1HuJBBxSYdvEtskQx+r/L1WMWQQxbcS8lHubCHtBw=="
+  "resolved" "https://registry.npmjs.org/whatwg-fetch-timeout/-/whatwg-fetch-timeout-2.0.2-timeout.tgz"
+  "version" "2.0.2-timeout"
+
 "whatwg-fetch@^3.0.0", "whatwg-fetch@>=0.10.0":
   "integrity" "sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA=="
   "resolved" "https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-3.6.2.tgz"

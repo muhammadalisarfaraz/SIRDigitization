@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 import Moment from 'moment';
 
-
+import { AuthContext } from '../components/context';
 import AsyncStorage from '@react-native-community/async-storage';
  
-//import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 function SupportScreen({ navigation }) {
@@ -29,7 +29,8 @@ function SupportScreen({ navigation }) {
   const [user, setUser] = useState('');
 
   const [currentDate, setCurrentDate] = useState('');
-
+  const {  supportScreen } = React.useContext(AuthContext);
+  
   useEffect(() => {
     console.log('Ali');
     console.log('test');

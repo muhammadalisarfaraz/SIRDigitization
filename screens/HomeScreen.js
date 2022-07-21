@@ -47,7 +47,7 @@ const HomeScreen = ({navigation}) => {
         'https://jsonplaceholder.typicode.com/users',
       );
       setLoader(false);
-    //  console.log('res', response.data);
+   //console.log('res', response.data);
       setPendingOrders(response.data);
     } catch (error) {
       alert(error);
@@ -66,7 +66,7 @@ const HomeScreen = ({navigation}) => {
         <View style={{ padding: 20 }}>
       </View>
       
-
+{/*
       <Animatable.View
         animation="bounceIn"
       >
@@ -253,10 +253,7 @@ const HomeScreen = ({navigation}) => {
                   onPress={() => {
                     //  alert('asdfasd');
                   
-                    navigation.reset({
-                      index: 0,
-                      routes: [{name: 'SIR Digitization Ordinary'}],
-                    });
+                  
                     navigation.navigate('SIR Digitization Ordinary', {
                       data: item,
                       index: index,
@@ -464,7 +461,7 @@ const HomeScreen = ({navigation}) => {
          </Animatable.View>
       )}
 
-     
+        */}
 
       
       </View>

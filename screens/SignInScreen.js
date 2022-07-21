@@ -139,6 +139,7 @@ const SignInScreen = ({navigation}) => {
        
                 AsyncStorage.setItem('User', JSON.stringify(data1))
         });
+        console.log("foundUser", foundUser);
         signIn(foundUser);
     }
 
@@ -231,16 +232,17 @@ const SignInScreen = ({navigation}) => {
             <View style={styles.button}>
                 <TouchableOpacity
                     style={styles.signIn}
-                 onPress={() => {loginHandle( data.username, data.password )}}
+                  onPress={() => {loginHandle( data.username, data.password )}}
                    
-                       /*   onPress={() => {
-                   navigation.reset({
+                /*  onPress={() => {
+                    navigation.reset({
                           index: 0,
                        // routes: [{name: 'HomeScreen'}],
                           routes: [{name: 'SIR Digitization'}],
-                        });
-                        navigation.navigate('SupportScreen')
-                      }}*/>
+                        }); */
+                     //   navigation.navigate('SIR Digitization');
+                      //}}
+                       >
                 <LinearGradient
                     colors={['#1565C0', '#64b5f6']}
                     style={styles.signIn}
