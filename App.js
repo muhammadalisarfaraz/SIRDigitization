@@ -198,9 +198,6 @@
        dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
      }, 3000);
 
-  
-     
-
      const onLocation = BackgroundGeolocation.onLocation((location) => {
       console.log('[onLocation]', location.coords.latitude);
       // storeData('latitude', location.coords.latitude)
@@ -260,14 +257,20 @@
       }
     
     });
+      return () => {
+      onLocation.remove();
+      onMotionChange.remove();
+      onActivityChange.remove();
+      onProviderChange.remove();
+    }
 
     
 
    }, []);
  
-   useEffect(() => {
-    BackgroundGeolocation.start();
-}, []);
+//    useEffect(() => {
+//     // BackgroundGeolocation.start();
+// }, []);
  
    if( loginState.isLoading ) {
      return(
