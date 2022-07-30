@@ -297,8 +297,8 @@ const App = () => {
     <PaperProvider theme={theme}>
       <AuthContext.Provider value={authContext}>
         <NavigationContainer theme={theme}>
-        {/*  <RootStackScreen /> */}
-           { loginState.userToken !== null ? (
+          <RootStackScreen /> 
+        {/*   { loginState.userToken !== null ? (
         
         <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
         <Drawer.Screen name="SIR Digitization" component={MainTabScreen} />
@@ -338,7 +338,7 @@ const App = () => {
        )
      :
            <RootStackScreen/>
-     }
+     }*/}
         </NavigationContainer>
       </AuthContext.Provider>
     </PaperProvider>

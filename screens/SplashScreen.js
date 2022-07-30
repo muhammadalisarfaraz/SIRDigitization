@@ -26,12 +26,14 @@ const SplashScreen = ({ navigation }) => {
 
 
     //  console.log("data", data);
-    // navigation.replace('SettingsScreen');
+     navigation.replace('SettingsScreen');
       if (data){
+        navigation.replace('SettingsScreen');
       
-        navigation.replace('SupportScreen');
+       // navigation.replace('SupportScreen');
       } else {
-        navigation.replace('SignInScreen');
+       // navigation.replace('SignInScreen');
+       navigation.replace('SettingsScreen');
       }
       
     } catch (error) {
