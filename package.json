@@ -71,7 +71,8 @@
     "react-native-underline-tabbar": "^1.3.6",
     "react-native-vector-icons": "^9.2.0",
     "toggle-switch-react-native": "^3.3.0",
-    "whatwg-fetch-timeout": "^2.0.2-timeout"
+    "whatwg-fetch-timeout": "^2.0.2-timeout",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

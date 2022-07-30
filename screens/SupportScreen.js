@@ -51,6 +51,7 @@ function SupportScreen({ navigation }) {
 
      <View style={{ padding: 3 }}>
       </View>
+      
       <View style={styles.footerMaster}>
 
         <View style={{ flex: 1, flexDirection: 'row' }}>

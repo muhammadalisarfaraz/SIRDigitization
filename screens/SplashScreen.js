@@ -23,10 +23,13 @@ const SplashScreen = ({ navigation }) => {
       const uservalue = await AsyncStorage.getItem('User');
 
       let data = uservalue != null ? JSON.parse(uservalue) : null;
-      navigation.replace('SignInScreen');
+
+
+    //  console.log("data", data);
+    // navigation.replace('SettingsScreen');
       if (data){
       
-        navigation.replace('SignInScreen');
+        navigation.replace('SupportScreen');
       } else {
         navigation.replace('SignInScreen');
       }

@@ -79,12 +79,12 @@ export function DrawerContent(props) {
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <Icon 
-                                name="settings-outline" 
+                                name="location-enter" 
                                 color={color}
                                 size={size}
                                 />
                             )}
-                            label="Verification"
+                            label="Tracking Details"
                             onPress={() => {props.navigation.navigate('SettingsScreen')}}
                         />
                         <DrawerItem 
@@ -95,7 +95,7 @@ export function DrawerContent(props) {
                                 size={size}
                                 />
                             )}
-                            label="Manager Verification"
+                            label="Dashboard"
                             onPress={() => {props.navigation.navigate('SupportScreen')}}
                         />
                     </Drawer.Section>

@@ -66,7 +66,7 @@ const HomeScreen = ({navigation}) => {
         <View style={{ padding: 20 }}>
       </View>
       
-{/*
+ 
       <Animatable.View
         animation="bounceIn"
       >
@@ -461,7 +461,7 @@ const HomeScreen = ({navigation}) => {
          </Animatable.View>
       )}
 
-        */}
+         
 
       
       </View>

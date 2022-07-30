@@ -112,7 +112,11 @@ const SignInScreen = ({navigation}) => {
 
 
 
+    console.log('Login----');
 
+
+
+    
         AsyncStorage.getItem('User')
         .then(items => {
           var data1 = [];                  
