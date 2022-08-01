@@ -23,6 +23,8 @@ import {
   DarkTheme as PaperDarkTheme
 } from 'react-native-paper';
 
+// import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import { DrawerContent } from './screens/DrawerContent';
 
 import MainTabScreen from './screens/MainTabScreen';
@@ -227,7 +229,7 @@ const App = () => {
 
 
     const onLocation = BackgroundGeolocation.onLocation((location) => {
-
+       console.log("location", location)
       // console.log('[onLocation]', location.coords.latitude);
       // storeData('latitude', location.coords.latitude)
       // storeData('longitude', location.coords.longitude)
@@ -240,7 +242,7 @@ const App = () => {
     })
 
     const onMotionChange = BackgroundGeolocation.onMotionChange((event) => {
-    //  console.log('[onMotionChange]', event);
+     console.log('[onMotionChange]', event);
      // console.log("event.location", event.location.coords.latitude );  
     //   console.log("event.longitude", event.location.coords.longitude );
     //  console.log("event.timestamp", event.location.timestamp );   
@@ -250,12 +252,12 @@ const App = () => {
     });
 
     const onActivityChange = BackgroundGeolocation.onActivityChange((event) => {
-     // console.log('[onActivityChange]', event);
-      alert(event);
+     console.log('[onActivityChange]', event);
+   //   alert(event);
     })
 
     const onProviderChange = BackgroundGeolocation.onProviderChange((event) => {
-    //  console.log('[onProviderChange]', event);
+     console.log('[onProviderChange]', event);
     })  
 
 
@@ -271,8 +273,8 @@ const App = () => {
       autoSync: true,
     }).then((state) => {
       // setEnabled(state.enabled)
-      //   console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
-      if (!state.enabled) {
+        console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
+      if (state.enabled) {
         BackgroundGeolocation.start()
       }
 
@@ -282,10 +284,6 @@ const App = () => {
 
   }, []);
 
-  /*useEffect(() => {
-    BackgroundGeolocation.start();
-  }, []);
-*/
   if (loginState.isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -293,12 +291,15 @@ const App = () => {
       </View>
     );
   }
+
+  // const Stack = createNativeStackNavigator();
+
   return (
     <PaperProvider theme={theme}>
       <AuthContext.Provider value={authContext}>
         <NavigationContainer theme={theme}>
-          <RootStackScreen /> 
-        {/*   { loginState.userToken !== null ? (
+          {/* <RootStackScreen /> */}
+          { loginState.userToken !== null ? (
         
         <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
         <Drawer.Screen name="SIR Digitization" component={MainTabScreen} />
@@ -338,7 +339,7 @@ const App = () => {
        )
      :
            <RootStackScreen/>
-     }*/}
+     }
         </NavigationContainer>
       </AuthContext.Provider>
     </PaperProvider>
