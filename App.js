@@ -261,7 +261,7 @@ const App = () => {
 
     BackgroundGeolocation.ready({
       desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-      distanceFilter: 50,
+      distanceFilter: 10,
       stopTimeout: 5,
       debug: false,
       logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
@@ -282,10 +282,10 @@ const App = () => {
 
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     BackgroundGeolocation.start();
   }, []);
-
+*/
   if (loginState.isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
