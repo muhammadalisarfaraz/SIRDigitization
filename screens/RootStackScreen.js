@@ -13,8 +13,7 @@ const RootStackScreen = ({navigation}) => (
     <RootStack.Navigator headerMode='false'>
         <RootStack.Screen name="SplashScreen" component={SplashScreen}/>
         <RootStack.Screen name="SettingsScreen" component={SettingsScreen}/>
-       
- 
+
     </RootStack.Navigator>
 );
 
