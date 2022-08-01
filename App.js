@@ -274,15 +274,15 @@ const App = () => {
     }).then((state) => {
       // setEnabled(state.enabled)
         console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
-      if (state.enabled) {
+      if (!state.enabled) {
         BackgroundGeolocation.start()
       }
 
     });
 
 
-
   }, []);
+
 
   if (loginState.isLoading) {
     return (
