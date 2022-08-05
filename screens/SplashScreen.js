@@ -26,7 +26,7 @@ const SplashScreen = ({ navigation }) => {
 
 
     //  console.log("data", data);
-    // navigation.replace('SettingsScreen');
+   // navigation.replace('ApiScreen');
       if (data){
       //  navigation.replace('SettingsScreen');
       

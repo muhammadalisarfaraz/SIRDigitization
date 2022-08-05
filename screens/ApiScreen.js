@@ -318,14 +318,13 @@ const ApiScreen = ({ navigation }) => {
   };
 
   const chooseFile = (type) => {
-    let options = {
-      mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
-    };
+    ImagePicker.openPicker({
+      width: 300,
+      height: 550,
+      cropping: true,
+      includeBase64: true
 
-    launchImageLibrary(options, (response) => {
+  }).then(response => {   
       console.log('Response = ', response);
 
       if (response.didCancel) {
@@ -348,9 +347,12 @@ const ApiScreen = ({ navigation }) => {
       setIsImage("Y");
 
       var Allimages = images;
-      setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+     // setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
 
-      setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+      //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+
+      setFilePath([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data, Status: 'Pending', RoshniBajiWebID: ''}, ...Allimages]);
+      setImages([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data , Status: 'Pending', RoshniBajiWebID: ''}, ...Allimages]);
 
 
     });
@@ -404,15 +406,6 @@ const ApiScreen = ({ navigation }) => {
     )
     //}
   }
-
-
-
-
-
-
-
-
-
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -2940,16 +2933,10 @@ const ApiScreen = ({ navigation }) => {
                             images={images1} // images1[0].uri //images1
                             imageIndex={0}
                             visible={visible1}
-
                             onRequestClose={() => setIsVisible1(false)}
                           />
                           <View style={{ flex: 2.5 }}>
-
-
                             <TouchableOpacity onPress={() => setIsVisible1(true)} >
-
-
-
                               <Image
                                 source={{ uri: images1.uri }}/// source={{uri: filePath.uri}}
                                 style={styles.imageStyle}
@@ -3261,12 +3248,7 @@ const ApiScreen = ({ navigation }) => {
 
 
                     <Modal visible={imageview} transparent={true}
-                      closeOnClick={true}
-                    >
-
-
-
-
+                      closeOnClick={true}>
                       <ImageViewer
                         renderHeader={() => {
                           return (

@@ -99,7 +99,7 @@ function SupportScreen({ navigation }) {
 
       </View>
 
-      <View style={{ padding: 5 }}>
+      <View style={{ padding: '1%' }}>
       </View>
 
       <View style={styles.footer}>
@@ -136,7 +136,7 @@ function SupportScreen({ navigation }) {
         <View
           style={{
             height: 30,
-            width: '32%',
+            width: '80%',
             color: '#1565C0',
             flexDirection: 'row',
             //alignItems:'flex-start',
@@ -155,7 +155,7 @@ function SupportScreen({ navigation }) {
 
         </View>
 
-        <View style={{ padding: 15, marginBottom: 10 }}>
+        <View style={{ padding: '5%', marginBottom: '1%' }}>
         </View>
 
         <View
@@ -186,8 +186,8 @@ function SupportScreen({ navigation }) {
             }}>
             <View
               style={{
-                height: 22,
-                // width: '95%',
+                height: '100%',
+              //    width: '23%',
                 backgroundColor: '#E349EC',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -197,10 +197,13 @@ function SupportScreen({ navigation }) {
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
                 Assigned
               </Text>
-            </View></TouchableOpacity>
+            </View>
+            
+            </TouchableOpacity>
+
           <View
             style={{
-              height: 22,
+              height: '100%',
               width: '23%',
               backgroundColor: '#944BF8',
               alignItems: 'center',
@@ -219,18 +222,30 @@ function SupportScreen({ navigation }) {
               }}
               style={{
                 //  height: 22,
-                width: '55%',
+               // width: '55%',
                 // backgroundColor: '#E349EC',
                 //    alignItems: 'center',
                 //  justifyContent: 'center',
               }}>
+
+            <View
+              style={{
+                height: '100%',
+                // width: '95%',
+                backgroundColor: '#944BF8',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
                 Saved
-              </Text></TouchableOpacity>
+              </Text>
+              </View>
+              
+              </TouchableOpacity>
           </View>
           <View
             style={{
-              height: 22,
+              height: '100%',
               width: '30%',
               backgroundColor: '#3636D3',
               alignItems: 'center',
@@ -253,14 +268,26 @@ function SupportScreen({ navigation }) {
                 //    alignItems: 'center',
                 //  justifyContent: 'center',
               }}>
+
+                
+            <View
+              style={{
+                height: '100%',
+                // width: '95%',
+                backgroundColor: '#3636D3',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
                 Un-Attempted
-              </Text></TouchableOpacity>
+              </Text>
+              </View>
+              </TouchableOpacity>
 
           </View>
           <View
             style={{
-              height: 22,
+              height: '100%',
               width: '30%',
               backgroundColor: '#3636D3',
               alignItems: 'center',
@@ -283,14 +310,32 @@ function SupportScreen({ navigation }) {
                 //    alignItems: 'center',
                 //  justifyContent: 'center',
               }}>
+
+            <View
+              style={{
+                height: '100%',
+                // width: '95%',
+                backgroundColor: '#3636D3',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
               <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
                 Post
-              </Text></TouchableOpacity>
+              </Text>
+              
+              </View>
+              
+              </TouchableOpacity>
 
           </View>
 
         </View>
-        <View style={{ padding: 15, marginBottom: 10 }}>
+       {/* <View style={{ padding: 15, marginBottom: 10 }}>
+        </View>
+        */
+        }
+
+        <View style={{ padding: '5%', marginBottom: '1%' }}>
         </View>
         <View
           style={{
@@ -313,8 +358,15 @@ function SupportScreen({ navigation }) {
           </Text>
 
         </View>
-        <View style={{ padding: 15, marginBottom: 10 }}>
+
+         {/* <View style={{ padding: 15, marginBottom: 10 }}>
         </View>
+        */
+      }
+
+      <View style={{ padding: '5%', marginBottom: '1%' }}>
+      </View>
+ 
 
         <View
           style={{
@@ -342,7 +394,7 @@ function SupportScreen({ navigation }) {
 
             <View
               style={{
-                height: 22,
+                height: '100%',
                 // width: '23%',
                 backgroundColor: '#E349EC',
                 alignItems: 'center',
@@ -354,7 +406,7 @@ function SupportScreen({ navigation }) {
             </View></TouchableOpacity>
           <View
             style={{
-              height: 22,
+              height: '100%',
               width: '23%',
               backgroundColor: '#944BF8',
               alignItems: 'center',
@@ -366,7 +418,7 @@ function SupportScreen({ navigation }) {
           </View>
           <View
             style={{
-              height: 22,
+              height: '100%',
               width: '30%',
               backgroundColor: '#3636D3',
               alignItems: 'center',
@@ -378,7 +430,7 @@ function SupportScreen({ navigation }) {
           </View>
           <View
             style={{
-              height: 22,
+              height: '100%',
               width: '20%',
               backgroundColor: '#3636D3',
               alignItems: 'center',
@@ -391,7 +443,8 @@ function SupportScreen({ navigation }) {
 
         </View>
 
-        <View style={{ padding: 15, marginBottom: 10 }}></View>
+        <View style={{ padding: '5%', marginBottom: '1%' }}>
+      </View>
 
         <View
           style={{
@@ -415,8 +468,8 @@ function SupportScreen({ navigation }) {
 
         </View>
 
-        <View style={{ padding: 15, marginBottom: 10 }}>
-        </View>
+        <View style={{ padding: '5%', marginBottom: '1%' }}>
+      </View>
         <View
           style={{
             height: 40,
@@ -426,6 +479,8 @@ function SupportScreen({ navigation }) {
             justifyContent: 'space-between',
             padding: 25
           }}>
+
+            
 
           <TouchableOpacity
             onPress={() => {

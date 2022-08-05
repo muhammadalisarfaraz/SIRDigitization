@@ -31,7 +31,7 @@ const [region, setRegion] = useState();
 
    
    
-//    console.log("data1.latitude", data1[0].latitude);
+      console.log("data1", data1)
 data = data1.filter(x => x.EntryDate == cDdate); //
 
 //console.log("data", data)
@@ -40,7 +40,7 @@ data = data1.filter(x => x.EntryDate == cDdate); //
 
   });
 
-  //console.log("newregion", newregion)
+ console.log("newregion", newregion)
 
 }
 
