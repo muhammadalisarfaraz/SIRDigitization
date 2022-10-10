@@ -930,7 +930,25 @@ const SafetyHazardCase = ({navigation}) => {
 
                 setLoader(true);
 
-               
+                try {
+                  let response = axios.get(
+                    "https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks='99',Pmt='99',Mobileno='99',Ibc='99',CreatedBy='99',Consumernumber='99')?$format=xml",
+                    
+                  )
+                    .then((response) => {
+                    //  console.log("response", response);
+                      let res = response;
+                      console.log("res.data", res );
+            
+                       
+                      setSuccessModalVisible(!isSuccessModalVisible);    
+            
+                    })
+                } catch (error) {
+                  // console.log('Error', e);
+                  alert('error' + error.message);
+                  setLoader(false)
+                }
 
 
                 AsyncStorage.getItem('User').then(items => {
