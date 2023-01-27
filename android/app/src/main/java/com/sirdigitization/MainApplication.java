@@ -17,38 +17,40 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.facebook.react.bridge.JSIModulePackage; // <- add
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- add
-
+import android.database.CursorWindow;
+import java.lang.reflect.Field;
 
 public class MainApplication extends Application implements ReactApplication {
 
-  private final ReactNativeHost mReactNativeHost =
-      new ReactNativeHost(this) {
-        @Override
-        public boolean getUseDeveloperSupport() {
-          return BuildConfig.DEBUG;
-        }
+  private static final boolean DEBUG_MODE = true;
+  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+    @Override
+    public boolean getUseDeveloperSupport() {
+      return BuildConfig.DEBUG;
+    }
 
-        @Override
-        protected List<ReactPackage> getPackages() {
-          @SuppressWarnings("UnnecessaryLocalVariable")
-          List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // packages.add(new MyReactNativePackage());
-          return packages;
-        }
+    @Override
+    protected List<ReactPackage> getPackages() {
+      @SuppressWarnings("UnnecessaryLocalVariable")
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // Packages that cannot be autolinked yet can be added manually here, for
+      // example:
+      // packages.add(new MyReactNativePackage());
+      return packages;
+    }
 
-        @Override
-        protected String getJSMainModuleName() {
-          return "index";
-        }
-        @Override
-        protected JSIModulePackage getJSIModulePackage() {
-          return new ReanimatedJSIModulePackage(); // <- add
-      }
-      };
+    @Override
+    protected String getJSMainModuleName() {
+      return "index";
+    }
 
-  private final ReactNativeHost mNewArchitectureNativeHost =
-      new MainApplicationReactNativeHost(this);
+    @Override
+    protected JSIModulePackage getJSIModulePackage() {
+      return new ReanimatedJSIModulePackage(); // <- add
+    }
+  };
+
+  private final ReactNativeHost mNewArchitectureNativeHost = new MainApplicationReactNativeHost(this);
 
   @Override
   public ReactNativeHost getReactNativeHost() {
@@ -66,10 +68,20 @@ public class MainApplication extends Application implements ReactApplication {
     ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    try {
+      Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+      field.setAccessible(true);
+      field.set(null, 100 * 1024 * 1024); // the 100MB is the new size
+    } catch (Exception e) {
+      if (DEBUG_MODE) {
+        e.printStackTrace();
+      }
+    }
   }
 
   /**
-   * Loads Flipper in React Native templates. Call this in the onCreate method with something like
+   * Loads Flipper in React Native templates. Call this in the onCreate method
+   * with something like
    * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
    *
    * @param context
@@ -80,9 +92,9 @@ public class MainApplication extends Application implements ReactApplication {
     if (BuildConfig.DEBUG) {
       try {
         /*
-         We use reflection here to pick up the class that initializes Flipper,
-        since Flipper library is not available in release mode
-        */
+         * We use reflection here to pick up the class that initializes Flipper,
+         * since Flipper library is not available in release mode
+         */
         Class<?> aClass = Class.forName("com.sirdigitization.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)

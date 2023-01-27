@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -10,41 +10,49 @@ import {
   TouchableHighlight,
   //AsyncStorage,
   Switch,
-  Image, ImageBackground,
+  Image,
+  ImageBackground,
   Picker,
   ScrollView,
   //CheckBox,
   SafeAreaView,
   Platform,
-  PermissionsAndroid, Pressable, Dimensions,
+  PermissionsAndroid,
+  Pressable,
+  Dimensions,
 } from 'react-native';
 import Moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+
+import RNFetchBlob from 'rn-fetch-blob';
+
+import axios from 'axios';
 import {
   launchCamera,
   launchImageLibrary,
   //ImagePicker,
-  Select
+  Select,
 } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-community/async-storage';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import ImageViewer from 'react-native-image-zoom-viewer';
 
-const SafetyHazardCase = ({navigation}) => {
+import base64 from 'react-native-base64';
 
+const SafetyHazardCase = ({navigation}) => {
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
   const [images1, setImages1] = useState([]);
   const [indexSelected, setIndexSelected] = useState(0);
-  const [isImage, setIsImage] = useState("N");
-  const [IsImage1, setIsImage1] = useState("N");
+  const [isImage, setIsImage] = useState('N');
+  const [IsImage1, setIsImage1] = useState('N');
   const [imageview, setimageview] = useState(false);
   const [indexer1, setindexer1] = useState(0);
-  const { width } = Dimensions.get('window');
+  const {width} = Dimensions.get('window');
   const [ImagedeletionLoader, setImagedeletionLoader] = useState(false);
   const [image1Show, setImage1Show] = useState(false);
   const [visible1, setIsVisible1] = useState(false);
@@ -59,21 +67,20 @@ const SafetyHazardCase = ({navigation}) => {
   const [ConsumerMobileNumber, setConsumerMobileNumber] = useState();
   const [Remarks, setRemarks] = useState();
   const [User, setUser] = useState();
-  const [latitude1, setlatitude] = useState("");
-  const [longitude1, setlongitude] = useState("");
+  const [latitude1, setlatitude] = useState('');
+  const [longitude1, setlongitude] = useState('');
   const [loader, setLoader] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   const SPACING = 10;
-  const THUMB_SIZE = 200; 
-  const flatListRef = useRef();  
+  const THUMB_SIZE = 200;
+  const flatListRef = useRef();
   const carouselRef = useRef();
- 
+
   const onTouchThumbnail = touched => {
     if (touched === indexSelected) return;
     carouselRef?.current?.snapToItem(touched);
   };
-
 
   const onSelect = indexSelected => {
     setIndexSelected(indexSelected);
@@ -102,60 +109,71 @@ const SafetyHazardCase = ({navigation}) => {
     } else return true;
   };
 
-  
-  const captureImage = async (type) => {
+  const captureImage = async type => {
     console.log('test');
-     let options = {
-       mediaType: type,
-       maxWidth: 300,
-       maxHeight: 550,
-       quality: 1,
-       includeBase64: true,
-       videoQuality: 'low',
-       durationLimit: 30, //Video max duration in seconds
-       saveToPhotos: true,
-     };
-     var filterkeyN;
-     let isCameraPermitted = await requestCameraPermission();
-     let isStoragePermitted = await requestExternalWritePermission();
- 
-     console.log("isCameraPermitted", isCameraPermitted);
-     console.log("isStoragePermitted", isStoragePermitted);
-     // && isStoragePermitted
-     if (isCameraPermitted) {
- 
-       ImagePicker.openCamera({
-         width: 300,
-         height: 400,
-         cropping: true,
-         includeBase64: true,
-       }).then(response => {
- 
- 
-         //launchCamera(options, (response) => {
-         // console.log('response.assets[0] = ', response.assets[0].fileName);
- 
-         if (response.didCancel) {
-           //  alert('User cancelled camera picker');
-           return;
-         } else if (response.errorCode == 'camera_unavailable') {
-           //  alert('Camera not available on device');
-           return;
-         } else if (response.errorCode == 'permission') {
-           alert('Permission not satisfied');
-           return;
-         } else if (response.errorCode == 'others') {
-           alert(response.errorMessage);
-           return;
-         }
-         var Allimages = images;         
-           setIsImage("Y");
-           setFilePath([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }, ...Allimages]);
-           setImages([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }, ...Allimages]);
-              
-       });
-     }
-   };
+    let options = {
+      mediaType: type,
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
+      includeBase64: true,
+      videoQuality: 'low',
+      durationLimit: 30, //Video max duration in seconds
+      saveToPhotos: true,
+    };
+    var filterkeyN;
+    let isCameraPermitted = await requestCameraPermission();
+    let isStoragePermitted = await requestExternalWritePermission();
+
+    console.log('isCameraPermitted', isCameraPermitted);
+    console.log('isStoragePermitted', isStoragePermitted);
+    // && isStoragePermitted
+    if (isCameraPermitted) {
+      ImagePicker.openCamera({
+        width: 300,
+        height: 400,
+        cropping: true,
+        includeBase64: true,
+      }).then(response => {
+        //launchCamera(options, (response) => {
+        // console.log('response.assets[0] = ', response.assets[0].fileName);
+
+        if (response.didCancel) {
+          //  alert('User cancelled camera picker');
+          return;
+        } else if (response.errorCode == 'camera_unavailable') {
+          //  alert('Camera not available on device');
+          return;
+        } else if (response.errorCode == 'permission') {
+          alert('Permission not satisfied');
+          return;
+        } else if (response.errorCode == 'others') {
+          alert(response.errorMessage);
+          return;
+        }
+        var Allimages = images;
+        setIsImage('Y');
+        setFilePath([
+          {
+            uri: response.path,
+            url: response.path,
+            fileName: 'BFDC.jpg',
+            base64: response.data,
+          },
+          ...Allimages,
+        ]);
+        setImages([
+          {
+            uri: response.path,
+            url: response.path,
+            fileName: 'BFDC.jpg',
+            base64: response.data,
+          },
+          ...Allimages,
+        ]);
+      });
+    }
+  };
 
   const requestExternalWritePermission = async () => {
     if (Platform.OS === 'android') {
@@ -177,36 +195,28 @@ const SafetyHazardCase = ({navigation}) => {
     } else return true;
   };
 
-  
-
   const getUserCurrentLocation = async () => {
-    let latitude, longitude
- 
+    let latitude, longitude;
+
     Geolocation.getCurrentPosition(
       info => {
-        const { coords } = info
+        const {coords} = info;
 
-        latitude = coords.latitude
-        longitude = coords.longitude
-
+        latitude = coords.latitude;
+        longitude = coords.longitude;
 
         setlatitude(latitude);
         setlongitude(longitude);
-    
-
-
-
-         
       },
       error => console.log(error),
       {
         enableHighAccuracy: false,
         timeout: 2000,
-        maximumAge: 3600000
-      }
-    )
+        maximumAge: 3600000,
+      },
+    );
     //}
-  }
+  };
 
   useEffect(() => {
     AsyncStorage.getItem('User').then(items => {
@@ -214,41 +224,22 @@ const SafetyHazardCase = ({navigation}) => {
       // var datatable = [];
       //data[0].name=[0];
       setUser(data[0].name);
-
-
-
     });
 
-     
     getUserCurrentLocation();
-
-
-
   }, []);
 
   return (
-
     <View style={styles.container}>
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        style={styles.container}>
-
-
+      <ScrollView keyboardShouldPersistTaps="handled" style={styles.container}>
         <View style={styles.slide1}>
-
-
-
-
-          <View style={{ width: '80%' }}>
-
+          <View style={{width: '80%'}}>
             <View
               style={{
                 // marginTop: 50,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-
-
               <View
                 style={{
                   height: 2,
@@ -256,19 +247,23 @@ const SafetyHazardCase = ({navigation}) => {
                   // position: 'absolute',
                   // backgroundColor: ' rgba(93,45,145,255)',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
                 }}>
                 <LinearGradient
                   colors={['#1565C0', '#64b5f6']}
-                  style={styles.signIn}
-                >
-                  <Text style={[styles.textSign, {
-                    color: '#fff'
-                  }]}>   Safety Hazard Case</Text>
+                  style={styles.signIn}>
+                  <Text
+                    style={[
+                      styles.textSign,
+                      {
+                        color: '#fff',
+                      },
+                    ]}>
+                    {' '}
+                    Safety Hazard Case
+                  </Text>
                 </LinearGradient>
               </View>
-
-
 
               <View
                 style={{
@@ -277,10 +272,8 @@ const SafetyHazardCase = ({navigation}) => {
                   // position: 'absolute',
                   //padding:90,
                   alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-              </View>
-
+                  justifyContent: 'center',
+                }}></View>
 
               <View
                 style={{
@@ -293,11 +286,10 @@ const SafetyHazardCase = ({navigation}) => {
                   alignItems: 'flex-start',
                   justifyContent: 'center',
                 }}>
-                <Text style={{ fontSize: 15, fontWeight: 'normal', color: 'black' }}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
                   Accident Nearest Location Address
                 </Text>
-
-
               </View>
               <View
                 style={{
@@ -310,12 +302,11 @@ const SafetyHazardCase = ({navigation}) => {
                   alignItems: 'flex-start',
                   justifyContent: 'center',
                 }}>
-
                 <TextInput
                   // selectedValue={selectedFeeder}
-                 // keyboardType={'numeric'}
+                  // keyboardType={'numeric'}
                   // KEaccountnumber={KEaccountnumber}
-                 // maxLength={12}               //  onBlur={text =>{text.}}
+                  // maxLength={12}               //  onBlur={text =>{text.}}
                   style={{
                     height: 50,
                     width: '86%',
@@ -325,7 +316,7 @@ const SafetyHazardCase = ({navigation}) => {
                     marginTop: -10,
                   }}
                   placeholder={'Enter Text'}
-                  placeholderText={{ fontSize: 16, color: 'grey' }}
+                  placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
                     setAccidentLocationAddress(text);
                   }}
@@ -343,15 +334,10 @@ const SafetyHazardCase = ({navigation}) => {
                   alignItems: 'flex-start',
                   justifyContent: 'center',
                 }}>
-
-
-                <Text style={{ fontSize: 15, fontWeight: 'normal', color: 'black' }}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
                   Premise Consumer Number
-
                 </Text>
-
-
-
               </View>
 
               <View
@@ -364,13 +350,12 @@ const SafetyHazardCase = ({navigation}) => {
                   //padding:90,
                   alignItems: 'flex-start',
                   justifyContent: 'center',
-
                 }}>
                 <TextInput
                   // selectedValue={selectedFeeder}
                   //value={PMT}
-                //  keyboardType={'numeric'}
-                //  maxLength={8}
+                  //  keyboardType={'numeric'}
+                  //  maxLength={8}
                   //contractnumber={contractnumber}
 
                   // onChangeText={text => setcontractnumber(text)}
@@ -385,18 +370,24 @@ const SafetyHazardCase = ({navigation}) => {
                     borderBottomWidth: 0.8,
                   }}
                   placeholder={'Enter Text'}
-                  placeholderText={{ fontSize: 16, color: 'grey' }}
+                  placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
                     setPremiseConsumerNumber(text);
                   }}
                 />
-
               </View>
 
-
               <View
-                style={{ height: 22, width: '100%', marginLeft: 40, alignItems: 'flex-start', justifyContent: 'center', marginTop: 15 }}>
-                <Text style={{ fontSize: 15, fontWeight: 'normal', color: 'black' }}>
+                style={{
+                  height: 22,
+                  width: '100%',
+                  marginLeft: 40,
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  marginTop: 15,
+                }}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
                   PMT
                 </Text>
               </View>
@@ -411,11 +402,9 @@ const SafetyHazardCase = ({navigation}) => {
                   //padding:90,
                   alignItems: 'flex-start',
                   justifyContent: 'center',
-
                 }}>
-
                 <TextInput
-                //  maxLength={10}
+                  //  maxLength={10}
                   style={{
                     height: 50,
                     width: '86%',
@@ -425,17 +414,13 @@ const SafetyHazardCase = ({navigation}) => {
                     // marginBottom: 50,
                     borderBottomWidth: 0.8,
                   }}
-
                   placeholder={'Enter Text'}
-                  placeholderText={{ fontSize: 16, color: 'grey' }}
+                  placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
                     setPMT(text);
                   }}
                 />
               </View>
-
-
-
 
               <View
                 style={{
@@ -448,9 +433,9 @@ const SafetyHazardCase = ({navigation}) => {
                   justifyContent: 'center',
                   marginTop: 10,
                 }}>
-                <Text style={{ fontSize: 15, fontWeight: 'normal', color: 'black' }}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
                   Consumer Mobile Number
-
                 </Text>
               </View>
 
@@ -464,13 +449,8 @@ const SafetyHazardCase = ({navigation}) => {
                   //padding:90,
                   alignItems: 'flex-start',
                   justifyContent: 'center',
-
                 }}>
-
-
                 <TextInput
-
-                 
                   style={{
                     height: 50,
                     width: '86%',
@@ -483,13 +463,11 @@ const SafetyHazardCase = ({navigation}) => {
                   maxLength={11}
                   keyboardType={'numeric'}
                   placeholder={'Enter Text'}
-                  placeholderText={{ fontSize: 16, color: 'grey' }}
+                  placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
                     setConsumerMobileNumber(text);
                   }}
                 />
-
-
               </View>
 
               <View
@@ -503,9 +481,9 @@ const SafetyHazardCase = ({navigation}) => {
                   justifyContent: 'center',
                   marginTop: 20,
                 }}>
-                <Text style={{ fontSize: 15, fontWeight: 'normal', color: 'black' }}>
-                  Consumer Remarks
-
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
+                  Remarks
                 </Text>
               </View>
               <View
@@ -518,14 +496,14 @@ const SafetyHazardCase = ({navigation}) => {
                   //padding:90,
                   alignItems: 'flex-start',
                   justifyContent: 'center',
-
                 }}>
-
                 <TextInput
                   multiline={true}
                   placeholder={'Any comment (if required)'}
                   placeholderTextColor="black"
-                  onChangeText={(text) => { setRemarks(text) }}
+                  onChangeText={text => {
+                    setRemarks(text);
+                  }}
                   style={{
                     height: 150,
                     width: '86%',
@@ -545,29 +523,38 @@ const SafetyHazardCase = ({navigation}) => {
                   // backgroundColor: ' rgba(93,45,145,255)',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginTop: 60
+                  marginTop: 60,
                 }}>
                 <LinearGradient
                   colors={['#1565C0', '#64b5f6']}
-                  style={styles.PhotosIn}
-                >
-                  <Text style={[styles.textPhotos, {
-                    color: '#fff'
-                  }]}> Photos of Hazards</Text>
+                  style={styles.PhotosIn}>
+                  <Text
+                    style={[
+                      styles.textPhotos,
+                      {
+                        color: '#fff',
+                      },
+                    ]}>
+                    {' '}
+                    Photos of Hazards
+                  </Text>
                 </LinearGradient>
-
               </View>
 
               <View
-                style={{ height: 22, width: '100%', marginLeft: 40, alignItems: 'flex-start', 
-                         justifyContent: 'center', 
-                         marginTop: 90 }}>
-                <Text style={{ fontSize: 15, fontWeight: 'normal', color: 'black' }}>
+                style={{
+                  height: 22,
+                  width: '100%',
+                  marginLeft: 40,
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  marginTop: 90,
+                }}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
                   Picture (Mandatory)
                 </Text>
-
-                </View>
-             
+              </View>
 
               <View
                 style={{
@@ -576,50 +563,42 @@ const SafetyHazardCase = ({navigation}) => {
                   flexDirection: 'row',
                   alignSelf: 'center',
                   alignItems: 'center',
-                   marginLeft:100,
+                  marginLeft: 100,
                   // justifyContent: 'space-between',
-                }}>               
+                }}>
+                <TouchableOpacity onPress={() => captureImage('photo')}>
+                  <Image
+                    source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
+                    style={styles.imageStyle}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      //marginTop: 2,
+                      textAlign: 'center',
+                      width: 120,
+                      marginLeft: -15,
+                      textAlignVertical: 'center',
+                      color: '#1565C0',
+                    }}>
+                    tap the picture from gallery
+                  </Text>
+                </TouchableOpacity>
 
-                <TouchableOpacity
-                         
-
-                          onPress={() => 
-                           captureImage('photo')
-                           }>
-                          <Image
-                            source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
-                            style={styles.imageStyle}
-                          />
-                           <Text
-                          style={{
-                            fontSize: 11,
-                            //marginTop: 2,
-                            textAlign: 'center',
-                            width: 120,
-                            marginLeft:-15,
-                            textAlignVertical: 'center',
-                            color: '#1565C0'
-
-                          }}>
-                          tap the picture from gallery
-                        </Text>
-                        </TouchableOpacity>              
-                       
-
-                    
-                       
-                <View style={{ flex: 1,alignSelf: 'center',  alignItems: 'flex-start',marginLeft:20
+                <View
+                  style={{
+                    flex: 1,
+                    alignSelf: 'center',
+                    alignItems: 'flex-start',
+                    marginLeft: 20,
                   }}>
                   <Carousel
-
                     ref={carouselRef}
-                    layout='default'
+                    layout="default"
                     data={images}
-
                     sliderWidth={width}
                     itemWidth={width}
-
-                    renderItem={({ item, index }) => {
+                    renderItem={({item, index}) => {
                       return (
                         <View>
                           <TouchableOpacity
@@ -627,18 +606,14 @@ const SafetyHazardCase = ({navigation}) => {
                               onTouchThumbnail(index);
                               setindexer1(index);
                               setimageview(true);
-
                             }}
-                            activeOpacity={0.9}
-                          >
-
+                            activeOpacity={0.9}>
                             <Image
-                              source={{ uri: item.uri }}
-                              style={{ height: 100, width: 100 }}></Image>
+                              source={{uri: item.uri}}
+                              style={{height: 100, width: 100}}></Image>
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() => {
-
                               setTimeout(() => {
                                 // setRefresh(true);
                                 setImagedeletionLoader(true);
@@ -653,10 +628,6 @@ const SafetyHazardCase = ({navigation}) => {
                                 setImages(arr);
                                 setImagedeletionLoader(false);
                               }, 2000);
-
-
-
-
                             }}
                             style={{
                               width: 100,
@@ -676,86 +647,65 @@ const SafetyHazardCase = ({navigation}) => {
                               Remove
                             </Text>
                           </TouchableOpacity>
-
                         </View>
-                      )
+                      );
                     }}
-
                     // sliderWidth={150}
                     //itemWidth={120}
                     onSnapToItem={index => onSelect(index)}
-
                   />
-                
-                </View> 
-             
                 </View>
-                
-
-
-
-
-
-
               </View>
-              <Modal visible={imageview} transparent={true}
-                      closeOnClick={true}
-                    >
-
-
-
-
-                      <ImageViewer
-                        renderHeader={() => {
-                          return (
-                            <View
-                              style={{
-                                width: '100%',
-                                height: 50,
-                                // backgroundColor: 'green',
-                                // alignItems: 'center',
-                                justifyContent: 'center',
-                              }}>
-                              <TouchableOpacity
-                                style={{
-                                  alignItems: 'center',
-                                  justifyContent: 'space-between',
-                                  flexDirection: 'row',
-                                }}
-                                onPress={() => {
-                                  setimageview(false);
-                                }}>
-                                <View></View>
-                                <View
-                                  style={{
-                                    backgroundColor: 'red',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    width: 30,
-                                    height: 30,
-                                    borderRadius: 15,
-                                    right: 5,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      color: 'white',
-                                      fontSize: 16,
-                                      fontWeight: 'bold',
-                                    }}>
-                                    X
-                                  </Text>
-                                </View>
-                              </TouchableOpacity>
-                            </View>
-                          );
+            </View>
+            <Modal visible={imageview} transparent={true} closeOnClick={true}>
+              <ImageViewer
+                renderHeader={() => {
+                  return (
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 50,
+                        // backgroundColor: 'green',
+                        // alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <TouchableOpacity
+                        style={{
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          flexDirection: 'row',
                         }}
-                        imageUrls={images}
-                        index={indexer1}
-                      />
-                    </Modal>
-
-
-
+                        onPress={() => {
+                          setimageview(false);
+                        }}>
+                        <View></View>
+                        <View
+                          style={{
+                            backgroundColor: 'red',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 30,
+                            height: 30,
+                            borderRadius: 15,
+                            right: 5,
+                          }}>
+                          <Text
+                            style={{
+                              color: 'white',
+                              fontSize: 16,
+                              fontWeight: 'bold',
+                            }}>
+                            X
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }}
+                imageUrls={images}
+                index={indexer1}
+              />
+            </Modal>
 
             <View
               style={{
@@ -779,22 +729,22 @@ const SafetyHazardCase = ({navigation}) => {
                 onPress={() => {
                   navigation.reset({
                     index: 0,
-                    routes: [{ name: 'SupportScreen' }],
+                    routes: [{name: 'SupportScreen'}],
                   });
                 }}>
-
-
                 <LinearGradient
                   colors={['#1565C0', '#64b5f6']}
-                  style={styles.submit}
-                >
-                  <Text style={[styles.textSign, {
-                    color: '#fff'
-                  }]}>Cancel</Text>
+                  style={styles.submit}>
+                  <Text
+                    style={[
+                      styles.textSign,
+                      {
+                        color: '#fff',
+                      },
+                    ]}>
+                    Cancel
+                  </Text>
                 </LinearGradient>
-
-
-
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
@@ -807,263 +757,254 @@ const SafetyHazardCase = ({navigation}) => {
                 onPress={() => {
                   // setUploadingMsg(res.d.Return);
 
-
                   setAuthModalVisible(!isAuthModalVisible);
-
                 }}>
-
                 <LinearGradient
                   colors={['#1565C0', '#64b5f6']}
-                  style={styles.submit}
-                >
-                  <Text style={[styles.textSign, {
-                    color: '#fff'
-                  }]}>Submit</Text>
+                  style={styles.submit}>
+                  <Text
+                    style={[
+                      styles.textSign,
+                      {
+                        color: '#fff',
+                      },
+                    ]}>
+                    Submit
+                  </Text>
                 </LinearGradient>
-
-
-
               </TouchableOpacity>
             </View>
 
             <Modal
-        style={{ alignItems: 'center', justifyContent: 'center' }}
-        isVisible={isModalVisible}>
-        <View
-          style={{
-            width: '80%',
-            height: 250,
-            backgroundColor: 'white',
-            borderRadius: 10,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingHorizontal: 10,
-            paddingVertical: 20,
-          }}>
-          <Text style={{ color: 'red', fontSize: 24, fontWeight: 'bold' }}>
-            Error
-          </Text>
+              style={{alignItems: 'center', justifyContent: 'center'}}
+              isVisible={isModalVisible}>
+              <View
+                style={{
+                  width: '80%',
+                  height: 250,
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingHorizontal: 10,
+                  paddingVertical: 20,
+                }}>
+                <Text style={{color: 'red', fontSize: 24, fontWeight: 'bold'}}>
+                  Error
+                </Text>
 
-          <Text style={{ color: 'red', fontSize: 16, textAlign: 'center' }}>
-            {error ? error : ''}
-          </Text>
+                <Text style={{color: 'red', fontSize: 16, textAlign: 'center'}}>
+                  {error ? error : ''}
+                </Text>
 
-          <Button
-            title="Close"
-            color="red"
-            onPress={() => {
-              setModalVisible(!isModalVisible);
-              setError('');
-            }}
-          />
-        </View>
-      </Modal>
-      <Modal
-        style={{ alignItems: 'center', justifyContent: 'center' }}
-        isVisible={isSuccessModalVisible}>
-        <View
-          style={{
-            width: '80%',
-            height: 250,
-            backgroundColor: 'white',
-            borderRadius: 10,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingHorizontal: 10,
-            paddingVertical: 20,
-          }}>
-          <Text style={{ color: 'rgba(93,45,145,255)', fontSize: 24, fontWeight: 'bold' }}>
-            Success
-          </Text>
+                <Button
+                  title="Close"
+                  color="red"
+                  onPress={() => {
+                    setModalVisible(!isModalVisible);
+                    setError('');
+                  }}
+                />
+              </View>
+            </Modal>
+            <Modal
+              style={{alignItems: 'center', justifyContent: 'center'}}
+              isVisible={isSuccessModalVisible}>
+              <View
+                style={{
+                  width: '80%',
+                  height: 250,
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingHorizontal: 10,
+                  paddingVertical: 20,
+                }}>
+                <Text
+                  style={{
+                    color: 'rgba(93,45,145,255)',
+                    fontSize: 24,
+                    fontWeight: 'bold',
+                  }}>
+                  Success
+                </Text>
 
-          <Text style={{ color: 'green', fontSize: 16, textAlign: 'center' }}>
-            {uploadingMsg == '' ? 'Saved Successfully' : uploadingMsg}
-          </Text>
+                <Text
+                  style={{color: 'green', fontSize: 16, textAlign: 'center'}}>
+                  {uploadingMsg == '' ? 'Saved Successfully' : uploadingMsg}
+                </Text>
 
-          <Button
-            title="Close"
-            color="green"
-            onPress={() => {
-              setSuccessModalVisible(!isSuccessModalVisible);
-              setError('');
-              // setTimeout(() => {
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'SupportScreen' }],
-                });
-            }}
-          />
-        </View>
-      </Modal>
-      <Modal
-        style={{ alignItems: 'center', justifyContent: 'center' }}
-        isVisible={isAuthModalVisible}>
-        <View
-          style={{
-            width: '80%',
-            height: 200,
-            backgroundColor: 'white',
-            borderRadius: 10,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingHorizontal: 10,
-            paddingVertical: 20,
-          }}>
-          <Text style={{ color: 'green', fontSize: 24, fontWeight: 'bold' }}>
-            Are you sure?
-          </Text>
+                <Button
+                  title="Close"
+                  color="green"
+                  onPress={() => {
+                    setSuccessModalVisible(!isSuccessModalVisible);
+                    setError('');
+                    // setTimeout(() => {
+                    navigation.reset({
+                      index: 0,
+                      routes: [{name: 'SupportScreen'}],
+                    });
+                  }}
+                />
+              </View>
+            </Modal>
+            <Modal
+              style={{alignItems: 'center', justifyContent: 'center'}}
+              isVisible={isAuthModalVisible}>
+              <View
+                style={{
+                  width: '80%',
+                  height: 200,
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingHorizontal: 10,
+                  paddingVertical: 20,
+                }}>
+                <Text
+                  style={{color: 'green', fontSize: 24, fontWeight: 'bold'}}>
+                  Are you sure?
+                </Text>
 
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    width: '70%',
+                    height: 50,
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Button
+                    title=" Yes "
+                    color="green"
+                    onPress={() => {
+                      setLoader(true);
+                      try {
+                        /*
+                        RNFetchBlob.config({
+                          trusty: true,
+                        })
+                          .fetch(
+                            'GET',
+                            // apiURLN + name.toLowerCase() + '&Password=' + userPassword.toLowerCase(),
+                            "https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks='99',Pmt='99',Mobileno='99',Ibc='99',CreatedBy='99',Consumernumber='99')?$format=json",
 
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '70%',
-              height: 50,
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Button
-              title=" Yes "
-              color="green"
-              onPress={() => {
-             
+                            {
+                              Authorization:
+                                'Basic ' + base64.encode('fioriqa:sapsap2'),
+                            },
+                          )
+                          .then(res => res.json())
+*/
+                        let response = axios
+                          .get(
+                            "https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks='" +
+                              Remarks +
+                              "',Pmt='" +
+                              PMT +
+                              "',Mobileno='" +
+                              ConsumerMobileNumber +
+                              "',Ibc='" +
+                              AccidentLocationAddress +
+                              "',CreatedBy='99',Consumernumber='" +
+                              ConsumerMobileNumber +
+                              "')?$format=json",
+                            {
+                              Authorization:
+                                'Basic ' + base64.encode('fioriqa:sapsap2'),
+                              'Content-Type': 'application/json',
+                              Accept: 'application/json',
+                              'X-CSRF-Token': '',
+                              'X-Requested-With': 'X',
+                            },
+                          )
+                          .then(resp => {
+                            console.log('res.data: ', resp.data.d.Message);
+                            setSuccessModalVisible(!isSuccessModalVisible);
+                          });
+                      } catch (error) {
+                        // console.log('Error', e);
+                        alert('error' + error.message);
+                        setLoader(false);
+                      }
 
-                setLoader(true);
+                      AsyncStorage.getItem('User').then(items => {
+                        var data = items ? JSON.parse(items) : {};
 
-                try {
-                  let response = axios.get(
-                    "https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks='99',Pmt='99',Mobileno='99',Ibc='99',CreatedBy='99',Consumernumber='99')?$format=xml",
-                    
-                  )
-                    .then((response) => {
-                    //  console.log("response", response);
-                      let res = response;
-                      console.log("res.data", res );
-            
-                       
-                      setSuccessModalVisible(!isSuccessModalVisible);    
-            
-                    })
-                } catch (error) {
-                  // console.log('Error', e);
-                  alert('error' + error.message);
-                  setLoader(false)
-                }
+                        AsyncStorage.getItem('SafetyHazard').then(items => {
+                          var data1 = [];
 
+                          data1 = items ? JSON.parse(items) : [];
 
-                AsyncStorage.getItem('User').then(items => {
-                  var data = items ? JSON.parse(items) : {};
+                          data1 = [
+                            ...data1,
+                            {
+                              UserID: ' testuser', //data[0].name
+                              SDate: Moment(Date.now()).format('YYYY-MM-DD'),
+                              AccidentLocationAddress: AccidentLocationAddress,
+                              PremiseConsumerNumber: PremiseConsumerNumber,
+                              PMT: PMT,
+                              ConsumerMobileNumber: ConsumerMobileNumber,
+                              Remarks: Remarks,
+                              longitude1: longitude1,
+                              latitude1: latitude1,
+                              Status: 'Pending',
+                              // IBC: data[0].IBC,
+                              //  MobileID: data[0].MobileID,
+                              SafetyHazardWebID: '',
+                              ImageFlag: isImage,
+                              HazardImages: images,
+                            },
+                          ];
 
-                
+                          AsyncStorage.setItem(
+                            'SafetyHazard',
+                            JSON.stringify(data1),
+                          ).then(() => {
+                            navigation.reset({
+                              index: 0,
+                              routes: [{name: 'SupportScreen'}],
+                            });
+                            //                          console.log("DAta1", data1);
+                            setRefresh(true);
 
-
-                  AsyncStorage.getItem('SafetyHazard')
-                    .then(items => {
-                      var data1 = [];
-
-                      data1 = items ? JSON.parse(items) : [];                     
-
-                      data1 = [
-                        ...data1,
-                        {
-
-                          UserID:" testuser", //data[0].name                          
-                          SDate: Moment(Date.now()).format('YYYY-MM-DD'),
-                          AccidentLocationAddress: AccidentLocationAddress,
-                          PremiseConsumerNumber: PremiseConsumerNumber,
-                          PMT: PMT,
-                          ConsumerMobileNumber: ConsumerMobileNumber,
-                          Remarks: Remarks,
-                          longitude1: longitude1,
-                          latitude1: latitude1,                         
-                          Status: 'Pending',
-                         // IBC: data[0].IBC,
-                        //  MobileID: data[0].MobileID,
-                          SafetyHazardWebID: "",
-                          ImageFlag: isImage,
-                          HazardImages: images
-
-
-                        },
-                      ];
-
-
-
-                      AsyncStorage.setItem('SafetyHazard', JSON.stringify(data1)).then(() => {
-
-
-
-
-
-                        navigation.reset({
-                          index: 0,
-                          routes: [{ name: 'SupportScreen' }],
+                            // swiper.current.scrollBy(1, true);
+                            setTimeout(() => {
+                              setRefresh(false);
+                            }, 1000);
+                          });
                         });
-                        //                          console.log("DAta1", data1);
-                        setRefresh(true);
-                       
-                        // swiper.current.scrollBy(1, true);
-                        setTimeout(() => {
-                          setRefresh(false);
-                          
-                        }, 1000);
-
                       });
 
-                    });
+                      setRefresh(true);
 
-                });
+                      setTimeout(() => {
+                        setRefresh(false);
+                      }, 1000);
 
+                      setAuthModalVisible(!isAuthModalVisible);
 
-               
-                setRefresh(true);
-                
-               
-                setTimeout(() => {
-                  setRefresh(false);
-                   
-                }, 1000);
+                      setSuccessModalVisible(!isSuccessModalVisible);
+                    }}
+                    // }
+                  />
 
-                setAuthModalVisible(!isAuthModalVisible);
-
-                setSuccessModalVisible(!isSuccessModalVisible);
-
-
-
-
-
-
-
-
-
-              }}
-            // }
-            />
-
-            <Button
-              title=" No "
-              color="red"
-              onPress={() => {
-                setAuthModalVisible(!isAuthModalVisible);
-               
-              }}
-            />
-          </View>
-        </View>
-      </Modal>
-
-
-
-
-
-
-
-
-
+                  <Button
+                    title=" No "
+                    color="red"
+                    onPress={() => {
+                      setAuthModalVisible(!isAuthModalVisible);
+                    }}
+                  />
+                </View>
+              </View>
+            </Modal>
           </View>
         </View>
       </ScrollView>
-
     </View>
   );
 };
@@ -1074,7 +1015,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    // alignItems: 'center', 
+    // alignItems: 'center',
     //  justifyContent: 'center'
   },
   slide1: {
@@ -1085,14 +1026,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
-
   signIn: {
     width: '100%',
     marginTop: 100,
     height: 70,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
 
   submit: {
@@ -1100,11 +1040,11 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
   textSign: {
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   imageStyle: {
     width: 50,
@@ -1114,20 +1054,16 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
 
-
-
   PhotosIn: {
     width: '100%',
     marginTop: 100,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
   textPhotos: {
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
-
-
 });

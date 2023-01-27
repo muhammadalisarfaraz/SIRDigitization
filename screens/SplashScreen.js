@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   ActivityIndicator,
   View,
@@ -11,12 +11,11 @@ import {
 
 import AsyncStorage from '@react-native-community/async-storage';
 import Moment from 'moment';
- 
-const SplashScreen = ({ navigation }) => {
+
+const SplashScreen = ({navigation}) => {
   const width = new Animated.Value(360);
   const height = new Animated.Value(600);
   const [animating, setAnimating] = useState(true);
- 
 
   const getAsyncData = async () => {
     try {
@@ -24,25 +23,21 @@ const SplashScreen = ({ navigation }) => {
 
       let data = uservalue != null ? JSON.parse(uservalue) : null;
 
+      //console.log(' ***** data **** ', data);
+      // navigation.replace('ApiScreen');
+      if (data) {
+        //  navigation.replace('SettingsScreen');
 
-    //  console.log("data", data);
-   // navigation.replace('ApiScreen');
-      if (data){
-      //  navigation.replace('SettingsScreen');
-      
-        navigation.replace('SupportScreen');
+        //navigation.replace('SupportScreen'); // Commented by Saad on 09-Dec-2022
+        navigation.replace('SignInScreen'); // Added by Saad on 09-DEc-2022
       } else {
-       navigation.replace('SignInScreen');
-     //  navigation.replace('SettingsScreen');
+        navigation.replace('SignInScreen');
+        //  navigation.replace('SettingsScreen');
       }
-      
     } catch (error) {
       console.log(error);
       return null;
     }
-
-
-    
   };
 
   useEffect(() => {
@@ -71,8 +66,6 @@ const SplashScreen = ({ navigation }) => {
   );
 };
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -81,7 +74,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 });
-
-
 
 export default SplashScreen;

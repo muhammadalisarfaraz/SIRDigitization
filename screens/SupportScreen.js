@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
-  View, Text, Button, StyleSheet, StatusBar, Image,
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  StatusBar,
+  Image,
   TouchableOpacity,
   TextInput,
   Platform,
-  Alert, ActivityIndicator
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Moment from 'moment';
 
-import { AuthContext } from '../components/context';
+import {AuthContext} from '../components/context';
 import AsyncStorage from '@react-native-community/async-storage';
- 
- import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function SupportScreen({ navigation }) {
-
+function SupportScreen({navigation}) {
   //  const { colors } = useTheme();
 
   //const theme = useTheme();
@@ -27,10 +31,11 @@ function SupportScreen({ navigation }) {
   const [refresh, setRefresh] = useState(false);
   const [pendingOrders, setPendingOrders] = useState([]);
   const [user, setUser] = useState('');
+  const [ibc, setIbc] = useState('');
 
   const [currentDate, setCurrentDate] = useState('');
-  const {  supportScreen } = React.useContext(AuthContext);
-  
+  const {supportScreen} = React.useContext(AuthContext);
+
   useEffect(() => {
     console.log('Ali');
     console.log('test');
@@ -38,23 +43,24 @@ function SupportScreen({ navigation }) {
     // console.log('test');
     //  getPendingOrders();
 
-    var date = new Date()
-    date =Moment(date).format("DD-MM-YYYY") ;
-    setCurrentDate(date); 
+    AsyncStorage.getItem('LoginCredentials').then(items => {
+      var data1 = [];
+      data1 = items ? JSON.parse(items) : [];
+      setUser(data1[0].User);
+      setIbc(data1[0].begru);
+    });
+
+    var date = new Date();
+    date = Moment(date).format('DD-MM-YYYY, h:mm:ss a');
+    setCurrentDate(date);
   }, []);
-
-
-
 
   return (
     <View style={styles.container}>
+      <View style={{padding: 3}}></View>
 
-     <View style={{ padding: 3 }}>
-      </View>
-      
       <View style={styles.footerMaster}>
-
-        <View style={{ flex: 1, flexDirection: 'row' }}>
+        <View style={{flex: 1, flexDirection: 'row'}}>
           <View
             style={{
               // flex: 0.45,
@@ -71,7 +77,7 @@ function SupportScreen({ navigation }) {
                 color: 'black', //'#FFFFFF',
                 //     marginBottom: 4,
               }}>
-              {'Data / Time:' + currentDate}
+              {'Data / Time: ' + currentDate}
             </Text>
 
             <Text
@@ -80,7 +86,7 @@ function SupportScreen({ navigation }) {
                 color: 'black',
                 fontSize: 13,
               }}>
-              {'User Name: Syed M. Shoaib'}
+              {'User ID: ' + user}
             </Text>
 
             <Text
@@ -88,25 +94,16 @@ function SupportScreen({ navigation }) {
                 marginTop: 15,
                 fontSize: 13,
                 color: 'black',
-
               }}>
-              {'IBC: North Nazimabad'}
+              {'IBC: ' + ibc}
             </Text>
-
-
           </View>
         </View>
-
       </View>
 
-      <View style={{ padding: '1%' }}>
-      </View>
+      <View style={{padding: '1%'}}></View>
 
       <View style={styles.footer}>
-
-
-
-
         <View
           style={{
             right: 0,
@@ -122,15 +119,14 @@ function SupportScreen({ navigation }) {
               fontSize: 16,
               fontWeight: 'bold',
               fontStyle: 'italic',
-              color: 'black'
+              color: 'black',
             }}>
             Welcome
           </Text>
           <TouchableOpacity
             // onPress={this._onPress}
             //style={[styles.button, { backgroundColor: '#3636D3' }]}
-            activeOpacity={1}>
-          </TouchableOpacity>
+            activeOpacity={1}></TouchableOpacity>
         </View>
 
         <View
@@ -142,21 +138,21 @@ function SupportScreen({ navigation }) {
             //alignItems:'flex-start',
             //justifyContent: 'left',
           }}>
-
-
-          <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+          <Text style={{fontSize: 25, fontWeight: 'bold', color: '#1565C0'}}>
             {/* <Icon name="thumb-up" size={30} color="brown" />  */}
-
           </Text>
-          <Text style={{ marginLeft: 5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+          <Text
+            style={{
+              marginLeft: 5,
+              fontSize: 25,
+              fontWeight: 'bold',
+              color: '#1565C0',
+            }}>
             Planned SIR
-
           </Text>
-
         </View>
 
-        <View style={{ padding: '5%', marginBottom: '1%' }}>
-        </View>
+        <View style={{padding: '5%', marginBottom: '1%'}}></View>
 
         <View
           style={{
@@ -165,7 +161,7 @@ function SupportScreen({ navigation }) {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginLeft:-5,
+            marginLeft: -5,
           }}>
           <TouchableOpacity
             onPress={() => {
@@ -173,8 +169,8 @@ function SupportScreen({ navigation }) {
                 index: 0,
                 // routes: [{name: 'HomeScreen'}],
                 //  routes: [{name: 'SIR Digitization Ordinary'}],
-                ///      routes: [{name: 'Site Inspection Report'}],  
-                routes: [{ name: 'HomeScreen' }],
+                ///      routes: [{name: 'Site Inspection Report'}],
+                routes: [{name: 'HomeScreen'}],
               });
             }}
             style={{
@@ -187,19 +183,16 @@ function SupportScreen({ navigation }) {
             <View
               style={{
                 height: '100%',
-              //    width: '23%',
+                //    width: '23%',
                 backgroundColor: '#E349EC',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-
-
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+              <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
                 Assigned
               </Text>
             </View>
-            
-            </TouchableOpacity>
+          </TouchableOpacity>
 
           <View
             style={{
@@ -208,180 +201,225 @@ function SupportScreen({ navigation }) {
               backgroundColor: '#944BF8',
               alignItems: 'center',
               justifyContent: 'center',
-              marginLeft:2,
+              marginLeft: 2,
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{name: 'HomeScreenPlannedSaved'}],
+                });
+              }}
+              style={
+                {
+                  //  height: 22,
+                  // width: '55%',
+                  // backgroundColor: '#E349EC',
+                  //    alignItems: 'center',
+                  //  justifyContent: 'center',
+                }
+              }>
+              <View
+                style={{
+                  height: '100%',
+                  // width: '95%',
+                  backgroundColor: '#944BF8',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
+                  Saved
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              height: '100%',
+              width: '30%',
+              backgroundColor: '#3636D3',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 2,
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{name: 'HomeScreenPlannedCompleted'}],
+                });
+              }}
+              style={
+                {
+                  //  height: 22,
+                  // width: '90%',
+                  // backgroundColor: '#E349EC',
+                  //    alignItems: 'center',
+                  //  justifyContent: 'center',
+                }
+              }>
+              <View
+                style={{
+                  height: '100%',
+                  // width: '95%',
+                  backgroundColor: '#3636D3',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
+                  Completed
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              height: '100%',
+              width: '30%',
+              backgroundColor: '#3636D3',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 2,
             }}>
             <TouchableOpacity
               onPress={() => {
                 navigation.reset({
                   index: 0,
 
-
-
-                  routes: [{ name: 'Site Inspection Report' }],
+                  routes: [{name: 'HomeScreenPlannedSummary'}],
                 });
               }}
-              style={{
-                //  height: 22,
-               // width: '55%',
-                // backgroundColor: '#E349EC',
-                //    alignItems: 'center',
-                //  justifyContent: 'center',
-              }}>
+              style={
+                {
+                  //  height: 22,
+                  // width: '90%',
+                  // backgroundColor: '#E349EC',
+                  //    alignItems: 'center',
+                  //  justifyContent: 'center',
+                }
+              }>
+              <View
+                style={{
+                  height: '100%',
+                  // width: '95%',
+                  backgroundColor: '#3636D3',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
+                  Statistics
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* <View style={{ padding: 15, marginBottom: 10 }}>
+        </View>
+        */}
 
+        <View style={{padding: '5%', marginBottom: '1%'}}></View>
+        <View
+          style={{
+            //height: 50,
+            // width: '32%',
+            color: '#1565C0',
+            flexDirection: 'row',
+            //alignItems:'flex-start',
+            //justifyContent: 'left',
+          }}>
+          <Text style={{fontSize: 25, fontWeight: 'bold', color: '#1565C0'}}>
+            {/*  <Icon name="thumb-down" size={30} color="brown" />   */}
+          </Text>
+          <Text
+            style={{
+              marginLeft: 5,
+              fontSize: 25,
+              fontWeight: 'bold',
+              color: '#1565C0',
+            }}>
+            Un-Planned SIR
+          </Text>
+        </View>
+
+        {/* <View style={{ padding: 15, marginBottom: 10 }}>
+        </View>
+        */}
+
+        <View style={{padding: '5%', marginBottom: '1%'}}></View>
+
+        <View
+          style={{
+            height: 40,
+            width: '96%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                // routes: [{name: 'HomeScreen'}],
+                routes: [{name: 'Un-Planned SIR'}],
+              });
+            }}
+            style={{
+              //  height: 22,
+              width: '23%',
+              // backgroundColor: '#E349EC',
+              //    alignItems: 'center',
+              //  justifyContent: 'center',
+            }}>
             <View
               style={{
                 height: '100%',
-                // width: '95%',
+                // width: '23%',
+                backgroundColor: '#E349EC',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
+                Assigned
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                // routes: [{name: 'HomeScreen'}],
+                routes: [{name: 'HomeScreenUnPlannedSaved'}],
+              });
+            }}
+            style={{
+              //  height: 22,
+              width: '23%',
+              // backgroundColor: '#E349EC',
+              //    alignItems: 'center',
+              //  justifyContent: 'center',
+            }}>
+            <View
+              style={{
+                height: '100%',
+                //width: '23%',
                 backgroundColor: '#944BF8',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+              <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
                 Saved
               </Text>
-              </View>
-              
-              </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              height: '100%',
-              width: '30%',
-              backgroundColor: '#3636D3',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft:2,
-            }}>
-
-            <TouchableOpacity
-              onPress={() => {
-                navigation.reset({
-                  index: 0,
-
-                  routes: [{ name: 'Site Inspection Above 40' }],
-                });
-              }}
-              style={{
-                //  height: 22,
-                // width: '90%',
-                // backgroundColor: '#E349EC',
-                //    alignItems: 'center',
-                //  justifyContent: 'center',
-              }}>
-
-                
-            <View
-              style={{
-                height: '100%',
-                // width: '95%',
-                backgroundColor: '#3636D3',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-                Un-Attempted
-              </Text>
-              </View>
-              </TouchableOpacity>
-
-          </View>
-          <View
-            style={{
-              height: '100%',
-              width: '30%',
-              backgroundColor: '#3636D3',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft:2,
-            }}>
-
-            <TouchableOpacity
-              onPress={() => {
-                navigation.reset({
-                  index: 0,
-
-                  routes: [{ name: 'Planned Saved SIR' }],
-                });
-              }}
-              style={{
-                //  height: 22,
-               // width: '90%',
-                // backgroundColor: '#E349EC',
-                //    alignItems: 'center',
-                //  justifyContent: 'center',
-              }}>
-
-            <View
-              style={{
-                height: '100%',
-                // width: '95%',
-                backgroundColor: '#3636D3',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-                Post
-              </Text>
-              
-              </View>
-              
-              </TouchableOpacity>
-
-          </View>
-
-        </View>
-       {/* <View style={{ padding: 15, marginBottom: 10 }}>
-        </View>
-        */
-        }
-
-        <View style={{ padding: '5%', marginBottom: '1%' }}>
-        </View>
-        <View
-          style={{
-            //height: 50,
-            // width: '32%',
-            color: '#1565C0',
-            flexDirection: 'row',
-            //alignItems:'flex-start',
-            //justifyContent: 'left',
-          }}>
-
-
-          <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
-            {/*  <Icon name="thumb-down" size={30} color="brown" />   */}
-
-          </Text>
-          <Text style={{ marginLeft: 5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
-            Un-Planned SIR
-
-          </Text>
-
-        </View>
-
-         {/* <View style={{ padding: 15, marginBottom: 10 }}>
-        </View>
-        */
-      }
-
-      <View style={{ padding: '5%', marginBottom: '1%' }}>
-      </View>
- 
-
-        <View
-          style={{
-            height: 40,
-            width: '96%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               navigation.reset({
                 index: 0,
                 // routes: [{name: 'HomeScreen'}],
-                routes: [{ name: 'Un-Planned SIR' }],
+                routes: [{name: 'HomeScreenUnPlannedCompleted'}],
               });
             }}
             style={{
@@ -391,60 +429,50 @@ function SupportScreen({ navigation }) {
               //    alignItems: 'center',
               //  justifyContent: 'center',
             }}>
-
             <View
               style={{
                 height: '100%',
-                // width: '23%',
-                backgroundColor: '#E349EC',
+                //width: '30%',
+                backgroundColor: '#3636D3',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-                Assigned
+              <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
+                Completed
               </Text>
-            </View></TouchableOpacity>
-          <View
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                // routes: [{name: 'HomeScreen'}],
+                routes: [{name: 'HomeScreenUnPlannedSummary'}],
+              });
+            }}
             style={{
-              height: '100%',
+              //  height: 22,
               width: '23%',
-              backgroundColor: '#944BF8',
-              alignItems: 'center',
-              justifyContent: 'center',
+              // backgroundColor: '#E349EC',
+              //    alignItems: 'center',
+              //  justifyContent: 'center',
             }}>
-            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-              Saved
-            </Text>
-          </View>
-          <View
-            style={{
-              height: '100%',
-              width: '30%',
-              backgroundColor: '#3636D3',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-              Un-Attempted
-            </Text>
-          </View>
-          <View
-            style={{
-              height: '100%',
-              width: '20%',
-              backgroundColor: '#3636D3',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
-              Post
-            </Text>
-          </View>
-
+            <View
+              style={{
+                height: '100%',
+                //width: '20%',
+                backgroundColor: '#3636D3',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
+                Statistics
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
-        <View style={{ padding: '5%', marginBottom: '1%' }}>
-      </View>
+        <View style={{padding: '5%', marginBottom: '1%'}}></View>
 
         <View
           style={{
@@ -455,21 +483,21 @@ function SupportScreen({ navigation }) {
             //alignItems:'flex-start',
             //justifyContent: 'left',
           }}>
-
-
-          <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+          <Text style={{fontSize: 25, fontWeight: 'bold', color: '#1565C0'}}>
             {/*  <FontAwesome name="ambulance" size={30} color="brown" />   */}
-
           </Text>
-          <Text style={{ marginLeft: 5, fontSize: 25, fontWeight: 'bold', color: '#1565C0' }}>
+          <Text
+            style={{
+              marginLeft: 5,
+              fontSize: 25,
+              fontWeight: 'bold',
+              color: '#1565C0',
+            }}>
             Safety Hazard Cases
-
           </Text>
-
         </View>
 
-        <View style={{ padding: '5%', marginBottom: '1%' }}>
-      </View>
+        <View style={{padding: '5%', marginBottom: '1%'}}></View>
         <View
           style={{
             height: 40,
@@ -477,17 +505,14 @@ function SupportScreen({ navigation }) {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: 25
+            padding: 25,
           }}>
-
-            
-
           <TouchableOpacity
             onPress={() => {
               navigation.reset({
                 index: 0,
                 // routes: [{name: 'HomeScreen'}],
-                routes: [{ name: 'Saved Safety Hazard' }],
+                routes: [{name: 'Saved Safety Hazard'}],
               });
             }}
             style={{
@@ -497,7 +522,6 @@ function SupportScreen({ navigation }) {
               //    alignItems: 'center',
               //  justifyContent: 'center',
             }}>
-
             <View
               style={{
                 height: 22,
@@ -506,17 +530,18 @@ function SupportScreen({ navigation }) {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+              <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
                 Saved
               </Text>
-            </View></TouchableOpacity>
+            </View>
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => {
               navigation.reset({
                 index: 0,
                 // routes: [{name: 'HomeScreen'}],
-                routes: [{ name: 'Posted Safety Hazards' }],
+                routes: [{name: 'Posted Safety Hazards'}],
               });
             }}
             style={{
@@ -526,7 +551,6 @@ function SupportScreen({ navigation }) {
               //    alignItems: 'center',
               //  justifyContent: 'center',
             }}>
-
             <View
               style={{
                 height: 22,
@@ -535,40 +559,27 @@ function SupportScreen({ navigation }) {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>
+              <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
                 Post
               </Text>
-            </View></TouchableOpacity>
-
-
-
+            </View>
+          </TouchableOpacity>
         </View>
 
-
-        <View style={{ padding: 15, marginBottom: 10 }}></View>
-
+        <View style={{padding: 15, marginBottom: 10}}></View>
       </View>
-
-
-
-
-
     </View>
   );
-};
-
-
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1565C0',
 
-    //  alignItems: 'center', 
+    //  alignItems: 'center',
     //    justifyContent: 'center'
   },
-
-
 
   logo: {
     fontWeight: 'bold',
@@ -589,7 +600,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     paddingHorizontal: 20,
-    paddingBottom: 80
+    paddingBottom: 80,
   },
 
   dashboad: {
@@ -605,9 +616,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
     paddingHorizontal: 2,
     paddingVertical: 2,
-    elevation: 10
-
-
+    elevation: 10,
   },
 
   footer: {
@@ -616,10 +625,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingHorizontal: 20,
-    paddingVertical: 30
+    paddingVertical: 30,
   },
   footerMaster: {
-    flex: .5,
+    flex: 0.5,
     backgroundColor: 'white',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -627,32 +636,30 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
 
     paddingHorizontal: 20,
-    paddingVertical: 30
+    paddingVertical: 30,
   },
   text_header: {
     color: '#fff',
     fontWeight: 'bold',
     //  fontSize: 30,
     textAlign: 'center',
-
   },
   text_footer: {
     color: '#05375a',
-
   },
   action: {
     flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#1565C0',
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   actionError: {
     flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#FF0000',
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   textInput: {
     flex: 1,
@@ -666,25 +673,25 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    marginTop: 50
+    marginTop: 50,
   },
   signIn: {
     width: '100%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
   textSign: {
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
 
   searchView: {
     flexDirection: 'row',
     alignItems: 'center',
     // elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,

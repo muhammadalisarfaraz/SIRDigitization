@@ -25,7 +25,7 @@ import {FlatList} from 'react-native-gesture-handler';
 
 import axios from 'axios';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreenUnPlannedCompleted = ({navigation}) => {
   const {colors} = useTheme();
 
   const theme = useTheme();
@@ -78,8 +78,9 @@ const HomeScreen = ({navigation}) => {
       AsyncStorage.getItem('SIRDigitization').then(items => {
         var data = items ? JSON.parse(items) : [];
         data = data.filter(item => {
-          return item.Random == '' && item.Status == '';
+          return item.Random != '' && item.Status == 'Post';
         });
+
         setPendingOrders(data);
         settemptableData(data);
         setLoader(false);
@@ -523,7 +524,7 @@ const HomeScreen = ({navigation}) => {
   );
 };
 
-export default HomeScreen;
+export default HomeScreenUnPlannedCompleted;
 
 const styles = StyleSheet.create({
   container: {

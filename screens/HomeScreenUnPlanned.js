@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
-  View, Text, Button, StyleSheet, StatusBar, Image,
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  StatusBar,
+  Image,
   TouchableOpacity,
-  TextInput, ScrollView,
+  TextInput,
+  ScrollView,
   Platform,
-  Alert, ActivityIndicator
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import {useTheme} from '@react-navigation/native';
 
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -14,13 +21,14 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
 import Swipeable from 'react-native-swipeable';
-import { FlatList } from 'react-native-gesture-handler';
- import DropDownPicker from 'react-native-dropdown-picker';
+import {FlatList} from 'react-native-gesture-handler';
+import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
+import base64 from 'react-native-base64';
+import Moment from 'moment';
 
-const HomeScreen = ({ navigation }) => {
-
-  const { colors } = useTheme();
+const HomeScreen = ({navigation}) => {
+  const {colors} = useTheme();
 
   const theme = useTheme();
   const [loader, setLoader] = useState(false);
@@ -30,69 +38,252 @@ const HomeScreen = ({ navigation }) => {
   const [temptableData, settemptableData] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [pendingOrders, setPendingOrders] = useState([]);
-  const [user, setUser] = useState('');
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState();
-  const [ContractNo, setContractNo] = useState();
-  const [ConsumerNo, setConsumerNo] = useState();
-  
+  const [contractNo, setContractNo] = useState('');
+  const [meterNo, setMeterNo] = useState('');
+
+  const [ibc, setIbc] = useState();
+  const [user, setUser] = useState();
+  const [contractnumberError, setcontractnumberError] = useState('');
+  var SystemMeterData = [];
+
   const [items, setItems] = useState([
     //        { label: '-- Please Select --', value: '', imageCount: 0 },
-    { label: 'Ordinary', value: 'Ordinary' },
-    { label: 'Below 40', value: 'B40' },
-    { label: 'Above 40', value: 'A40' },
-
+    {label: 'Ordinary', value: 'Ordinary'},
+    {label: 'Below 40', value: 'B40'},
+    {label: 'Above 40', value: 'A40'},
   ]);
+
+  const getLoginCredentials = () => {
+    AsyncStorage.getItem('LoginCredentials').then(items => {
+      var data1 = [];
+      data1 = items ? JSON.parse(items) : [];
+      setIbc(data1[0].begru);
+      setUser(data1[0].User);
+    });
+  };
 
   const [SIRFormat, setSIRFormat] = useState('');
   useEffect(() => {
-    console.log('test');
+    getLoginCredentials();
     getApiData();
   }, []);
 
+  const getMeterNo = (Sirnr, MIO_NAME, Meterno) => {
+    axios({
+      method: 'get',
+      url:
+        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_GET_VERTRAG_VIA_GERNR_SRV/ITABSet?$filter=Gernr%20eq%20%27' +
+        Meterno +
+        '%27%20&$format=json',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+      },
+    })
+      .then(res => {
+        if (res.data.d.results != []) {
+          res.data.d.results.forEach(singleResult => {
+            if (singleResult.Vertrag != '') {
+              getContract(Sirnr, MIO_NAME, singleResult.Vertrag);
+            } else {
+              alert('No contract available against the Meter No');
+              return false;
+            }
+          });
+        }
+      })
+
+      .catch(error => {
+        console.error('axios:getMeterNo:error: ' + error);
+      });
+
+    return;
+  };
+  const getContract = (Sirnr, MIO_NAME, ContractNo) => {
+    let CustomData = [];
+    axios({
+      method: 'get',
+      url:
+        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_UNPLANNED_GET_POST_SRV/ITABSet?$filter=Vertrag%20eq%20%27' +
+        ContractNo +
+        '%27%20and%20Sirnr%20eq%20%27' +
+        Sirnr +
+        '%27&$format=json',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+      },
+    })
+      .then(res => {
+        if (res.data.d.results != []) {
+          res.data.d.results.forEach(singleResult => {
+            CustomData.push({
+              Vertrag: singleResult.Vertrag,
+              Vkont: singleResult.Vkont,
+              Erdat: Moment().format('YYYYMMDD'),
+              AssignMio: singleResult.AssignMio,
+              ADDRESS: singleResult.ADDRESS,
+              NAME: singleResult.NAME,
+              CONSUMER_NO: singleResult.CONSUMER_NO,
+              Sirnr: Sirnr,
+              Ibc: ibc,
+              MIO_NAME: MIO_NAME,
+            });
+          });
+        }
+      })
+      .then(res => {
+        getSystemMeter(ContractNo, CustomData, SIRFormat);
+      })
+      .catch(error => {
+        console.error('axios:error: ' + error);
+      });
+
+    return;
+  };
 
   const getApiData = async () => {
     console.log('get api data function');
     setLoader(true);
     try {
-      let response = await axios.get(
-        'https://jsonplaceholder.typicode.com/users',
-      );
-      setLoader(false);
-      console.log('res', response.data);
-      setPendingOrders(response.data);
+      // Saad Comment Loading PremiseType Data
+      AsyncStorage.getItem('SIRDigitization').then(items => {
+        var data = items ? JSON.parse(items) : [];
+        data = data.filter(item => {
+          return item.Random != '' && item.Status == '';
+        });
+        setPendingOrders(data);
+        settemptableData(data);
+        setLoader(false);
+      });
     } catch (error) {
       alert(error);
       setLoader(false);
-      console.log('Error ', error);
+      // console.log('Error ', error);
     }
   };
 
+  const getSystemMeter = (contract, CustomData, SIRFormat) => {
+    let index = '';
+    console.log('contract: ', contract);
 
+    AsyncStorage.getItem('SystemMeter')
+      .then(items => {
+        SystemMeterData = items ? JSON.parse(items) : [];
 
-   
+        console.log('Screen:SystemMeterData.length: ' + SystemMeterData.length);
+      })
+      .then(item => {
+        axios({
+          method: 'get',
+          url:
+            'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%270' +
+            contract +
+            '%27&$format=json',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+          },
+        })
+          .then(res => {
+            if (res.data.d.results != []) {
+              res.data.d.results.forEach(singleResult => {
+                SystemMeterData.push({
+                  CONTRACT: contract,
+                  Anlage: singleResult.Anlage,
+                  Geraet: singleResult.Geraet,
+                  Kennziff: singleResult.Kennziff,
+                  Herst: singleResult.Herst,
+                  Rating: singleResult.Rating,
+                  PVoltage: singleResult.PVoltage,
+                  SVoltage: singleResult.SVoltage,
+                  Tarifart: singleResult.Tarifart,
+                  Preiskla: singleResult.Preiskla,
+                  Ablbelnr: singleResult.Ablbelnr,
+                  Ablesgr: singleResult.Ablesgr,
+                  Adat: singleResult.Adat,
+                  VZwstand: singleResult.VZwstand,
+                  Istablart: singleResult.Istablart,
+                  Ablstat: singleResult.Ablstat,
+                  Voltage: singleResult.Voltage,
+                  Phase: singleResult.Phase,
+                });
+                console.log(
+                  'contract: ' + contract + ' Anlage: ' + singleResult.Anlage,
+                );
+              });
+            }
+          })
+          .then(res => {
+            AsyncStorage.setItem(
+              'SystemMeter',
+              JSON.stringify(SystemMeterData),
+            );
+            if (SIRFormat == 'Ordinary') {
+              /*
+              var filterData = CustomData.filter(item => {
+                console.log(item);
+              });
+    */
+              navigation.navigate('SIR Digitization Ordinary', {
+                data: CustomData[0],
+                index: index,
+                otherParam: 'item.filterkey',
+              });
+            } else if (SIRFormat == 'B40') {
+              navigation.navigate('Site Inspection Report', {
+                data: CustomData[0],
+                index: index,
+                otherParam: 'item.filterkey',
+              });
+            } else if (SIRFormat == 'A40') {
+              navigation.navigate('Site Inspection Above 40', {
+                data: CustomData[0],
+                index: index,
+                otherParam: 'item.filterkey',
+              });
+            }
+          })
+          .catch(error => {
+            console.error('axios:error:getSystemMeter: ' + error);
+          });
+      });
+  };
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={theme.dark ? "light-content" : "dark-content"} />
+      <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
 
-      <View style={{ flex: 1, width: '100%' }}>
+      <View style={{flex: 1, width: '100%'}}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           style={styles.container}>
-
-          <View style={{ flex: 1 }}>
-
-            <View style={{ padding: 5 }}>
-            </View>
+          <View style={{flex: 1}}>
+            <View style={{padding: 5}}></View>
 
             <View style={styles.dashboad}>
-              <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                <View style={{ flex: 0.5, alignItems: 'flex-start' }}>
-                  <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15 }}>  SIR Format </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flex: 1,
+                  width: '88%',
+                  marginTop: 10,
+                }}>
+                <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                  <Text
+                    style={{
+                      fontWeight: 'normal',
+                      color: 'black',
+                      marginTop: 15,
+                    }}>
+                    {' '}
+                    SIR Format{' '}
+                  </Text>
                 </View>
-                <View style={{ flex: 0.5 }}>
+                <View style={{flex: 0.5}}>
                   <DropDownPicker
                     open={open}
                     value={value}
@@ -101,109 +292,173 @@ const HomeScreen = ({ navigation }) => {
                     setValue={setValue}
                     setItems={setItems}
                     onChangeValue={item => {
-                      console.log("onChangeValue: " + item);
+                      console.log('onChangeValue: ' + item);
                       setSIRFormat(item);
                     }}
-                    onSelectItem={item => {// setSIRFormat(item.value);
+                    onSelectItem={item => {
+                      // setSIRFormat(item.value);
                     }}
                   />
                 </View>
               </View>
 
-              <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 2 }}>
-                <View style={{ flex: 0.5, alignItems: 'flex-start' }}>
-                  <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15 }}>  Contract No </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flex: 0.5,
+                  width: '88%',
+                  marginTop: 2,
+                }}>
+                <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                  <Text
+                    style={{
+                      fontWeight: 'normal',
+                      color: 'black',
+                      marginTop: 15,
+                    }}>
+                    {' '}
+                    Contract No{' '}
+                  </Text>
                 </View>
-                <View style={{ flex: 0.5 }}>
-                <TextInput
-                        style={styles.inputLoadDetail}
-                        placeholder={'Contract No'}
-                        keyboardType={'numeric'}
-                        placeholderTextColor="grey"
-                        onChangeText={text => {
-                          setContractNo(text);
-                        }}></TextInput>
+                <View style={{flex: 0.5}}>
+                  <TextInput
+                    style={styles.inputLoadDetail}
+                    placeholder={'Contract No'}
+                    keyboardType={'numeric'}
+                    placeholderTextColor="grey"
+                    onChangeText={text => {
+                      if (text.length < 10) {
+                        setcontractnumberError(true);
+                      } else {
+                        setcontractnumberError(false);
+                      }
+                      setContractNo(text);
+                    }}
+                    value={contractNo}
+                  />
+                  {contractnumberError ? (
+                    <Text style={{marginBottom: 20, color: 'red'}}>
+                      Contract must be 10 digits
+                    </Text>
+                  ) : (
+                    <Text></Text>
+                  )}
                 </View>
               </View>
-
-              <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 2 }}>
-                <View style={{ flex: 0.5, alignItems: 'flex-start' }}>
-                  <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15 }}> Consumer No</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flex: 0.5,
+                  width: '88%',
+                  marginTop: 2,
+                }}>
+                <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                  <Text
+                    style={{
+                      fontWeight: 'normal',
+                      color: 'black',
+                      marginTop: 15,
+                    }}>
+                    {' '}
+                    Meter No{' '}
+                  </Text>
                 </View>
-                <View style={{ flex: 0.5 }}>
-                <TextInput
-                        style={styles.inputLoadDetail}
-                        placeholder={'Consumer No'}
-                        keyboardType={'numeric'}
-                        placeholderTextColor="grey"
-                        onChangeText={text => {
-                          setConsumerNo(text);
-                        }}></TextInput>
+                <View style={{flex: 0.5}}>
+                  <TextInput
+                    style={styles.inputLoadDetail}
+                    placeholder={'Meter No'}
+                    keyboardType={'numeric'}
+                    placeholderTextColor="grey"
+                    onChangeText={text => {
+                      setMeterNo(text);
+                    }}
+                    value={meterNo}
+                  />
                 </View>
-              </View>               
+              </View>
+              {/*
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flex: 1,
+                  width: '88%',
+                  marginTop: 2,
+                }}>
+                <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                  <Text
+                    style={{
+                      fontWeight: 'normal',
+                      color: 'black',
+                      marginTop: 15,
+                    }}>
+                    {' '}
+                    Consumer No
+                  </Text>
+                </View>
+                <View style={{flex: 0.5}}>
+                  <TextInput
+                    style={styles.inputLoadDetail}
+                    placeholder={'Consumer No'}
+                    keyboardType={'numeric'}
+                    placeholderTextColor="grey"
+                    onChangeText={text => {
+                      setConsumerNo(text);
+                    }}></TextInput>
+                </View>
+              </View>
+                  */}
             </View>
 
-            <View style={{ padding: 10 }}>
-            </View>
-
+            <View style={{padding: 10}}></View>
 
             <View style={styles.searchView}>
               <Image
-                style={{ width: 26, height: 28 }}
+                style={{width: 26, height: 28}}
                 source={require('../assets/search.png')}
               />
-
-              <TextInput
-                onChangeText={text => searchFilterFunction(text)}
-                autoCorrect={false}
-                placeholder="Search SIR"
-                placeholderTextColor="#1565C0"
-                style={{
-                  // backgroundColor: '#C2C2C2',
-                  textAlignVertical: 'center',
-                  fontSize: 16,
-                  height: 40,
-                  borderRadius: 25,
-                  paddingHorizontal: 10,
-                  alignSelf: 'center',
-                  width: '94%',
-                  marginVertical: 10,
-                  backgroundColor: 'white',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  color: '#1565C0'
-                  // elevation: 4,
-                }}
-
-              />
+              <View>
+                <TextInput
+                  onChangeText={text => searchFilterFunction(text)}
+                  autoCorrect={false}
+                  placeholder="Search SIR"
+                  placeholderTextColor="#1565C0"
+                  style={{
+                    // backgroundColor: '#C2C2C2',
+                    textAlignVertical: 'center',
+                    fontSize: 16,
+                    height: 40,
+                    borderRadius: 25,
+                    paddingHorizontal: 10,
+                    alignSelf: 'center',
+                    width: '94%',
+                    marginVertical: 10,
+                    backgroundColor: 'white',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    color: '#1565C0',
+                    // elevation: 4,
+                  }}
+                />
+              </View>
             </View>
 
-
             {loader ? (
-              <ActivityIndicator
-                color="#1191D0"
-                size="small"
-
-              />
+              <ActivityIndicator color="#1191D0" size="small" />
             ) : (
               <Animatable.View
                 animation="fadeInUpBig"
-                style={[styles.footer, {
-                  backgroundColor: "white"//colors.background
-                }]}
-              >
-
-
-
-
-
+                style={[
+                  styles.footer,
+                  {
+                    backgroundColor: 'white', //colors.background
+                  },
+                ]}>
                 <FlatList
-                  style={{ flex: 1, width: '100%' }}
+                  style={{flex: 1, width: '100%'}}
                   data={pendingOrders.length > 0 ? pendingOrders : 0}
                   //data.splice(index, 1);0
-                    extraData={pendingOrders}
+                  extraData={pendingOrders}
                   keyExtractor={item => item.id}
-
                   // onEndReachedThreshold={0.5}
                   ListFooterComponent={() => {
                     return (
@@ -220,11 +475,18 @@ const HomeScreen = ({ navigation }) => {
                         {pendingOrders ? (
                           pendingOrders.length > 0 ? (
                             <TouchableOpacity onPress={() => loadData('more')}>
-                              <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold' }}>Load More</Text>
+                              <Text
+                                style={{
+                                  color: 'black',
+                                  fontSize: 18,
+                                  fontWeight: 'bold',
+                                }}>
+                                Load More
+                              </Text>
                               {loading ? (
                                 <ActivityIndicator
                                   color="black"
-                                  style={{ marginLeft: 8 }}
+                                  style={{marginLeft: 8}}
                                 />
                               ) : null}
                             </TouchableOpacity>
@@ -232,12 +494,19 @@ const HomeScreen = ({ navigation }) => {
                             <View />
                           )
                         ) : (
-                          <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold' }} >No Record to Show</Text>
+                          <Text
+                            style={{
+                              color: 'black',
+                              fontSize: 18,
+                              fontWeight: 'bold',
+                            }}>
+                            No Record to Show
+                          </Text>
                         )}
                       </View>
                     );
                   }}
-                  renderItem={({ item, index }) => {
+                  renderItem={({item, index}) => {
                     // var date = +item.PreqDate.replace(/\/Date\((.*?)\)\//g, '$1');
 
                     return (
@@ -270,56 +539,33 @@ const HomeScreen = ({ navigation }) => {
                               //   setLoader(false);
                               // }, 500);
                             }}>
-                            {<Image
-                              style={{ height: 30, width: 30 }}
-                              source={require('../assets/dustbin.png')}
-                            />}
+                            {
+                              <Image
+                                style={{height: 30, width: 30}}
+                                source={require('../assets/dustbin.png')}
+                              />
+                            }
                             <Text>Delete</Text>
                           </TouchableOpacity>,
                         ]}>
                         <TouchableOpacity
                           // disabled={true}
                           onPress={() => {
-                            //  alert('asdfasd');
-                            if (SIRFormat=='Ordinary'){
-                            navigation.reset({
-                              index: 0,
-                              routes: [{ name: 'Ordinary Un-Planned' }],
-                            });
-                            navigation.navigate('Ordinary Un-Planned', {
-                              data: item,
-                              index: index,
-                              otherParam: item.filterkey,
-                            });
-                          }
-                          else if (SIRFormat=='B40'){
-                          navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'Below 40 Un-Planned' }],
-                          });
-                          navigation.navigate('Below 40 Un-Planned', {
-                            data: item,
-                            index: index,
-                            otherParam: item.filterkey,
-                          });
-                        }
-                        
-                        else if (SIRFormat=='A40'){
-                          navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'Above 40 Un-Planned' }],
-                          });
-                          navigation.navigate('Above 40 Un-Planned', {
-                            data: item,
-                            index: index,
-                            otherParam: item.filterkey,
-                          });
-                        }
-                        
-                        
-                        }}
+                            if (contractNo == '' && meterNo == '') {
+                              alert('please provide contract or meter no');
+                            } else {
+                              if (contractNo != '' && contractNo.length > 9) {
+                                getContract(
+                                  item.Sirnr,
+                                  item.MIO_NAME,
+                                  contractNo,
+                                );
+                              } else if (meterNo != '') {
+                                getMeterNo(item.Sirnr, item.MIO_NAME, meterNo);
+                              }
+                            }
+                          }}
                           style={{
-
                             backgroundColor: '#f0f0f1',
                             alignSelf: 'center',
                             borderRadius: 15,
@@ -332,14 +578,14 @@ const HomeScreen = ({ navigation }) => {
                             borderColor: 'black',
                             borderBottomWidth: 0,
                             shadowColor: 'black',
-                            shadowOffset: { width: 10, height: 10 },
+                            shadowOffset: {width: 10, height: 10},
                             shadowOpacity: 0.8,
                             shadowRadius: 15,
                             elevation: 10,
                             // borderBottomColor: 'grey',
                             // borderBottomWidth: 0.5,
                           }}>
-                          <View style={{ flex: 1, flexDirection: 'row' }}>
+                          <View style={{flex: 1, flexDirection: 'row'}}>
                             <View
                               style={{
                                 backgroundColor: '#1565C0',
@@ -362,7 +608,7 @@ const HomeScreen = ({ navigation }) => {
                                   color: 'white', //'#FFFFFF',
                                   marginBottom: 4,
                                 }}>
-                                {"SIR No. : "}
+                                {'SIR No. : ' + item.Sirnr}
                               </Text>
                             </View>
                             <View
@@ -378,7 +624,7 @@ const HomeScreen = ({ navigation }) => {
                                   color: 'black',
                                   fontSize: 13,
                                 }}>
-                                {'MIO No. ' + item.id}
+                                {'MIO No. ' + item.AssignMio}
                               </Text>
 
                               <Text
@@ -387,7 +633,7 @@ const HomeScreen = ({ navigation }) => {
                                   fontSize: 13,
                                   color: 'black',
                                 }}>
-                                {'MIO Name : ' + item.contractnumber1}
+                                {'MIO Name : ' + item.MIO_NAME}
                               </Text>
                               <Text
                                 style={{
@@ -454,11 +700,8 @@ const HomeScreen = ({ navigation }) => {
                                   height: 65,
                                   width: 180,
                                   borderRadius: 15,
-                                }}>
-                              </View>
+                                }}></View>
                             </View>
-
-
 
                             <View
                               style={{
@@ -485,9 +728,6 @@ const HomeScreen = ({ navigation }) => {
                                 {'Category: Un-Planned'}
                               </Text>
                             </View>
-
-
-
                           </View>
                         </TouchableOpacity>
                       </Swipeable>
@@ -496,13 +736,10 @@ const HomeScreen = ({ navigation }) => {
                 />
               </Animatable.View>
             )}
-
-
           </View>
-
         </ScrollView>
-
-      </View></View>
+      </View>
+    </View>
   );
 };
 
@@ -513,11 +750,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1565C0',
 
-    //  alignItems: 'center', 
+    //  alignItems: 'center',
     //    justifyContent: 'center'
   },
-
-
 
   logo: {
     fontWeight: 'bold',
@@ -538,7 +773,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     paddingHorizontal: 20,
-    paddingBottom: 80
+    paddingBottom: 80,
   },
 
   dashboad: {
@@ -556,8 +791,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     paddingVertical: 2,
     //elevation: 10
-
-
   },
 
   footer: {
@@ -566,32 +799,30 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
-    paddingVertical: 30
+    paddingVertical: 30,
   },
   text_header: {
     color: '#fff',
     fontWeight: 'bold',
     //  fontSize: 30,
     textAlign: 'center',
-
   },
   text_footer: {
     color: '#05375a',
-
   },
   action: {
     flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#1565C0',
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   actionError: {
     flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#FF0000',
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   textInput: {
     flex: 1,
@@ -605,25 +836,25 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    marginTop: 50
+    marginTop: 50,
   },
   signIn: {
     width: '100%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
   textSign: {
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
 
   searchView: {
     flexDirection: 'row',
     alignItems: 'center',
     // elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -647,5 +878,5 @@ const styles = StyleSheet.create({
   inputLoadDetail: {
     color: 'black',
     borderBottomWidth: 0.5,
-  }
+  },
 });
