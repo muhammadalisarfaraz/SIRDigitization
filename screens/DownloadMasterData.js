@@ -25,6 +25,7 @@ const DownloadMasterData = ({navigation}) => {
   const [SIRDigitizationData, setSIRDigitizationData] = useState('');
   const [MRNote, setMRNote] = useState('');
   const [PremiseType, setPremiseType] = useState('');
+  const [Appliances, setAppliances] = useState('');
   const [Tariff, setTariff] = useState('');
   const [DISCREPANCY, setDISCREPANCY] = useState('');
   const [systemmeter, setSystemMeter] = useState([]);
@@ -35,10 +36,7 @@ const DownloadMasterData = ({navigation}) => {
 
   useEffect(() => {
     console.log('Screen:Download Master Data:');
-    getAppliances();
-    getMRNote();
-    getPremiseType();
-    getTariff();
+    getLoginCredentials();
   }, []);
 
   const getLoginCredentials = () => {
@@ -48,12 +46,10 @@ const DownloadMasterData = ({navigation}) => {
         data1 = items ? JSON.parse(items) : [];
         setMio(data1[0].pernr);
         setIbc(data1[0].begru);
-        getMIOData(data1[0].pernr, data1[0].begru);
-        getDISCREPANCY(data1[0].pernr, data1[0].begru);
+        //getMIOData(data1[0].pernr, data1[0].begru);
+        //getDISCREPANCY(data1[0].pernr, data1[0].begru);
       })
       .then(res => {
-        console.log('Mio:: ', Mio);
-        console.log('Ibc:: ', Ibc);
         getAppliances();
         getMRNote();
         getPremiseType();
@@ -255,12 +251,7 @@ const DownloadMasterData = ({navigation}) => {
             MRNoteData.length,
         );*/
         AsyncStorage.setItem('MRNote', JSON.stringify(MRNoteData));
-        setMRNote(
-          'final:MRNoteData: ' +
-            typeof MRNoteData +
-            ' length: ' +
-            MRNoteData.length,
-        );
+        setMRNote('final:MRNote:length: ' + MRNoteData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);
@@ -296,12 +287,7 @@ const DownloadMasterData = ({navigation}) => {
             PremiseTypeData.length,
         );*/
         AsyncStorage.setItem('PremiseType', JSON.stringify(PremiseTypeData));
-        setPremiseType(
-          'final:PremiseTypeData: ' +
-            typeof PremiseTypeData +
-            ' length: ' +
-            PremiseTypeData.length,
-        );
+        setPremiseType('final:PremiseType: length: ' + PremiseTypeData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);
@@ -332,20 +318,8 @@ const DownloadMasterData = ({navigation}) => {
         }
       })
       .then(res => {
-        /*
-        console.log(
-          'final:AppliancesData: ' +
-            typeof AppliancesData +
-            ' length: ' +
-            AppliancesData.length,
-        );*/
         AsyncStorage.setItem('Appliances', JSON.stringify(AppliancesData));
-        setPremiseType(
-          'final:AppliancesData: ' +
-            typeof AppliancesData +
-            ' length: ' +
-            AppliancesData.length,
-        );
+        setAppliances('final:AppliancesData:length: ' + AppliancesData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);
@@ -381,12 +355,7 @@ const DownloadMasterData = ({navigation}) => {
             TariffData.length,
         );*/
         AsyncStorage.setItem('Tariff', JSON.stringify(TariffData));
-        setTariff(
-          'final:TariffData: ' +
-            typeof TariffData +
-            ' length: ' +
-            TariffData.length,
-        );
+        setTariff('final:Tariff:length: ' + TariffData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);
@@ -422,20 +391,8 @@ const DownloadMasterData = ({navigation}) => {
         }
       })
       .then(res => {
-        /*
-        console.log(
-          'final:DISCREPANCY: ' +
-            typeof DISCREPANCYData +
-            ' length: ' +
-            DISCREPANCYData.length,
-        );*/
         AsyncStorage.setItem('DISCREPANCY', JSON.stringify(DISCREPANCYData));
-        setDISCREPANCY(
-          'final:DISCREPANCY: ' +
-            typeof DISCREPANCYData +
-            ' length: ' +
-            DISCREPANCYData.length,
-        );
+        setDISCREPANCY('final:DISCREPANCY:length: ' + DISCREPANCYData.length);
         setLoader(false);
       })
       .catch(error => {
@@ -463,7 +420,7 @@ const DownloadMasterData = ({navigation}) => {
           </Text>
           <Text style={{color: 'white', fontSize: 15}}>Tariff: {Tariff}</Text>
           <Text style={{color: 'white', fontSize: 15}}>
-            DISCREPANCY: {DISCREPANCY}
+            Appliances: {Appliances}
           </Text>
         </>
       )}

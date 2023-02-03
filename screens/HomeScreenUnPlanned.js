@@ -111,6 +111,8 @@ const HomeScreen = ({navigation}) => {
         ContractNo +
         '%27%20and%20Sirnr%20eq%20%27' +
         Sirnr +
+        '%27%20and%20SIR_FORMAT%20eq%20%27' +
+        SIRFormat +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
@@ -131,6 +133,7 @@ const HomeScreen = ({navigation}) => {
               Sirnr: Sirnr,
               Ibc: ibc,
               MIO_NAME: MIO_NAME,
+              CLUSTER: singleResult.Cluster,
             });
           });
         }
@@ -168,7 +171,7 @@ const HomeScreen = ({navigation}) => {
 
   const getSystemMeter = (contract, CustomData, SIRFormat) => {
     let index = '';
-    console.log('contract: ', contract);
+    console.log('**** contract: ', contract);
 
     AsyncStorage.getItem('SystemMeter')
       .then(items => {
@@ -180,7 +183,7 @@ const HomeScreen = ({navigation}) => {
         axios({
           method: 'get',
           url:
-            'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%270' +
+            'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_UNPLANNED_SRV/ITABSet?$filter=CONTRACT%20eq%20%27' +
             contract +
             '%27&$format=json',
           headers: {
@@ -210,6 +213,7 @@ const HomeScreen = ({navigation}) => {
                   Ablstat: singleResult.Ablstat,
                   Voltage: singleResult.Voltage,
                   Phase: singleResult.Phase,
+                  TARIFF: singleResult.TARIFTYP,
                 });
                 console.log(
                   'contract: ' + contract + ' Anlage: ' + singleResult.Anlage,
@@ -367,7 +371,7 @@ const HomeScreen = ({navigation}) => {
                   <TextInput
                     style={styles.inputLoadDetail}
                     placeholder={'Meter No'}
-                    keyboardType={'numeric'}
+                    //keyboardType={'numeric'}
                     placeholderTextColor="grey"
                     onChangeText={text => {
                       setMeterNo(text);

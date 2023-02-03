@@ -531,7 +531,7 @@ function SupportScreen({navigation}) {
                 justifyContent: 'center',
               }}>
               <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
-                Saved
+                Post
               </Text>
             </View>
           </TouchableOpacity>
@@ -560,7 +560,7 @@ function SupportScreen({navigation}) {
                 justifyContent: 'center',
               }}>
               <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
-                Post
+                Saved
               </Text>
             </View>
           </TouchableOpacity>

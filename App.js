@@ -66,6 +66,7 @@ import SafetyHazardEditRecordDetails from './screens/SafetyHazardEditRecordDetai
 import SafetyHazardPosted from './screens/SafetyHazardPosted';
 import LoadingScreenforDataDownload from './screens/LoadingScreenforDataDownload';
 import DownloadMasterData from './screens/DownloadMasterData';
+import DeleteSIRs from './screens/DeleteSIRs';
 
 import {AuthContext} from './components/context';
 
@@ -218,7 +219,7 @@ const App = () => {
         console.log(
           '************************SIRDigitizationLocation***************************',
         );
-        console.log(data1);
+        //console.log(data1);
 
         data1 = [
           ...data1,
@@ -359,6 +360,8 @@ const App = () => {
                 name="DownloadMasterData"
                 component={DownloadMasterData}
               />
+
+              <Drawer.Screen name="DeleteSIRs" component={DeleteSIRs} />
 
               <Drawer.Screen
                 name="Un-Planned SIR"

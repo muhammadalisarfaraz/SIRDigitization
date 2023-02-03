@@ -25,6 +25,7 @@ import Moment from 'moment';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
+import Geolocation from '@react-native-community/geolocation';
 
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -61,16 +62,26 @@ const SafetyHazardCase = ({navigation}) => {
   const [isAuthModalVisible, setAuthModalVisible] = useState(false);
   const [error, setError] = useState('');
   const [uploadingMsg, setUploadingMsg] = useState('');
-  const [AccidentLocationAddress, setAccidentLocationAddress] = useState();
-  const [PremiseConsumerNumber, setPremiseConsumerNumber] = useState();
-  const [PMT, setPMT] = useState();
-  const [ConsumerMobileNumber, setConsumerMobileNumber] = useState();
-  const [Remarks, setRemarks] = useState();
-  const [User, setUser] = useState();
+  const [AccidentLocationAddress, setAccidentLocationAddress] = useState('');
+  const [PremiseConsumerNumber, setPremiseConsumerNumber] = useState('');
+  const [PMT, setPMT] = useState('');
+  const [ConsumerMobileNumber, setConsumerMobileNumber] = useState('');
+  const [Remarks, setRemarks] = useState('');
+  const [user, setUser] = useState('');
+  const [ibc, setIbc] = useState('');
   const [latitude1, setlatitude] = useState('');
   const [longitude1, setlongitude] = useState('');
   const [loader, setLoader] = useState(false);
   const [refresh, setRefresh] = useState(false);
+
+  const [accidentLocationAddressError, setAccidentLocationAddressError] =
+    useState('');
+  const [premiseConsumerNumberError, setPremiseConsumerNumberError] =
+    useState('');
+  const [pmtError, setPMTError] = useState('');
+  const [consumerMobileNumberError, setConsumerMobileNumberError] =
+    useState('');
+  const [remarksError, setRemarksError] = useState('');
 
   const SPACING = 10;
   const THUMB_SIZE = 200;
@@ -207,6 +218,9 @@ const SafetyHazardCase = ({navigation}) => {
 
         setlatitude(latitude);
         setlongitude(longitude);
+
+        console.log('latitude' + latitude);
+        console.log('longitude' + longitude);
       },
       error => console.log(error),
       {
@@ -218,12 +232,20 @@ const SafetyHazardCase = ({navigation}) => {
     //}
   };
 
+  const validate = (text, textLength) => {
+    if (text.length <= textLength) {
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
-    AsyncStorage.getItem('User').then(items => {
+    AsyncStorage.getItem('LoginCredentials').then(items => {
       var data = items ? JSON.parse(items) : {};
       // var datatable = [];
       //data[0].name=[0];
-      setUser(data[0].name);
+      setUser(data[0].pernr);
+      setIbc(data[0].begru);
     });
 
     getUserCurrentLocation();
@@ -319,8 +341,18 @@ const SafetyHazardCase = ({navigation}) => {
                   placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
                     setAccidentLocationAddress(text);
+                    if (validate(text, 40)) {
+                      setAccidentLocationAddressError(
+                        'Input must be at least 40 characters long.',
+                      );
+                    } else setAccidentLocationAddressError('');
                   }}
                 />
+                {accidentLocationAddressError !== '' && (
+                  <Text style={styles.error}>
+                    {accidentLocationAddressError}
+                  </Text>
+                )}
               </View>
 
               <View
@@ -373,8 +405,16 @@ const SafetyHazardCase = ({navigation}) => {
                   placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
                     setPremiseConsumerNumber(text);
+                    if (validate(text, 12)) {
+                      setPremiseConsumerNumberError(
+                        'Input must be at least 12 characters long.',
+                      );
+                    } else setPremiseConsumerNumberError('');
                   }}
                 />
+                {premiseConsumerNumberError !== '' && (
+                  <Text style={styles.error}>{premiseConsumerNumberError}</Text>
+                )}
               </View>
 
               <View
@@ -415,11 +455,17 @@ const SafetyHazardCase = ({navigation}) => {
                     borderBottomWidth: 0.8,
                   }}
                   placeholder={'Enter Text'}
-                  placeholderText={{fontSize: 16, color: 'grey'}}
+                  placeholderText={{fontSize: 30, color: 'grey'}}
                   onChangeText={text => {
                     setPMT(text);
+                    if (validate(text, 30)) {
+                      setPMTError('Input must be at least 30 characters long.');
+                    } else setPMTError('');
                   }}
                 />
+                {pmtError !== '' && (
+                  <Text style={styles.error}>{pmtError}</Text>
+                )}
               </View>
 
               <View
@@ -466,8 +512,16 @@ const SafetyHazardCase = ({navigation}) => {
                   placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
                     setConsumerMobileNumber(text);
+                    if (validate(text, 15)) {
+                      setConsumerMobileNumberError(
+                        'Input must be at least 15 characters long.',
+                      );
+                    } else setConsumerMobileNumberError('');
                   }}
                 />
+                {consumerMobileNumberError !== '' && (
+                  <Text style={styles.error}>{consumerMobileNumberError}</Text>
+                )}
               </View>
 
               <View
@@ -503,6 +557,11 @@ const SafetyHazardCase = ({navigation}) => {
                   placeholderTextColor="black"
                   onChangeText={text => {
                     setRemarks(text);
+                    if (validate(text, 200)) {
+                      setRemarksError(
+                        'Input must be at least 200 characters long.',
+                      );
+                    } else setRemarksError('');
                   }}
                   style={{
                     height: 150,
@@ -512,7 +571,11 @@ const SafetyHazardCase = ({navigation}) => {
                     textAlignVertical: 'top',
                     marginTop: 10,
                     color: 'black',
-                  }}></TextInput>
+                  }}
+                />
+                {remarksError !== '' && (
+                  <Text style={styles.error}>{remarksError}</Text>
+                )}
               </View>
 
               <View
@@ -899,19 +962,38 @@ const SafetyHazardCase = ({navigation}) => {
                           )
                           .then(res => res.json())
 */
+
+                        console.log(Remarks);
+                        console.log(PMT);
+                        console.log(ConsumerMobileNumber);
+                        console.log(AccidentLocationAddress);
+                        console.log(user);
+                        console.log(PremiseConsumerNumber);
+                        console.log(latitude1);
+                        console.log(longitude1);
+                        console.log(ibc);
+
                         let response = axios
                           .get(
-                            "https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks='" +
+                            'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks=%27' +
                               Remarks +
-                              "',Pmt='" +
+                              '%27,Pmt=%27' +
                               PMT +
-                              "',Mobileno='" +
+                              '%27,Mobileno=%27' +
                               ConsumerMobileNumber +
-                              "',Ibc='" +
+                              '%27,Ibc=%27' +
+                              ibc +
+                              '%27,CreatedBy=%27' +
+                              user +
+                              '%27,Consumernumber=%27' +
+                              PremiseConsumerNumber +
+                              '%27,Latitude=%27' +
+                              latitude1.toString() +
+                              '%27,Longitude=%27' +
+                              longitude1.toString() +
+                              '%27,ACCIDENT_NEAR_ADDR=%27' +
                               AccidentLocationAddress +
-                              "',CreatedBy='99',Consumernumber='" +
-                              ConsumerMobileNumber +
-                              "')?$format=json",
+                              '%27)',
                             {
                               Authorization:
                                 'Basic ' + base64.encode('fioriqa:sapsap2'),
@@ -924,6 +1006,64 @@ const SafetyHazardCase = ({navigation}) => {
                           .then(resp => {
                             console.log('res.data: ', resp.data.d.Message);
                             setSuccessModalVisible(!isSuccessModalVisible);
+                            setAuthModalVisible(!isAuthModalVisible);
+
+                            AsyncStorage.getItem('LoginCredentials').then(
+                              items => {
+                                var data = items ? JSON.parse(items) : {};
+
+                                AsyncStorage.getItem('SafetyHazard').then(
+                                  items => {
+                                    var data1 = [];
+
+                                    data1 = items ? JSON.parse(items) : [];
+
+                                    data1 = [
+                                      ...data1,
+                                      {
+                                        UserID: ' testuser', //data[0].name
+                                        SDate: Moment(Date.now()).format(
+                                          'YYYY-MM-DD',
+                                        ),
+                                        AccidentLocationAddress:
+                                          AccidentLocationAddress,
+                                        PremiseConsumerNumber:
+                                          PremiseConsumerNumber,
+                                        PMT: PMT,
+                                        ConsumerMobileNumber:
+                                          ConsumerMobileNumber,
+                                        Remarks: Remarks,
+                                        longitude1: longitude1,
+                                        latitude1: latitude1,
+                                        Status: 'Pending',
+                                        // IBC: data[0].IBC,
+                                        //  MobileID: data[0].MobileID,
+                                        SafetyHazardWebID: '',
+                                        ImageFlag: isImage,
+                                        HazardImages: images,
+                                      },
+                                    ];
+
+                                    AsyncStorage.setItem(
+                                      'SafetyHazard',
+                                      JSON.stringify(data1),
+                                    ).then(() => {
+                                      navigation.reset({
+                                        index: 0,
+                                        routes: [{name: 'SupportScreen'}],
+                                      });
+                                      //                          console.log("DAta1", data1);
+                                      setRefresh(true);
+
+                                      // swiper.current.scrollBy(1, true);
+                                      setTimeout(() => {
+                                        setRefresh(false);
+                                      }, 1000);
+                                    });
+                                  },
+                                );
+                              },
+                            );
                           });
                       } catch (error) {
                         // console.log('Error', e);
@@ -931,63 +1071,11 @@ const SafetyHazardCase = ({navigation}) => {
                         setLoader(false);
                       }
 
-                      AsyncStorage.getItem('User').then(items => {
-                        var data = items ? JSON.parse(items) : {};
-
-                        AsyncStorage.getItem('SafetyHazard').then(items => {
-                          var data1 = [];
-
-                          data1 = items ? JSON.parse(items) : [];
-
-                          data1 = [
-                            ...data1,
-                            {
-                              UserID: ' testuser', //data[0].name
-                              SDate: Moment(Date.now()).format('YYYY-MM-DD'),
-                              AccidentLocationAddress: AccidentLocationAddress,
-                              PremiseConsumerNumber: PremiseConsumerNumber,
-                              PMT: PMT,
-                              ConsumerMobileNumber: ConsumerMobileNumber,
-                              Remarks: Remarks,
-                              longitude1: longitude1,
-                              latitude1: latitude1,
-                              Status: 'Pending',
-                              // IBC: data[0].IBC,
-                              //  MobileID: data[0].MobileID,
-                              SafetyHazardWebID: '',
-                              ImageFlag: isImage,
-                              HazardImages: images,
-                            },
-                          ];
-
-                          AsyncStorage.setItem(
-                            'SafetyHazard',
-                            JSON.stringify(data1),
-                          ).then(() => {
-                            navigation.reset({
-                              index: 0,
-                              routes: [{name: 'SupportScreen'}],
-                            });
-                            //                          console.log("DAta1", data1);
-                            setRefresh(true);
-
-                            // swiper.current.scrollBy(1, true);
-                            setTimeout(() => {
-                              setRefresh(false);
-                            }, 1000);
-                          });
-                        });
-                      });
-
                       setRefresh(true);
 
                       setTimeout(() => {
                         setRefresh(false);
                       }, 1000);
-
-                      setAuthModalVisible(!isAuthModalVisible);
-
-                      setSuccessModalVisible(!isSuccessModalVisible);
                     }}
                     // }
                   />

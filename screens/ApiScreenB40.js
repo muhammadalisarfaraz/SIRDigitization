@@ -15,6 +15,7 @@ import {
   ActivityIndicator,
   Dimensions,
   BackHandler,
+  Alert,
 } from 'react-native';
 import {CheckBox} from 'react-native-elements';
 import {
@@ -358,13 +359,15 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [value, setValue] = useState();
   /* Consumer Detail */
 
-  const [consumerStatus, setConsumerStatus] = useState('');
-  const [isConsumerStatus, setIsConsumerStatus] = useState();
+  const [consumerStatus, setConsumerStatus] = useState('X');
+  const [isConsumerStatus, setIsConsumerStatus] = useState(0);
+  const [serviceType, setServiceType] = useState('O/H');
+  const [isServiceType, setIsServiceType] = useState(0);
+
   const [industryType, setIndustryType] = useState('');
   const [tariff, setTariff] = useState('');
-  const [serviceType, setServiceType] = useState('');
-  const [isServiceType, setIsServiceType] = useState();
-
+  const [ibcName, setIbcName] = useState('');
+  const [reviewRemarks, setReviewRemarks] = useState('');
   const [sizeofService, setSizeofService] = useState('');
   const [fedFromPMTSS, setFedFromPMTSS] = useState('');
   const [pmtSSCode, setPMTSSCode] = useState('');
@@ -406,8 +409,8 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [meterTestingTo, setMeterTestingTo] = useState('');
   const [meterInstalled1, setMeterInstalled1] = useState('');
   const [meterInstalled2, setMeterInstalled2] = useState('');
-  const [meterInstalled, setMeterInstalled] = useState('');
-  const [isMeterInstalled, setIsMeterInstalled] = useState('');
+  const [meterInstalled, setMeterInstalled] = useState('FMR');
+  const [isMeterInstalled, setIsMeterInstalled] = useState(0);
   const [fmrNo, setFMRNo] = useState('');
   const [statusPostalorder, setStatusPostalorder] = useState('');
   const [metertestingResultremarks, setmetertestingResultremarks] =
@@ -427,10 +430,10 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [mobileNo, setMobileNo] = useState('');
   const [consumerCNIC, setConsumerCNIC] = useState('');
   const [consumerRemarks, setConsumerRemarks] = useState('');
-  const [consumerRefuseYN, setConsumerRefuseYN] = useState('');
+  const [consumerRefuseYN, setConsumerRefuseYN] = useState('Yes');
   const [isConsumerRefuseYN, setIsConsumerRefuseYN] = useState(0);
-  const [consumerSign, setConsumerSign] = useState('');
-  const [isConsumerSign, setIsConsumerSign] = useState('');
+  const [consumerSign, setConsumerSign] = useState('Yes');
+  const [isConsumerSign, setIsConsumerSign] = useState(0);
 
   /* Customer Acknowlegment ------------ End */
 
@@ -450,7 +453,39 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [isAuthModalVisible, setAuthModalVisible] = useState(false);
   const [isSignModalVisible, setSignModalVisible] = useState(false);
+
   const [error, setError] = useState('');
+  const [industryTypeError, setIndustryTypeError] = useState('');
+  const [tariffError, setTariffError] = useState('');
+  const [sizeofServiceError, setSizeofServiceError] = useState('');
+  const [fedFromPMTSSError, setFedFromPMTSSError] = useState('');
+  const [pmtSSCodeError, setPMTSSCodeError] = useState('');
+  const [connectedLoadError, setConnectedLoadError] = useState('');
+  const [contractLoadError, setContractLoadError] = useState('');
+  const [connectedLoadKWError, setConnectedLoadKWError] = useState('');
+  const [runningLoadKWError, setRunningLoadKWError] = useState('');
+  const [quantityError, setQuantityError] = useState('');
+  const [meterTestingResultTCError, setMeterTestingResultTCError] =
+    useState('');
+  const [meterTestingperErrorError, setMeterTestingperErrorError] =
+    useState('');
+  const [meterTestingToError, setMeterTestingToError] = useState('');
+  const [meterInstalled1Error, setMeterInstalled1Error] = useState('');
+  const [meterInstalled2Error, setMeterInstalled2Error] = useState('');
+  const [fmrNoError, setFMRNoError] = useState('');
+  const [discrepancyfindingsRemarksError, setDiscrepancyfindingsRemarksError] =
+    useState('');
+  const [powerKENoError, setPowerKENoError] = useState('');
+  const [powerMeterMakeError, setPowerMeterMakeError] = useState('');
+  const [powerMCError, setPowerMCError] = useState('');
+  const [powerMeterRemarksError, setPowerMeterRemarksError] = useState('');
+  const [powerMeterReadingError, setPowerMeterReadingError] = useState('');
+  const [consumerNameError, setConsumerNameError] = useState('');
+  const [mobileNoError, setMobileNoError] = useState('');
+  const [consumerCNICError, setConsumerCNICError] = useState('');
+  const [consumerRemarksError, setConsumerRemarksError] = useState('');
+  const [agedifferror, setAgedifferror] = useState('');
+
   const [uploadingMsg, setUploadingMsg] = useState('');
 
   const [consumerSignature, setConsumerSignature] = useState([]);
@@ -488,7 +523,7 @@ const ApiScreenB40 = ({route, navigation}) => {
     );
   };
 
-  const [date1, setDate] = useState();
+  const [date1, setDate] = useState('');
 
   const [descripancylist, setDescripancyList] = useState([]);
   const [tableList, setTableList] = useState([]);
@@ -505,6 +540,12 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [sirdate, setSirDate] = useState('');
   const [sirtime, setSirTime] = useState('');
   const [isEditable, setIsEditable] = useState(false);
+
+  const [NAME, setNAME] = useState('');
+  const [ADDRESS, setADDRESS] = useState('');
+  const [CONSUMER_NO, setCONSUMER_NO] = useState('');
+  const [Vkont, setVkont] = useState('');
+  const [TARIFF, setTARIFF] = useState('');
 
   const {data, index, otherParam} = route.params;
 
@@ -531,6 +572,11 @@ const ApiScreenB40 = ({route, navigation}) => {
     {label: 'X1', value: 'X1'},
     {label: 'MDI-Off', value: 'MDI-Off'},
     {label: 'MDI-On', value: 'MDI-On'},
+    {label: 'K0', value: 'K0'},
+    {label: 'R0', value: 'R0'},
+    {label: 'K1i', value: 'K1i'},
+    {label: 'K0i', value: 'K0i'},
+    {label: 'P1i', value: 'P1i'},
     {label: 'R', value: 'R'},
     {label: 'Y', value: 'Y'},
     {label: 'B', value: 'B'},
@@ -638,6 +684,7 @@ const ApiScreenB40 = ({route, navigation}) => {
 
   const deleteAppliance = (index, e) => {
     setTableList(tableList.filter((v, i) => i !== index));
+    setApplianceList(appliancelist.filter((v, i) => i !== index));
   };
 
   const onAddmore = () => {
@@ -957,7 +1004,23 @@ const ApiScreenB40 = ({route, navigation}) => {
     });
   };
 
-  const StoreInDevice = (status, isPost) => {
+  const validate = (text, textLength) => {
+    if (text.length <= textLength) {
+      return false;
+    }
+    return true;
+  };
+
+  const StoreInDevice = (
+    status,
+    isPost,
+    Result_Discrepancies,
+    Result_Appliances,
+    Result_Meter,
+    Result_Register,
+    Result_Onsite,
+    Result_MeterSeal,
+  ) => {
     AsyncStorage.getItem('SIRDigitization').then(async items => {
       let data = JSON.parse(items);
       data.filter((item, index) => {
@@ -1057,8 +1120,23 @@ const ApiScreenB40 = ({route, navigation}) => {
           data[index].LightPT = lightPT;
           data[index].LightPTSec = lightPTSec;
 
+          data[index].NAME = NAME;
+          data[index].ADDRESS = ADDRESS;
+          data[index].CONSUMER_NO = CONSUMER_NO;
+          data[index].Vkont = Vkont;
+          data[index].TARIFF = TARIFF;
+
           data[index].isDiscrepancyitems = isSelecteditems;
           data[index].Discrepancyitems = selectedItems;
+
+          if (Result_Discrepancies != undefined) {
+            data[index].Result_Discrepancies = Result_Discrepancies;
+            data[index].Result_Appliances = Result_Appliances;
+            data[index].Result_Meter = Result_Meter;
+            data[index].Result_Register = Result_Register;
+            data[index].Result_Onsite = Result_Onsite;
+            data[index].Result_MeterSeal = Result_MeterSeal;
+          }
 
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data));
         }
@@ -1082,10 +1160,6 @@ const ApiScreenB40 = ({route, navigation}) => {
       console.log(item);
     });
     */
-
-    console.log(powermeter);
-    console.log(appliancelist);
-    console.log(descripancylist);
 
     const powermeterData = powermeter.length > 0 ? powermeter : [{}];
     const appliancelistData = appliancelist.length > 0 ? appliancelist : [{}];
@@ -1176,9 +1250,20 @@ const ApiScreenB40 = ({route, navigation}) => {
         console.log(
           '******************PostSimultaneous UPDATED*********************************',
         );
-        console.log('res.data.d.Result------' + res.data.d.Result);
+        console.log(
+          'res.data.d.Result------' + res.data.d.Result_Discrepancies,
+        );
         //GetImageAPIToken();
-        StoreInDevice('Post', true);
+        StoreInDevice(
+          'Post',
+          true,
+          res.data.d.Result_Discrepancies,
+          res.data.d.Result_Appliances,
+          res.data.d.Result_Meter,
+          res.data.d.Result_Register,
+          res.data.d.Result_Onsite,
+          res.data.d.Result_MeterSeal,
+        );
         setAuthModalVisible(!isAuthModalVisible);
         setSuccessModalVisible(!isSuccessModalVisible);
       })
@@ -1199,6 +1284,12 @@ const ApiScreenB40 = ({route, navigation}) => {
     setSirTime(Moment().format('hh:mm:ss'));
     setConnectedLoad(data.CONNECTED_LOAD);
 
+    setNAME(data.NAME);
+    setADDRESS(data.ADDRESS);
+    setCONSUMER_NO(data.CONSUMER_NO);
+    setVkont(data.Vkont);
+    setTARIFF(data.TARIFF);
+
     AsyncStorage.getItem('SIRDigitization').then(items => {
       var localData = items ? JSON.parse(items) : [];
       var filterData = localData.filter(item => {
@@ -1206,10 +1297,20 @@ const ApiScreenB40 = ({route, navigation}) => {
           if (item.Status != 'Post') {
             setIsEditable(true);
           }
-          setConsumerStatus(item.ConsumerStatus);
-          setIsConsumerStatus(item.IsConsumerStatus);
-          setServiceType(item.ServiceType);
-          setIsServiceType(item.IsServiceType);
+          if (item.REMARKS != undefined) setReviewRemarks(item.REMARKS);
+
+          setIbcName(item.IBCNAME);
+          setTARIFF(item.TARIFF);
+
+          if (item.ConsumerStatus != undefined)
+            setConsumerStatus(item.ConsumerStatus);
+          if (item.IsConsumerStatus != undefined)
+            setIsConsumerStatus(item.IsConsumerStatus);
+
+          if (item.ServiceType != undefined) setServiceType(item.ServiceType);
+          if (item.IsServiceType != undefined)
+            setIsServiceType(item.IsServiceType);
+
           setIndustryType(item.IndustryType);
           setTariff(item.Tariff);
           setFedFromPMTSS(item.FedFromPMTSS);
@@ -1227,10 +1328,15 @@ const ApiScreenB40 = ({route, navigation}) => {
           setMeterTestingResultTC(item.MeterTestingResultTC);
           setMeterTestingperError(item.MeterTestingperError);
           setMeterTestingTo(item.MetertestingTo);
-          setFMRNo(item.FMRNo);
-          setDate(item.Date1);
-          setIsMeterInstalled(item.IsMeterInstalled);
-          setMeterInstalled(item.MeterInstalled);
+
+          if (item.FMRNo != undefined) setFMRNo(item.FMRNo);
+          if (item.Date1 != undefined) setDate(item.Date1);
+
+          if (item.IsMeterInstalled != undefined)
+            setIsMeterInstalled(item.IsMeterInstalled);
+          if (item.MeterInstalled != undefined)
+            setMeterInstalled(item.MeterInstalled);
+
           setMeterInstalled1(item.MeterInstalled1);
           setMeterInstalled2(item.MeterInstalled2);
 
@@ -1245,13 +1351,23 @@ const ApiScreenB40 = ({route, navigation}) => {
           setMobileNo(item.MobileNo);
           setConsumerCNIC(item.ConsumerCNIC);
           setConsumerRemarks(item.ConsumerRemarks);
-          setIsConsumerRefuseYN(item.IsConsumerRefuseYN);
-          setConsumerRefuseYN(item.ConsumerRefuseYN);
-          setIsConsumerSign(item.IsConsumerSign);
-          setConsumerSign(item.ConsumerSign);
+
+          if (item.IsConsumerRefuseYN != undefined)
+            setIsConsumerRefuseYN(item.IsConsumerRefuseYN);
+          if (item.ConsumerRefuseYN != undefined)
+            setConsumerRefuseYN(item.ConsumerRefuseYN);
+
+          if (item.IsConsumerSign != undefined)
+            setIsConsumerSign(item.IsConsumerSign);
+          if (item.ConsumerSign != undefined)
+            setConsumerSign(item.ConsumerSign);
 
           if (item.ConsumerSignature != undefined) {
-            setSign(item.ConsumerSignature[0].consSign);
+            var filterConsumerSignature = item.ConsumerSignature.filter(
+              items => {
+                setSign(items.consSign);
+              },
+            );
             setConsumerSignature(item.ConsumerSignature);
             setIsSignature(item.IsSignature);
           }
@@ -1286,6 +1402,8 @@ const ApiScreenB40 = ({route, navigation}) => {
           setLightPTSec(item.LightPTSec);
 
           setTableList(item.ApplianceDetail);
+          setApplianceList(item.Appliancelist);
+          setDescripancyList(item.DescripancyDetail);
         }
       });
     });
@@ -1314,9 +1432,30 @@ const ApiScreenB40 = ({route, navigation}) => {
       //console.og('********items.id', data);
       setItemsAppliance(data);
     });
+
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      handleBackButtonPress,
+      () => {
+        Alert.alert(
+          'Exit App',
+          'Do you want to exit?',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => {},
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ],
+          {
+            cancelable: false,
+          },
+        );
+        return true;
+      },
     );
     return () => backHandler.remove();
   }, []);
@@ -1594,18 +1733,39 @@ const ApiScreenB40 = ({route, navigation}) => {
                     fontSize: 13,
                     color: 'black',
                   }}>
+                  {'Tariff: ' + TARIFF}
+                </Text>
+                <Text
+                  style={{
+                    marginTop: 4,
+                    fontSize: 13,
+                    color: 'black',
+                  }}>
                   {'Assign To: ' + data.AssignMio + ' - ' + data.MIO_NAME}
+                </Text>
+                <Text
+                  style={{
+                    marginTop: 4,
+                    fontSize: 13,
+                    color: 'black',
+                  }}>
+                  {reviewRemarks}
                 </Text>
               </View>
             </View>
 
-            <View style={{paddingTop: 20}}></View>
+            <View
+              style={
+                {
+                  /*paddingTop: 20*/
+                }
+              }></View>
             <View style={{padding: 5, marginBottom: 10}}></View>
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
                   // flex: 0.45,
-                  paddingTop: 5,
+                  paddingTop: -50,
                   //   flexDirection: 'row',
                   //  justifyContent: 'space-between',
                   paddingVertical: 10,
@@ -1619,7 +1779,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                     color: 'black', //'#FFFFFF',
                     //     marginBottom: 4,
                   }}>
-                  {'Cluster / IBC: ' + clusterIBC}
+                  {'Cluster / IBC: ' + data.CLUSTER + '/' + ibcName}
                 </Text>
 
                 <Text
@@ -1766,10 +1926,18 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setIndustryType(text);
+                            if (validate(text, 8)) {
+                              setIndustryTypeError(
+                                'Input must be at least 8 characters long.',
+                              );
+                            } else setIndustryTypeError('');
                           }}
                           value={industryType}
                           editable={isEditable}
                         />
+                        {industryTypeError !== '' && (
+                          <Text style={styles.error}>{industryTypeError}</Text>
+                        )}
                       </View>
 
                       <View
@@ -1785,10 +1953,18 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setTariff(text);
+                            if (validate(text, 10)) {
+                              setTariffError(
+                                'Input must be at least 10 characters long.',
+                              );
+                            } else setTariffError('');
                           }}
                           value={tariff}
                           editable={isEditable}
                         />
+                        {tariffError !== '' && (
+                          <Text style={styles.error}>{tariffError}</Text>
+                        )}
                       </View>
                     </View>
 
@@ -1864,14 +2040,22 @@ const ApiScreenB40 = ({route, navigation}) => {
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
-                          keyboardType={'email-address'}
+                          //keyboardType={'email-address'}
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setSizeofService(text);
+                            if (validate(text, 4)) {
+                              setSizeofServiceError(
+                                'Input must be at least 4 characters long.',
+                              );
+                            } else setSizeofServiceError('');
                           }}
                           value={sizeofService}
                           editable={isEditable}
                         />
+                        {sizeofServiceError !== '' && (
+                          <Text style={styles.error}>{sizeofServiceError}</Text>
+                        )}
                       </View>
                     </View>
 
@@ -1911,10 +2095,18 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setFedFromPMTSS(text);
+                            if (validate(text, 10)) {
+                              setFedFromPMTSSError(
+                                'Input must be at least 10 characters long.',
+                              );
+                            } else setFedFromPMTSSError('');
                           }}
                           value={fedFromPMTSS}
                           editable={isEditable}
                         />
+                        {fedFromPMTSSError !== '' && (
+                          <Text style={styles.error}>{fedFromPMTSSError}</Text>
+                        )}
                       </View>
 
                       <View
@@ -1930,10 +2122,18 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setPMTSSCode(text);
+                            if (validate(text, 10)) {
+                              setPMTSSCodeError(
+                                'Input must be at least 10 characters long.',
+                              );
+                            } else setPMTSSCodeError('');
                           }}
                           value={pmtSSCode}
                           editable={isEditable}
                         />
+                        {pmtSSCodeError !== '' && (
+                          <Text style={styles.error}>{pmtSSCodeError}</Text>
+                        )}
                       </View>
                     </View>
 
@@ -1972,10 +2172,18 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setConnectedLoad(text);
+                            if (validate(text, 10)) {
+                              setConnectedLoadError(
+                                'Input must be at least 10 characters long.',
+                              );
+                            } else setConnectedLoadError('');
                           }}
                           value={connectedLoad}
                           editable={false}
                         />
+                        {connectedLoadError !== '' && (
+                          <Text style={styles.error}>{connectedLoadError}</Text>
+                        )}
                       </View>
 
                       <View
@@ -1991,10 +2199,18 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setContractLoad(text);
+                            if (validate(text, 10)) {
+                              setContractLoadError(
+                                'Input must be at least 10 characters long.',
+                              );
+                            } else setContractLoadError('');
                           }}
                           value={contractLoad}
                           editable={isEditable}
                         />
+                        {contractLoadError !== '' && (
+                          <Text style={styles.error}>{contractLoadError}</Text>
+                        )}
                       </View>
                     </View>
 
@@ -2029,10 +2245,20 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setConnectedLoadKW(text);
+                            if (validate(text, 10)) {
+                              setConnectedLoadKWError(
+                                'Input must be at least 10 characters long.',
+                              );
+                            } else setConnectedLoadKWError('');
                           }}
                           value={connectedLoadKW}
                           editable={isEditable}
                         />
+                        {connectedLoadKWError !== '' && (
+                          <Text style={styles.error}>
+                            {connectedLoadKWError}
+                          </Text>
+                        )}
                       </View>
 
                       <View
@@ -2048,10 +2274,18 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholderTextColor="grey"
                           onChangeText={text => {
                             setRunningLoadKW(text);
+                            if (validate(text, 10)) {
+                              setRunningLoadKWError(
+                                'Input must be at least 10 characters long.',
+                              );
+                            } else setRunningLoadKWError('');
                           }}
                           value={runningLoadKW}
                           editable={isEditable}
                         />
+                        {runningLoadKWError !== '' && (
+                          <Text style={styles.error}>{runningLoadKWError}</Text>
+                        )}
                       </View>
                     </View>
                   </View>
@@ -2194,7 +2428,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                     }}>
                     <TextInput
                       style={{backgroundColor: 'white'}}
-                      onChangeText={value => setQuantity(value)}
+                      onChangeText={value => {
+                        setQuantity(value);
+                        if (validate(value, 2)) {
+                          setQuantityError(
+                            'Input must be at least 2 characters long.',
+                          );
+                        } else setQuantityError('');
+                      }}
                       placeholder="Quantity"
                       keyboardType={'numeric'}
                       placeholderTextColor="black"
@@ -2202,6 +2443,9 @@ const ApiScreenB40 = ({route, navigation}) => {
                       value={quantity}
                       //defaultValue="1"
                     />
+                    {quantityError !== '' && (
+                      <Text style={styles.error}>{quantityError}</Text>
+                    )}
                   </View>
                 </View>
                 <View>
@@ -2486,10 +2730,20 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setMeterTestingResultTC(text);
+                                if (validate(text, 10)) {
+                                  setMeterTestingResultTCError(
+                                    'Input must be at least 10 characters long.',
+                                  );
+                                } else setMeterTestingResultTCError('');
                               }}
                               value={meterTestingResultTC}
                               editable={isEditable}
                             />
+                            {meterTestingResultTCError !== '' && (
+                              <Text style={styles.error}>
+                                {meterTestingResultTCError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -2539,10 +2793,20 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setMeterTestingperError(text);
+                                if (validate(text, 6)) {
+                                  setMeterTestingperErrorError(
+                                    'Input must be at least 6 characters long.',
+                                  );
+                                } else setMeterTestingperErrorError('');
                               }}
                               value={meterTestingperError}
                               editable={isEditable}
                             />
+                            {meterTestingperErrorError !== '' && (
+                              <Text style={styles.error}>
+                                {meterTestingperErrorError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -2582,10 +2846,20 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setMeterTestingTo(text);
+                                if (validate(text, 6)) {
+                                  setMeterTestingToError(
+                                    'Input must be at least 6 characters long.',
+                                  );
+                                } else setMeterTestingToError('');
                               }}
                               value={meterTestingTo}
                               editable={isEditable}
                             />
+                            {meterTestingToError !== '' && (
+                              <Text style={styles.error}>
+                                {meterTestingToError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -2641,10 +2915,20 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setMeterInstalled1(text);
+                                if (validate(text, 10)) {
+                                  setMeterInstalled1Error(
+                                    'Input must be at least 10 characters long.',
+                                  );
+                                } else setMeterInstalled1Error('');
                               }}
                               value={meterInstalled1}
                               editable={isEditable}
                             />
+                            {meterInstalled1Error !== '' && (
+                              <Text style={styles.error}>
+                                {meterInstalled1Error}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -2681,14 +2965,24 @@ const ApiScreenB40 = ({route, navigation}) => {
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'Detail'}
-                              keyboardType={'email-address'}
+                              //keyboardType={'email-address'}
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setMeterInstalled2(text);
+                                if (validate(text, 10)) {
+                                  setMeterInstalled2Error(
+                                    'Input must be at least 10 characters long.',
+                                  );
+                                } else setMeterInstalled2Error('');
                               }}
                               value={meterInstalled2}
                               editable={isEditable}
                             />
+                            {meterInstalled2Error !== '' && (
+                              <Text style={styles.error}>
+                                {meterInstalled2Error}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -2838,10 +3132,18 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setFMRNo(text);
+                                if (validate(text, 4)) {
+                                  setFMRNoError(
+                                    'Input must be at least 4 characters long.',
+                                  );
+                                } else setFMRNoError('');
                               }}
                               value={fmrNo}
                               editable={isEditable}
                             />
+                            {fmrNoError !== '' && (
+                              <Text style={styles.error}>{fmrNoError}</Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -3039,6 +3341,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               multiline={true}
                               onChangeText={text => {
                                 setDiscrepancyfindingsRemarks(text);
+                                if (validate(text, 255)) {
+                                  setDiscrepancyfindingsRemarksError(
+                                    'Input must be at least 255 characters long.',
+                                  );
+                                } else setDiscrepancyfindingsRemarksError('');
                               }}
                               placeholder={'Any Comments (If Required) '}
                               placeholderTextColor="black"
@@ -3053,6 +3360,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               value={discrepancyfindingsRemarks}
                               editable={isEditable}
                             />
+                            {discrepancyfindingsRemarksError !== '' && (
+                              <Text style={styles.error}>
+                                {discrepancyfindingsRemarksError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -3117,6 +3429,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setPowerKENo(text);
+                                  if (validate(text, 10)) {
+                                    setPowerKENoError(
+                                      'Input must be at least 10 characters long.',
+                                    );
+                                  } else setPowerKENoError('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -3129,6 +3446,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 value={powerKENo}
                                 editable={isEditable}
                               />
+                              {powerKENoError !== '' && (
+                                <Text style={styles.error}>
+                                  {powerKENoError}
+                                </Text>
+                              )}
                             </View>
                           </View>
                         </View>
@@ -3166,6 +3488,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setPowerMeterMake(text);
+                                  if (validate(text, 10)) {
+                                    setPowerMeterMakeError(
+                                      'Input must be at least 10 characters long.',
+                                    );
+                                  } else setPowerMeterMakeError('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -3178,6 +3505,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 value={powerMeterMake}
                                 editable={isEditable}
                               />
+                              {powerMeterMakeError !== '' && (
+                                <Text style={styles.error}>
+                                  {powerMeterMakeError}
+                                </Text>
+                              )}
                             </View>
                           </View>
                         </View>
@@ -3212,10 +3544,15 @@ const ApiScreenB40 = ({route, navigation}) => {
                               <TextInput
                                 // style={styles.inputLoadDetail}
                                 placeholder={'Meter CT Ratio'}
-                                keyboardType={'email-address'}
+                                //keyboardType={'email-address'}
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setPowerMC(text);
+                                  if (validate(text, 4)) {
+                                    setPowerMCError(
+                                      'Input must be at least 4 characters long.',
+                                    );
+                                  } else setPowerMCError('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -3228,6 +3565,9 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 value={powerMC}
                                 editable={isEditable}
                               />
+                              {powerMCError !== '' && (
+                                <Text style={styles.error}>{powerMCError}</Text>
+                              )}
                             </View>
                           </View>
                         </View>
@@ -3265,6 +3605,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setPowerMCSec(text);
+                                  if (validate(text, 4)) {
+                                    setPowerMCError(
+                                      'Input must be at least 4 characters long.',
+                                    );
+                                  } else setPowerMCError('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -3277,6 +3622,9 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 value={powerMCSec}
                                 editable={isEditable}
                               />
+                              {powerMCError !== '' && (
+                                <Text style={styles.error}>{powerMCError}</Text>
+                              )}
                             </View>
                           </View>
                         </View>
@@ -3304,6 +3652,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               multiline={true}
                               onChangeText={text => {
                                 setPowerMeterRemarks(text);
+                                if (validate(text, 255)) {
+                                  setPowerMeterRemarksError(
+                                    'Input must be at least 255 characters long.',
+                                  );
+                                } else setPowerMeterRemarksError('');
                               }}
                               placeholder={'Any comment (if required)'}
                               placeholderTextColor="black"
@@ -3318,6 +3671,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               value={powerMeterRemarks}
                               editable={isEditable}
                             />
+                            {powerMeterRemarksError !== '' && (
+                              <Text style={styles.error}>
+                                {powerMeterRemarksError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -3456,15 +3814,25 @@ const ApiScreenB40 = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={{flex: 0.2, backgroundColor: 'white'}}
-                              onChangeText={value =>
-                                setPowerMeterReading(value)
-                              }
+                              onChangeText={value => {
+                                setPowerMeterReading(value);
+                                if (validate(value, 10)) {
+                                  setPowerMeterReadingError(
+                                    'Input must be at least 10 characters long.',
+                                  );
+                                } else setPowerMeterReadingError('');
+                              }}
                               placeholder="Meter Reading"
                               keyboardType={'numeric'}
                               placeholderTextColor="black"
                               fontSize={14}
                               value={powermeterreading}
                             />
+                            {powerMeterReadingError !== '' && (
+                              <Text style={styles.error}>
+                                {powerMeterReadingError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                         <View>
@@ -3549,6 +3917,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setLightKENo(text);
+                                  if (validate(text, 2)) {
+                                    setAgedifferror(
+                                      'Input must be at least 2 characters long.',
+                                    );
+                                  } else setAgedifferror('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -3598,6 +3971,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setLightMeterMake(text);
+                                  if (validate(text, 2)) {
+                                    setAgedifferror(
+                                      'Input must be at least 2 characters long.',
+                                    );
+                                  } else setAgedifferror('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -3648,6 +4026,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setLightMC(text);
+                                  if (validate(text, 2)) {
+                                    setAgedifferror(
+                                      'Input must be at least 2 characters long.',
+                                    );
+                                  } else setAgedifferror('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -3697,6 +4080,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setLightMCSec(text);
+                                  if (validate(text, 2)) {
+                                    setAgedifferror(
+                                      'Input must be at least 2 characters long.',
+                                    );
+                                  } else setAgedifferror('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -3736,6 +4124,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               multiline={true}
                               onChangeText={text => {
                                 setLightMeterRemarks(text);
+                                if (validate(text, 2)) {
+                                  setAgedifferror(
+                                    'Input must be at least 2 characters long.',
+                                  );
+                                } else setAgedifferror('');
                               }}
                               placeholder={'Any comment (if required)'}
                               placeholderTextColor="black"
@@ -3888,9 +4281,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={{flex: 0.2, backgroundColor: 'white'}}
-                              onChangeText={value =>
-                                setLightMeterReading(value)
-                              }
+                              onChangeText={value => {
+                                setLightMeterReading(value);
+                                if (validate(value, 2)) {
+                                  setAgedifferror(
+                                    'Input must be at least 2 characters long.',
+                                  );
+                                } else setAgedifferror('');
+                              }}
                               placeholder="Meter Reading"
                               keyboardType={'numeric'}
                               placeholderTextColor="black"
@@ -4744,6 +5142,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setConsumerName(text);
+                                if (validate(text, 20)) {
+                                  setConsumerNameError(
+                                    'Input must be at least 20 characters long.',
+                                  );
+                                } else setConsumerNameError('');
                               }}
                               style={{
                                 //height: 24,
@@ -4756,6 +5159,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               value={consumerName}
                               editable={isEditable}
                             />
+                            {consumerNameError !== '' && (
+                              <Text style={styles.error}>
+                                {consumerNameError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -4792,6 +5200,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setMobileNo(text);
+                                if (validate(text, 11)) {
+                                  setMobileNoError(
+                                    'Input must be at least 11 characters long.',
+                                  );
+                                } else setMobileNoError('');
                               }}
                               style={{
                                 //height: 24,
@@ -4804,6 +5217,9 @@ const ApiScreenB40 = ({route, navigation}) => {
                               value={mobileNo}
                               editable={isEditable}
                             />
+                            {mobileNoError !== '' && (
+                              <Text style={styles.error}>{mobileNoError}</Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -4841,6 +5257,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setConsumerCNIC(text);
+                                if (validate(text, 16)) {
+                                  setConsumerCNICError(
+                                    'Input must be at least 16 characters long.',
+                                  );
+                                } else setConsumerCNICError('');
                               }}
                               style={{
                                 //height: 24,
@@ -4853,6 +5274,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               value={consumerCNIC}
                               editable={isEditable}
                             />
+                            {consumerCNICError !== '' && (
+                              <Text style={styles.error}>
+                                {consumerCNICError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -4882,6 +5308,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               multiline={true}
                               onChangeText={text => {
                                 setConsumerRemarks(text);
+                                if (validate(text, 255)) {
+                                  setConsumerRemarksError(
+                                    'Input must be at least 255 characters long.',
+                                  );
+                                } else setConsumerRemarksError('');
                               }}
                               placeholder={'Any comment (if required)'}
                               placeholderTextColor="black"
@@ -4896,6 +5327,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               value={consumerRemarks}
                               editable={isEditable}
                             />
+                            {consumerRemarksError !== '' && (
+                              <Text style={styles.error}>
+                                {consumerRemarksError}
+                              </Text>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -5821,7 +6257,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     marginVertical: 3,
     width: 400,
-    height: 180,
+    height: 230,
     marginTop: 10,
     justifyContent: 'center',
     // borderWidth: .5,
@@ -6055,6 +6491,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#69B2FF',
     width: 120,
     textAlign: 'center',
+    marginTop: 10,
+  },
+  error: {
+    color: 'red',
     marginTop: 10,
   },
 });

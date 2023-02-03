@@ -228,9 +228,9 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   }, []);
 
   const getLoginCredentials = () => {
+    var data1 = [];
     AsyncStorage.getItem('LoginCredentials')
       .then(items => {
-        var data1 = [];
         data1 = items ? JSON.parse(items) : [];
         setMio(data1[0].pernr);
         setIbc(data1[0].begru);
@@ -240,12 +240,12 @@ const LoadingScreenforDataDownload = ({navigation}) => {
       .then(res => {
         console.log('Mio:: ', Mio);
         console.log('Ibc:: ', Ibc);
-        /*
-        getAppliances();
-        getMRNote();
-        getPremiseType();
-        getTariff();
-      */
+        if (data1 == []) {
+          getAppliances();
+          getMRNote();
+          getPremiseType();
+          getTariff();
+        }
       });
   };
   const getMIOData = (mio, ibc) => {
@@ -299,8 +299,9 @@ const LoadingScreenforDataDownload = ({navigation}) => {
               console.log('child loop' + child.Sirnr);
               if (child.Sirnr == parent.Sirnr) {
                 if (parent.SirStatus == 'REVW') {
-                  data[index].Status = '';
+                  data[index].Status = 'Save';
                   data[index].SirStatus = parent.SirStatus;
+                  data[index].REMARKS = parent.REMARKS;
                   console.log('data[index].Status' + data[index].Status);
                   console.log('data.Status' + data.Status);
                 }
@@ -332,9 +333,13 @@ const LoadingScreenforDataDownload = ({navigation}) => {
                 CLUSTER: parent.CLUSTER,
                 MIO_NAME: parent.MIO_NAME,
                 CONSUMER_NO: parent.CONSUMER_NO,
+                TARIFF: parent.TARIFF,
+                IBCNAME: parent.IBCNAME,
+                REMARKS: parent.REMARKS,
                 OnsiteMeterDetail: [],
                 ApplianceDetail: [],
                 DescripancyDetail: [],
+                Appliancelist: [],
                 PowerMeter: [],
                 LightMeter: [],
                 Status: '',
@@ -349,12 +354,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
         .then(res => {
           console.log('final:data: ' + typeof data + ' length: ' + data.length);
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data));
-          setSIRDigitizationData(
-            'final:SIRDigitization: ' +
-              typeof MIOData +
-              ' length: ' +
-              MIOData.length,
-          );
+          setSIRDigitizationData('final: length: ' + data.length);
         });
     } catch (error) {
       // Error saving data
@@ -651,7 +651,6 @@ const LoadingScreenforDataDownload = ({navigation}) => {
         <>
           <Text style={{color: 'white', fontSize: 15}}>IBC: {Ibc}</Text>
           <Text style={{color: 'white', fontSize: 15}}>MIO: {Mio}</Text>
-          <Text style={{color: 'white', fontSize: 15}}>MIOData: {MIOData}</Text>
           <Text style={{color: 'white', fontSize: 15}}>
             SIRDigitizationData: {SIRDigitizationData}
           </Text>

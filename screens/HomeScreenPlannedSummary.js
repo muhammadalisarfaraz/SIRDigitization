@@ -21,6 +21,7 @@ const HomeScreenPlannedSummary = ({navigation}) => {
   const [savedCases, setSavedCases] = useState(0);
   const [pendingCases, setPendingCases] = useState(0);
   const [postCases, setPostCases] = useState(0);
+  const [safetyHazardCases, setsafetyHazardCases] = useState(0);
 
   const [startOfMonth, setstartOfMonth] = useState(
     moment().startOf('month').subtract(1, 'days').format('YYYYMMDD'),
@@ -46,6 +47,12 @@ const HomeScreenPlannedSummary = ({navigation}) => {
       setPostCases(SIRData.filter(x => x.Status == 'Post').length);
 
       setPendingCases(SIRData.filter(x => x.Status == '').length);
+    });
+
+    AsyncStorage.getItem('SafetyHazard').then(items => {
+      var SafetyHazardData = items ? JSON.parse(items) : {};
+      setsafetyHazardCases(SafetyHazardData.length);
+      console.log('total setsafetyHazardCases: ' + SafetyHazardData.length);
     });
   };
 
@@ -102,6 +109,14 @@ const HomeScreenPlannedSummary = ({navigation}) => {
           </View>
           <View style={{flex: 1, alignItems: 'flex-start'}}>
             <Text style={styles.text_right}>{postCases}</Text>
+          </View>
+        </View>
+        <View style={{flexDirection: 'row', flex: 1, width: '96%'}}>
+          <View style={{flex: 1, alignItems: 'flex-start'}}>
+            <Text style={styles.text_left}>Safety Hazard Cases</Text>
+          </View>
+          <View style={{flex: 1, alignItems: 'flex-start'}}>
+            <Text style={styles.text_right}>{safetyHazardCases}</Text>
           </View>
         </View>
       </View>

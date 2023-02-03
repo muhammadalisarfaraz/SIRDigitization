@@ -439,28 +439,56 @@ const HomeScreenUnPlannedSaved = ({navigation}) => {
                             borderRadius: 15,
                           }}></View>
                       </View>
-                      <View
-                        style={{
-                          backgroundColor: '#1565C0',
-                          flexDirection: 'row',
-                          paddingHorizontal: 6,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: 140,
-                          height: 34,
-                          position: 'absolute',
-                          borderTopRightRadius: 15,
-                          right: -1,
-                        }}>
-                        <Text
-                          style={{
-                            // marginLeft: 5,
-                            fontSize: 13,
-                            fontWeight: 'bold',
-                            color: '#FFFFFF',
-                          }}>
-                          {'SIR Format: ' + item.SirFormat}
-                        </Text>
+                      <View>
+                        {item.SirStatus == 'REVW' ? (
+                          <View
+                            style={{
+                              backgroundColor: 'orange',
+                              flexDirection: 'row',
+                              paddingHorizontal: 6,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: 140,
+                              height: 34,
+                              position: 'absolute',
+                              borderTopRightRadius: 15,
+                              right: -1,
+                            }}>
+                            <Text
+                              style={{
+                                // marginLeft: 5,
+                                fontSize: 13,
+                                fontWeight: 'bold',
+                                color: '#FFFFFF',
+                              }}>
+                              {'SIR Format: ' + item.SirFormat}
+                            </Text>
+                          </View>
+                        ) : (
+                          <View
+                            style={{
+                              backgroundColor: '#1565C0',
+                              flexDirection: 'row',
+                              paddingHorizontal: 6,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: 140,
+                              height: 34,
+                              position: 'absolute',
+                              borderTopRightRadius: 15,
+                              right: -1,
+                            }}>
+                            <Text
+                              style={{
+                                // marginLeft: 5,
+                                fontSize: 13,
+                                fontWeight: 'bold',
+                                color: '#FFFFFF',
+                              }}>
+                              {'SIR Format: ' + item.SirFormat}
+                            </Text>
+                          </View>
+                        )}
                       </View>
                       <View
                         style={{

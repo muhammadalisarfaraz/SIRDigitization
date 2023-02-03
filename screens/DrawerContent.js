@@ -85,6 +85,15 @@ export function DrawerContent(props) {
               icon={({color, size}) => (
                 <Icon name="account-check-outline" color={color} size={size} />
               )}
+              label="Referesh SIR Data"
+              onPress={() => {
+                props.navigation.navigate('DeleteSIRs');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="account-check-outline" color={color} size={size} />
+              )}
               label="Download Master Data"
               onPress={() => {
                 props.navigation.navigate('DownloadMasterData');
