@@ -1,25 +1,62 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
   Button,
-  StyleSheet,
-  StatusBar,
-  Image,
-  TouchableOpacity,
   TextInput,
-  Platform,
-  Alert,
+  StyleSheet,
+  TouchableOpacity,
   ActivityIndicator,
+  TouchableHighlight,
+  //AsyncStorage,
+  Switch,
+  Image,
+  ImageBackground,
+  Picker,
+  ScrollView,
+  //CheckBox,
+  SafeAreaView,
+  Platform,
+  PermissionsAndroid,
+  Pressable,
+  Dimensions,
 } from 'react-native';
+import Moment from 'moment';
+import LinearGradient from 'react-native-linear-gradient';
+import Modal from 'react-native-modal';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+import Geolocation from '@react-native-community/geolocation';
+
+import RNFetchBlob from 'rn-fetch-blob';
 
 import axios from 'axios';
+import {
+  launchCamera,
+  launchImageLibrary,
+  //ImagePicker,
+  Select,
+} from 'react-native-image-picker';
 import AsyncStorage from '@react-native-community/async-storage';
+import ImagePicker from 'react-native-image-crop-picker';
+
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 import base64 from 'react-native-base64';
-import LinearGradient from 'react-native-linear-gradient';
 
 const DeleteSIRs = ({navigation}) => {
-  const [loader, setLoader] = useState(false);
+  const {width} = Dimensions.get('window');
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [isAuthModalVisible, setAuthModalVisible] = useState(false);
+  const [error, setError] = useState('');
+  const [uploadingMsg, setUploadingMsg] = useState('');
+
+  const [user, setUser] = useState('');
+  const [ibc, setIbc] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+
   const [postedSIRCount, setPostedSIRCount] = useState('');
   const [postedSIRtobeDeletedCount, setPostedSIRtobeDeletedCount] =
     useState('');
@@ -29,8 +66,22 @@ const DeleteSIRs = ({navigation}) => {
 
   useEffect(() => {
     console.log('Screen:Delete SIR:');
-    getPostedSIRs();
+
+    getLoginCredentials();
   }, []);
+
+  const getLoginCredentials = () => {
+    var data1 = [];
+    let pernr;
+    AsyncStorage.getItem('LoginCredentials')
+      .then(items => {
+        data1 = items ? JSON.parse(items) : [];
+        pernr = data1[0].pernr;
+      })
+      .then(res => {
+        getPostedSIRs(pernr);
+      });
+  };
 
   const getDeletedSIRfromSAP = () => {
     let count = 0;
@@ -71,7 +122,7 @@ const DeleteSIRs = ({navigation}) => {
       });
   };
 
-  const getPostedSIRs = () => {
+  const getPostedSIRs = pernr => {
     let count = 0;
     let localdata = [];
     AsyncStorage.getItem('SIRDigitization').then(items => {
@@ -80,6 +131,7 @@ const DeleteSIRs = ({navigation}) => {
         //if (singleItem.Status == 'Post') {
         localdata.push({
           Sirnr: singleItem.Sirnr,
+          Pernr: pernr,
         });
         // }
       });
@@ -111,86 +163,211 @@ const DeleteSIRs = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {loader ? (
-        <View style={{flex: 1, backgroundColor: '#1565C0', marginTop: 70}}>
-          <ActivityIndicator
-            size="large"
-            style={{transform: [{scaleX: 5}, {scaleY: 5}]}}
-            color="white"
-          />
+      <ScrollView keyboardShouldPersistTaps="handled" style={styles.container}>
+        <View style={styles.slide1}>
+          <View style={{width: '80%'}}>
+            <View
+              style={{
+                // marginTop: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <View
+                style={{
+                  height: 2,
+                  width: '100%',
+                  // position: 'absolute',
+                  // backgroundColor: ' rgba(93,45,145,255)',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <LinearGradient
+                  colors={['#1565C0', '#64b5f6']}
+                  style={styles.signIn}>
+                  <Text
+                    style={[
+                      styles.textSign,
+                      {
+                        color: '#fff',
+                      },
+                    ]}>
+                    {' '}
+                    Delete SIRs Screen
+                  </Text>
+                </LinearGradient>
+              </View>
+
+              <View
+                style={{
+                  height: 50,
+                  width: '100%',
+                  // position: 'absolute',
+                  //padding:90,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}></View>
+
+              <View
+                style={{
+                  height: 25,
+                  width: '100%',
+                  marginLeft: 40,
+                  marginTop: 50,
+                  // position: 'absolute',
+                  //padding:90,
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
+                  Total cases SIR Count: {postedSIRCount}
+                </Text>
+              </View>
+              <View
+                style={{
+                  //height: 25,
+                  width: '100%',
+                  marginLeft: 40,
+                  marginTop: 10,
+                  // position: 'absolute',
+                  //padding:90,
+                  //backgroundColor: 'black',
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                }}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    //backgroundColor: '#1565C0',
+                    //  padding: 15
+                    flex: 1,
+                  }}
+                  onPress={() => {
+                    getDeletedSIRfromSAP();
+                  }}>
+                  <LinearGradient
+                    colors={['#1565C0', '#64b5f6']}
+                    style={styles.submit}>
+                    <Text
+                      style={[
+                        styles.textButton,
+                        {
+                          color: '#fff',
+                        },
+                      ]}>
+                      Posted SIR's to be Deleted
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+
+              <View
+                style={{
+                  //height: 22,
+                  width: '100%',
+                  marginLeft: 40,
+                  marginTop: 10,
+                  // position: 'absolute',
+                  //padding:90,
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
+                  Total cases to be Deleted Count: {postedSIRtobeDeletedCount}
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  //height: 25,
+                  width: '100%',
+                  marginLeft: 40,
+                  marginTop: 10,
+                  // position: 'absolute',
+                  //padding:90,
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                }}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flex: 1,
+                    //    backgroundColor: '#1565C0',
+                    //  padding: 15
+                  }}
+                  onPress={() => {
+                    StoreInDevice();
+                  }}>
+                  <LinearGradient
+                    colors={['#1565C0', '#64b5f6']}
+                    style={styles.submit}>
+                    <Text
+                      style={[
+                        styles.textButton,
+                        {
+                          color: '#fff',
+                        },
+                      ]}>
+                      Delete from Mobile Data
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  //height: 22,
+                  width: '100%',
+                  marginLeft: 40,
+                  marginTop: 10,
+                  // position: 'absolute',
+                  //padding:90,
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
+                  {storeInDeviceText}
+                </Text>
+              </View>
+            </View>
+          </View>
         </View>
-      ) : (
-        <>
-          <Text style={{color: 'white', fontSize: 24}}>
-            Total cases SIR Count: {postedSIRCount}
-          </Text>
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              //    backgroundColor: '#1565C0',
-              //  padding: 15
-            }}
-            onPress={() => {
-              getDeletedSIRfromSAP();
-            }}>
-            <LinearGradient
-              colors={['#1565C0', '#64b5f6']}
-              style={styles.submit}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: '#fff',
-                  },
-                ]}>
-                Get Posted SIR's to be Deleted
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <Text style={{color: 'white', fontSize: 24}}>
-            Total cases to be Deleted Count: {postedSIRtobeDeletedCount}
-          </Text>
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              //    backgroundColor: '#1565C0',
-              //  padding: 15
-            }}
-            onPress={() => {
-              StoreInDevice();
-            }}>
-            <LinearGradient
-              colors={['#1565C0', '#64b5f6']}
-              style={styles.submit}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: '#fff',
-                  },
-                ]}>
-                Delete from Mobile Data
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <Text style={{color: 'white', fontSize: 24}}>
-            {storeInDeviceText}
-          </Text>
-        </>
-      )}
+      </ScrollView>
     </View>
   );
 };
 
+export default DeleteSIRs;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue',
+    backgroundColor: 'white',
+    // alignItems: 'center',
+    //  justifyContent: 'center'
   },
+  slide1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    backgroundColor: 'white',
+  },
+
+  signIn: {
+    width: '100%',
+    marginTop: 100,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+
   submit: {
     width: '50%',
     height: 50,
@@ -198,6 +375,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
   },
-});
+  textSign: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  textButton: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  imageStyle: {
+    width: 50,
+    height: 50,
+    alignContent: 'center',
+    justifyContent: 'center',
+    marginLeft: 20,
+  },
 
-export default DeleteSIRs;
+  PhotosIn: {
+    width: '100%',
+    marginTop: 100,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  textPhotos: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginTop: 10,
+  },
+});

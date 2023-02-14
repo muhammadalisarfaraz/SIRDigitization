@@ -54,6 +54,7 @@ export function DrawerContent(props) {
                 props.navigation.navigate('Safety Hazard Case');
               }}
             />
+            {/*
             <DrawerItem
               icon={({color, size}) => (
                 <Icon name="bookmark-outline" color={color} size={size} />
@@ -61,6 +62,16 @@ export function DrawerContent(props) {
               label="My Buildings"
               onPress={() => {
                 props.navigation.navigate('BookmarkScreen');
+              }}
+            />
+            */}
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="bookmark-outline" color={color} size={size} />
+              )}
+              label="Change Password"
+              onPress={() => {
+                props.navigation.navigate('ChangePassword');
               }}
             />
             <DrawerItem
@@ -85,7 +96,7 @@ export function DrawerContent(props) {
               icon={({color, size}) => (
                 <Icon name="account-check-outline" color={color} size={size} />
               )}
-              label="Referesh SIR Data"
+              label="Refresh SIR Data"
               onPress={() => {
                 props.navigation.navigate('DeleteSIRs');
               }}

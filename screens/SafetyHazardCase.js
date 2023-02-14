@@ -27,7 +27,7 @@ import Modal from 'react-native-modal';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Geolocation from '@react-native-community/geolocation';
 
-import RNFetchBlob from 'rn-fetch-blob';
+import NetInfo from '@react-native-community/netinfo';
 
 import axios from 'axios';
 import {
@@ -239,7 +239,215 @@ const SafetyHazardCase = ({navigation}) => {
     return true;
   };
 
+  const chooseFile = type => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 550,
+      cropping: true,
+      includeBase64: true,
+    }).then(response => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        // alert('User cancelled camera picker');
+        return;
+      } else if (response.errorCode == 'camera_unavailable') {
+        // alert('Camera not available on device');
+        return;
+      } else if (response.errorCode == 'permission') {
+        alert('Permission not satisfied');
+        return;
+      } else if (response.errorCode == 'others') {
+        alert('chooseFile: ' + response.errorMessage);
+        return;
+      }
+
+      setIsImage('Y');
+
+      var Allimages = images;
+      // setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+
+      //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+
+      setFilePath([
+        {
+          uri: response.path,
+          url: response.path,
+          fileName: 'BFDC.jpg',
+          base64: response.data,
+          Status: 'Pending',
+          RoshniBajiWebID: '',
+        },
+        ...Allimages,
+      ]);
+      setImages([
+        {
+          uri: response.path,
+          url: response.path,
+          fileName: 'BFDC.jpg',
+          base64: response.data,
+          Status: 'Pending',
+          RoshniBajiWebID: '',
+        },
+        ...Allimages,
+      ]);
+    });
+  };
+
+  const PostSIRImage = () => {
+    let data1 = [];
+    let count = 1;
+    console.log('Post Safety Image called');
+
+    images.filter(item => {
+      //console.log('item:= ' + item);
+      data1.push({
+        imageName: 'SafetyHazrd',
+        imageBase64: item.base64,
+        imageID: '1',
+        IBC: ibc,
+        SHID: user,
+        MIONo: user,
+      });
+      count++;
+    });
+
+    axios({
+      method: 'POST',
+      url: 'https://stagingdev.ke.com.pk:8039/api/Image/PostSIHImageData',
+      headers: {
+        'content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
+      },
+      data: JSON.stringify(data1),
+    })
+      .then(res => {
+        console.log(
+          '******************Post Safety Image updated*********************************',
+        );
+        console.log(res.data);
+        storeInDevice();
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Post Safety Image Data: ' + error);
+      });
+  };
+
+  const storeInDevice = () => {
+    setSuccessModalVisible(!isSuccessModalVisible);
+    setAuthModalVisible(!isAuthModalVisible);
+
+    AsyncStorage.getItem('LoginCredentials').then(items => {
+      var data = items ? JSON.parse(items) : {};
+
+      AsyncStorage.getItem('SafetyHazard').then(items => {
+        var data1 = [];
+
+        data1 = items ? JSON.parse(items) : [];
+
+        data1 = [
+          ...data1,
+          {
+            UserID: user, //data[0].name
+            SDate: Moment(Date.now()).format('YYYY-MM-DD'),
+            AccidentLocationAddress: AccidentLocationAddress,
+            PremiseConsumerNumber: PremiseConsumerNumber,
+            PMT: PMT,
+            ConsumerMobileNumber: ConsumerMobileNumber,
+            Remarks: Remarks,
+            longitude1: longitude1,
+            latitude1: latitude1,
+            Status: 'Pending',
+            IBC: ibc,
+            SafetyHazardWebID: '',
+            ImageFlag: isImage,
+            HazardImages: images,
+          },
+        ];
+
+        AsyncStorage.setItem('SafetyHazard', JSON.stringify(data1)).then(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'SupportScreen'}],
+          });
+          //                          console.log("DAta1", data1);
+          //setRefresh(true);
+
+          // swiper.current.scrollBy(1, true);
+          /*
+                setTimeout(() => {
+                  setRefresh(false);
+                }, 1000);
+*/
+        });
+      });
+    });
+  };
+
+  const postSafetyHazard = () => {
+    setLoader(true);
+
+    console.log('Remarks ' + Remarks);
+    console.log('PMT ' + PMT);
+    console.log('ConsumerMobileNumber ' + ConsumerMobileNumber);
+    console.log('AccidentLocationAddress ' + AccidentLocationAddress);
+    console.log('user ' + user);
+    console.log('PremiseConsumerNumber ' + PremiseConsumerNumber);
+    console.log('latitude1 ' + latitude1);
+    console.log('longitude1 ' + longitude1);
+    console.log('ibc' + ibc);
+
+    axios({
+      method: 'GET',
+      url:
+        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks=%27' +
+        Remarks +
+        '%27,Pmt=%27' +
+        PMT +
+        '%27,Mobileno=%27' +
+        ConsumerMobileNumber +
+        '%27,Ibc=%27' +
+        ibc +
+        '%27,CreatedBy=%27' +
+        user +
+        '%27,Consumernumber=%27' +
+        PremiseConsumerNumber +
+        '%27,Latitude=%27' +
+        latitude1.toString() +
+        '%27,Longitude=%27' +
+        longitude1.toString() +
+        '%27,ACCIDENT_NEAR_ADDR=%27' +
+        AccidentLocationAddress +
+        '%27)',
+      headers: {
+        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-CSRF-Token': '',
+        'X-Requested-With': 'X',
+      },
+    })
+      .then(resp => {
+        console.log('res.data: ', resp.data.d.Message);
+        PostSIRImage();
+      })
+      .catch(error => {
+        console.error(error);
+        alert('post Safety Hazard Data: ' + error);
+      });
+    /*
+    setRefresh(true);
+
+    setTimeout(() => {
+      setRefresh(false);
+    }, 1000);
+*/
+  };
+
   useEffect(() => {
+    console.log('SafetyHazardCase:Screen');
     AsyncStorage.getItem('LoginCredentials').then(items => {
       var data = items ? JSON.parse(items) : {};
       // var datatable = [];
@@ -315,7 +523,7 @@ const SafetyHazardCase = ({navigation}) => {
               </View>
               <View
                 style={{
-                  height: 25,
+                  //height: 25,
                   width: '100%',
                   marginLeft: 40,
                   marginTop: 10,
@@ -330,12 +538,12 @@ const SafetyHazardCase = ({navigation}) => {
                   // KEaccountnumber={KEaccountnumber}
                   // maxLength={12}               //  onBlur={text =>{text.}}
                   style={{
-                    height: 50,
+                    //height: 50,
                     width: '86%',
                     fontSize: 16,
                     color: 'black',
                     borderBottomWidth: 0.8,
-                    marginTop: -10,
+                    //marginTop: -10,
                   }}
                   placeholder={'Enter Text'}
                   placeholderText={{fontSize: 16, color: 'grey'}}
@@ -357,7 +565,7 @@ const SafetyHazardCase = ({navigation}) => {
 
               <View
                 style={{
-                  height: 22,
+                  //height: 22,
                   width: '100%',
                   marginLeft: 40,
                   marginTop: 10,
@@ -374,7 +582,7 @@ const SafetyHazardCase = ({navigation}) => {
 
               <View
                 style={{
-                  height: 25,
+                  //height: 25,
                   width: '100%',
                   marginLeft: 40,
                   marginTop: 10,
@@ -393,7 +601,7 @@ const SafetyHazardCase = ({navigation}) => {
                   // onChangeText={text => setcontractnumber(text)}
                   // onFocus={text => setcontractnumber(ShowMaxAlert(text))}
                   style={{
-                    height: 50,
+                    //height: 50,
                     width: '86%',
                     fontSize: 16,
                     color: 'black',
@@ -419,7 +627,7 @@ const SafetyHazardCase = ({navigation}) => {
 
               <View
                 style={{
-                  height: 22,
+                  // height: 22,
                   width: '100%',
                   marginLeft: 40,
                   alignItems: 'flex-start',
@@ -434,7 +642,7 @@ const SafetyHazardCase = ({navigation}) => {
 
               <View
                 style={{
-                  height: 25,
+                  //height: 25,
                   width: '100%',
                   marginLeft: 40,
                   marginTop: 8,
@@ -446,7 +654,7 @@ const SafetyHazardCase = ({navigation}) => {
                 <TextInput
                   //  maxLength={10}
                   style={{
-                    height: 50,
+                    //height: 50,
                     width: '86%',
                     fontSize: 16,
                     color: 'black',
@@ -577,32 +785,98 @@ const SafetyHazardCase = ({navigation}) => {
                   <Text style={styles.error}>{remarksError}</Text>
                 )}
               </View>
-
               <View
                 style={{
-                  height: 2,
                   width: '100%',
-                  // position: 'absolute',
-                  // backgroundColor: ' rgba(93,45,145,255)',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginTop: 60,
+                  //padding: 20,
+                  //paddingTop: -90,
+                  //paddingBottom: 150,
+                  flexDirection: 'column',
+                  //alignSelf: 'center',
+                  //alignItems: 'center',
+                  // justifyContent: 'space-between',
                 }}>
-                <LinearGradient
-                  colors={['#1565C0', '#64b5f6']}
-                  style={styles.PhotosIn}>
-                  <Text
-                    style={[
-                      styles.textPhotos,
-                      {
-                        color: '#fff',
-                      },
-                    ]}>
-                    {' '}
-                    Photos of Hazards
-                  </Text>
-                </LinearGradient>
+                <View
+                  style={{
+                    //height: 2,
+                    width: '100%',
+                    // position: 'absolute',
+                    // backgroundColor: ' rgba(93,45,145,255)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: 60,
+                  }}>
+                  <LinearGradient
+                    colors={['#1565C0', '#64b5f6']}
+                    style={styles.PhotosIn}>
+                    <Text
+                      style={[
+                        styles.textPhotos,
+                        {
+                          color: '#fff',
+                        },
+                      ]}>
+                      {' '}
+                      Photos of Hazards
+                    </Text>
+                  </LinearGradient>
+                </View>
+                {/*Saad Added on Galery*/}
+                <View
+                  style={{
+                    width: '100%',
+                    // padding: 20,
+                    flexDirection: 'row',
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                    // justifyContent: 'space-between',
+                  }}>
+                  <View style={{flex: 2, alignItems: 'center'}}>
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      onPress={() => chooseFile('photo')}>
+                      <Image
+                        source={require('../assets/Gallery.png')} // source={{uri: filePath.uri}}
+                        style={styles.imageStyle}
+                      />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        marginTop: 4,
+                        textAlign: 'center',
+                        width: 120,
+                        textAlignVertical: 'center',
+                        color: '#1565C0',
+                      }}>
+                      tap the picture from gallery
+                    </Text>
+                  </View>
+                  <View style={{flex: 2, alignItems: 'center'}}>
+                    <TouchableOpacity
+                      style={{marginTop: 15}}
+                      onPress={() => captureImage('photo')}>
+                      <Image
+                        source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
+                        style={styles.imageStyle}
+                      />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        marginTop: 4,
+                        textAlign: 'center',
+                        width: 120,
+                        textAlignVertical: 'center',
+                        color: '#1565C0',
+                      }}>
+                      tap the camera to take a picture
+                    </Text>
+                  </View>
+                </View>
               </View>
+              {/*Saad Added on Galery*/}
+              {/* Saad Commented on Single Gallery
 
               <View
                 style={{
@@ -648,77 +922,80 @@ const SafetyHazardCase = ({navigation}) => {
                   </Text>
                 </TouchableOpacity>
 
-                <View
-                  style={{
-                    flex: 1,
-                    alignSelf: 'center',
-                    alignItems: 'flex-start',
-                    marginLeft: 20,
-                  }}>
-                  <Carousel
-                    ref={carouselRef}
-                    layout="default"
-                    data={images}
-                    sliderWidth={width}
-                    itemWidth={width}
-                    renderItem={({item, index}) => {
-                      return (
-                        <View>
-                          <TouchableOpacity
-                            onPress={() => {
-                              onTouchThumbnail(index);
-                              setindexer1(index);
-                              setimageview(true);
-                            }}
-                            activeOpacity={0.9}>
-                            <Image
-                              source={{uri: item.uri}}
-                              style={{height: 100, width: 100}}></Image>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            onPress={() => {
-                              setTimeout(() => {
-                                // setRefresh(true);
-                                setImagedeletionLoader(true);
-
-                                //console.log("images", images);
-                                var arr = images;
-                                arr.splice(index, 1);
-                                // console.log(index)
-                                //console.log("index", index);
-                                //console.log("arr)", arr);
-
-                                setImages(arr);
-                                setImagedeletionLoader(false);
-                              }, 2000);
-                            }}
-                            style={{
-                              width: 100,
-                              height: 16,
-                              // borderRadius: 13,
-                              zIndex: 100,
-                              backgroundColor: 'red',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}>
-                            <Text
-                              style={{
-                                color: 'white',
-                                fontSize: 12,
-                                fontWeight: 'bold',
-                              }}>
-                              Remove
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    }}
-                    // sliderWidth={150}
-                    //itemWidth={120}
-                    onSnapToItem={index => onSelect(index)}
-                  />
-                </View>
+                
               </View>
+Saad Commented on Single Gallery */}
+            </View>
+            <View
+              style={{
+                flex: 1,
+                alignSelf: 'center',
+                alignItems: 'flex-start',
+                marginLeft: 200,
+                width: '100%',
+              }}>
+              <Carousel
+                ref={carouselRef}
+                layout="default"
+                data={images}
+                sliderWidth={width}
+                itemWidth={width}
+                renderItem={({item, index}) => {
+                  return (
+                    <View>
+                      <TouchableOpacity
+                        onPress={() => {
+                          onTouchThumbnail(index);
+                          setindexer1(index);
+                          setimageview(true);
+                        }}
+                        activeOpacity={0.9}>
+                        <Image
+                          source={{uri: item.uri}}
+                          style={{height: 100, width: 100}}></Image>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setTimeout(() => {
+                            // setRefresh(true);
+                            setImagedeletionLoader(true);
+
+                            //console.log("images", images);
+                            var arr = images;
+                            arr.splice(index, 1);
+                            // console.log(index)
+                            //console.log("index", index);
+                            //console.log("arr)", arr);
+
+                            setImages(arr);
+                            setImagedeletionLoader(false);
+                          }, 2000);
+                        }}
+                        style={{
+                          width: 100,
+                          height: 16,
+                          // borderRadius: 13,
+                          zIndex: 100,
+                          backgroundColor: 'red',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                          }}>
+                          Remove
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }}
+                // sliderWidth={150}
+                //itemWidth={120}
+                onSnapToItem={index => onSelect(index)}
+              />
             </View>
             <Modal visible={imageview} transparent={true} closeOnClick={true}>
               <ImageViewer
@@ -944,140 +1221,16 @@ const SafetyHazardCase = ({navigation}) => {
                     title=" Yes "
                     color="green"
                     onPress={() => {
-                      setLoader(true);
-                      try {
-                        /*
-                        RNFetchBlob.config({
-                          trusty: true,
-                        })
-                          .fetch(
-                            'GET',
-                            // apiURLN + name.toLowerCase() + '&Password=' + userPassword.toLowerCase(),
-                            "https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks='99',Pmt='99',Mobileno='99',Ibc='99',CreatedBy='99',Consumernumber='99')?$format=json",
-
-                            {
-                              Authorization:
-                                'Basic ' + base64.encode('fioriqa:sapsap2'),
-                            },
-                          )
-                          .then(res => res.json())
-*/
-
-                        console.log(Remarks);
-                        console.log(PMT);
-                        console.log(ConsumerMobileNumber);
-                        console.log(AccidentLocationAddress);
-                        console.log(user);
-                        console.log(PremiseConsumerNumber);
-                        console.log(latitude1);
-                        console.log(longitude1);
-                        console.log(ibc);
-
-                        let response = axios
-                          .get(
-                            'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks=%27' +
-                              Remarks +
-                              '%27,Pmt=%27' +
-                              PMT +
-                              '%27,Mobileno=%27' +
-                              ConsumerMobileNumber +
-                              '%27,Ibc=%27' +
-                              ibc +
-                              '%27,CreatedBy=%27' +
-                              user +
-                              '%27,Consumernumber=%27' +
-                              PremiseConsumerNumber +
-                              '%27,Latitude=%27' +
-                              latitude1.toString() +
-                              '%27,Longitude=%27' +
-                              longitude1.toString() +
-                              '%27,ACCIDENT_NEAR_ADDR=%27' +
-                              AccidentLocationAddress +
-                              '%27)',
-                            {
-                              Authorization:
-                                'Basic ' + base64.encode('fioriqa:sapsap2'),
-                              'Content-Type': 'application/json',
-                              Accept: 'application/json',
-                              'X-CSRF-Token': '',
-                              'X-Requested-With': 'X',
-                            },
-                          )
-                          .then(resp => {
-                            console.log('res.data: ', resp.data.d.Message);
-                            setSuccessModalVisible(!isSuccessModalVisible);
-                            setAuthModalVisible(!isAuthModalVisible);
-
-                            AsyncStorage.getItem('LoginCredentials').then(
-                              items => {
-                                var data = items ? JSON.parse(items) : {};
-
-                                AsyncStorage.getItem('SafetyHazard').then(
-                                  items => {
-                                    var data1 = [];
-
-                                    data1 = items ? JSON.parse(items) : [];
-
-                                    data1 = [
-                                      ...data1,
-                                      {
-                                        UserID: ' testuser', //data[0].name
-                                        SDate: Moment(Date.now()).format(
-                                          'YYYY-MM-DD',
-                                        ),
-                                        AccidentLocationAddress:
-                                          AccidentLocationAddress,
-                                        PremiseConsumerNumber:
-                                          PremiseConsumerNumber,
-                                        PMT: PMT,
-                                        ConsumerMobileNumber:
-                                          ConsumerMobileNumber,
-                                        Remarks: Remarks,
-                                        longitude1: longitude1,
-                                        latitude1: latitude1,
-                                        Status: 'Pending',
-                                        // IBC: data[0].IBC,
-                                        //  MobileID: data[0].MobileID,
-                                        SafetyHazardWebID: '',
-                                        ImageFlag: isImage,
-                                        HazardImages: images,
-                                      },
-                                    ];
-
-                                    AsyncStorage.setItem(
-                                      'SafetyHazard',
-                                      JSON.stringify(data1),
-                                    ).then(() => {
-                                      navigation.reset({
-                                        index: 0,
-                                        routes: [{name: 'SupportScreen'}],
-                                      });
-                                      //                          console.log("DAta1", data1);
-                                      setRefresh(true);
-
-                                      // swiper.current.scrollBy(1, true);
-                                      setTimeout(() => {
-                                        setRefresh(false);
-                                      }, 1000);
-                                    });
-                                  },
-                                );
-                              },
-                            );
-                          });
-                      } catch (error) {
-                        // console.log('Error', e);
-                        alert('error' + error.message);
-                        setLoader(false);
-                      }
-
-                      setRefresh(true);
-
-                      setTimeout(() => {
-                        setRefresh(false);
-                      }, 1000);
+                      NetInfo.fetch().then(state => {
+                        if (state.isConnected) {
+                          console.log(' **** You are online! ******** ');
+                          postSafetyHazard();
+                        } else {
+                          Alert.alert('You are offline!');
+                          return;
+                        }
+                      });
                     }}
-                    // }
                   />
 
                   <Button
@@ -1153,5 +1306,9 @@ const styles = StyleSheet.create({
   textPhotos: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginTop: 10,
   },
 });

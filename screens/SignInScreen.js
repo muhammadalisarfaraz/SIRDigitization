@@ -137,6 +137,7 @@ const SignInScreen = ({navigation}) => {
             Status: res.data.d.Status,
             begru: res.data.d.begru,
             pernr: res.data.d.pernr,
+            IBC_Name: res.data.d.IBC_Name,
           });
         } else {
           Alert.alert('Wrong Input!', res.data.d.Mesg, [{text: 'Okay'}]);

@@ -237,6 +237,16 @@ const ApiScreenA40 = ({route, navigation}) => {
     },
   ];
 
+  // saad Comment Tarif Dropdowm
+  const [openTarif, setOpenTarif] = useState(false);
+  const [valueTarif, setValueTarif] = useState(null);
+  const [itemsTarif, setItemsTarif] = useState([]);
+
+  // saad Comment PremiseType Dropdowm
+  const [openPremiseType, setOpenPremiseType] = useState(false);
+  const [valuePremiseType, setValuePremiseType] = useState(null);
+  const [itemsPremiseType, setItemsPremiseType] = useState([]);
+
   // saad Comment Appliance Dropdowm
   const [openAppliance, setOpenAppliance] = useState(false);
   const [valueAppliance, setValueAppliance] = useState(null);
@@ -449,11 +459,12 @@ const ApiScreenA40 = ({route, navigation}) => {
 
   const [consumerStatus, setConsumerStatus] = useState('X');
   const [isConsumerStatus, setIsConsumerStatus] = useState(0);
-  const [industryType, setIndustryType] = useState('');
-  const [tariff, setTariff] = useState('');
+  //const [industryType, setIndustryType] = useState('');
+  //const [tariff, setTariff] = useState('');
 
   const [ibcName, setIbcName] = useState('');
   const [reviewRemarks, setReviewRemarks] = useState('');
+  const [CELL_NUMBER, setCELL_NUMBER] = useState('');
 
   const [serviceType, setServiceType] = useState('O/H');
   const [isServiceType, setIsServiceType] = useState(0);
@@ -566,7 +577,7 @@ const ApiScreenA40 = ({route, navigation}) => {
   const [isSignModalVisible, setSignModalVisible] = useState(false);
 
   const [error, setError] = useState('');
-  const [industryTypeError, setIndustryTypeError] = useState('');
+  //const [industryTypeError, setIndustryTypeError] = useState('');
   const [sizeofServiceError, setSizeofServiceError] = useState('');
   const [fedFromPMTSSError, setFedFromPMTSSError] = useState('');
   const [pmtSSCodeError, setPMTSSCodeError] = useState('');
@@ -605,7 +616,7 @@ const ApiScreenA40 = ({route, navigation}) => {
   const [mobileNoError, setMobileNoError] = useState('');
   const [consumerNameCNICError, setConsumerNameCNICError] = useState('');
   const [consumerRemarksError, setConsumerRemarksError] = useState('');
-  const [tariffError, setTariffError] = useState('');
+  //const [tariffError, setTariffError] = useState('');
 
   const [uploadingMsg, setUploadingMsg] = useState('');
 
@@ -624,6 +635,7 @@ const ApiScreenA40 = ({route, navigation}) => {
   const [CONSUMER_NO, setCONSUMER_NO] = useState('');
   const [Vkont, setVkont] = useState('');
   const [TARIFF, setTARIFF] = useState('');
+  const [contract, setContract] = useState('');
 
   const SPACING = 10;
   const THUMB_SIZE = 80;
@@ -1165,7 +1177,6 @@ const ApiScreenA40 = ({route, navigation}) => {
       let data = JSON.parse(items);
       data.filter((item, index) => {
         if (item.Sirnr == SIR) {
-          console.log('****Tariff: ' + tariff);
           console.log('****item.Sirnr: ' + item.Sirnr);
           console.log('****data[index].Sirnr: ' + data[index].Sirnr);
           //data[index].CaseType = 'Planned';
@@ -1177,8 +1188,8 @@ const ApiScreenA40 = ({route, navigation}) => {
 
           data[index].ConsumerStatus = consumerStatus;
           data[index].IsConsumerStatus = isConsumerStatus;
-          data[index].IndustryType = industryType;
-          data[index].Tariff = tariff;
+          data[index].PremiseType = valuePremiseType;
+          data[index].Tariff = valueTarif;
           data[index].ServiceType = serviceType;
           data[index].IsServiceType = isServiceType;
           data[index].FedFromPMTSS = fedFromPMTSS;
@@ -1258,6 +1269,7 @@ const ApiScreenA40 = ({route, navigation}) => {
           data[index].CONSUMER_NO = CONSUMER_NO;
           data[index].Vkont = Vkont;
           data[index].TARIFF = TARIFF;
+          data[index].Vertrag = contract;
 
           if (Result_Discrepancies != undefined) {
             data[index].Result_Discrepancies = Result_Discrepancies;
@@ -1285,6 +1297,111 @@ const ApiScreenA40 = ({route, navigation}) => {
     setAuthModalVisible(!isAuthModalVisible);
     setSuccessModalVisible(!isSuccessModalVisible);
   };
+
+  const PostSIRImage = () => {
+    let data1 = [];
+    let count = 1;
+    console.log('Post SIR Image Data called');
+
+    images.filter(item => {
+      //console.log('item:= ' + item);
+      data1.push({
+        imageName: data.Sirnr,
+        imageBase64: item.base64,
+        imageID: count.toString(),
+        IBC: data.Begru,
+        SIRNo: data.Sirnr,
+        ContractNo: data.Vertrag,
+        MIONo: data.AssignMio,
+      });
+      count++;
+    });
+
+    axios({
+      method: 'POST',
+      url: 'https://stagingdev.ke.com.pk:8039/api/Image/PostSIRImageData',
+      headers: {
+        'content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
+      },
+      data: JSON.stringify(data1),
+    })
+      .then(res => {
+        console.log(
+          '******************Post SIR Image updated*********************************',
+        );
+        //console.log(res.data);
+        PostConsumerImage();
+      })
+      .catch(error => {
+        console.log('ERROR STARTS NOW');
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('error.message: ', error.message);
+        }
+        console.log('error: ', error);
+      });
+  };
+
+  const PostConsumerImage = () => {
+    let consumerImageData = [];
+    let count = 1;
+    console.log('Post SIR Image Data called');
+
+    consumerImages.filter(item => {
+      //console.log('item:= ' + item);
+      consumerImageData.push({
+        imageName: data.Sirnr,
+        imageBase64: item.base64,
+        imageID: count.toString(),
+        IBC: data.Begru,
+        SIRNo: data.Sirnr,
+        ContractNo: data.Vertrag,
+        MIONo: data.AssignMio,
+      });
+      count++;
+    });
+
+    if (isSignature == 'Y') {
+      consumerImageData.push({
+        imageName: data.Sirnr,
+        imageBase64: signaturePreview,
+        imageID: count.toString(),
+        IBC: data.Begru,
+        SIRNo: data.Sirnr,
+        ContractNo: data.Vertrag,
+        MIONo: data.AssignMio,
+      });
+    }
+
+    axios({
+      method: 'POST',
+      url: 'https://stagingdev.ke.com.pk:8039/api/Image/PostSIRImageData',
+      headers: {
+        'content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
+      },
+      data: JSON.stringify(consumerImageData),
+    })
+      .then(res => {
+        console.log(
+          '******************Post Consumer Image updated*********************************',
+        );
+        //console.log(res.data);
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Post Consumer Image Data: ' + error);
+      });
+  };
+
   const PostSIRSimultaneous = () => {
     console.log('**************************************************');
     console.log('PostSIRSimultaneous');
@@ -1300,6 +1417,11 @@ const ApiScreenA40 = ({route, navigation}) => {
     const appliancelistData = appliancelist.length > 0 ? appliancelist : [{}];
     const descripancylistData =
       descripancylist.length > 0 ? descripancylist : [{}];
+
+    const valuePremiseTypeData =
+      valuePremiseType != undefined ? valuePremiseType : '';
+    const valueTarifData = valueTarif != undefined ? valueTarif : '';
+
     const consumerRefuseYNData =
       consumerRefuseYN != undefined ? consumerRefuseYN : '';
     const consumerSignData = consumerSign != undefined ? consumerSign : '';
@@ -1333,8 +1455,8 @@ const ApiScreenA40 = ({route, navigation}) => {
         INSP_DATE: sirdate,
         INSP_TIME: sirtime,
         SERVTYPE: serviceType,
-        VBSART: industryType,
-        TARIFTYP: tariff,
+        VBSART: valuePremiseTypeData,
+        TARIFTYP: valueTarifData,
         FEEDER: fedFromPMTSS,
         PMT: pmtSSCode,
         CUSTNAME: consumerName,
@@ -1404,7 +1526,7 @@ const ApiScreenA40 = ({route, navigation}) => {
           '******************PostSIRSimultaneous UPDATED*********************************',
         );
         console.log('res.data.d.Result------' + res.data.d.Result_Appliances);
-        //GetImageAPIToken();
+        PostSIRImage();
         StoreInDevice(
           'Post',
           true,
@@ -1480,6 +1602,7 @@ const ApiScreenA40 = ({route, navigation}) => {
     setCONSUMER_NO(data.CONSUMER_NO);
     setVkont(data.Vkont);
     setTARIFF(data.TARIFF);
+    setContract(data.Vertrag);
 
     AsyncStorage.getItem('SIRDigitization').then(items => {
       var localData = items ? JSON.parse(items) : [];
@@ -1489,9 +1612,10 @@ const ApiScreenA40 = ({route, navigation}) => {
             setIsEditable(true);
           }
 
-          setReviewRemarks(item.REMARKS);
-          setIbcName(item.IBCNAME);
-          setTARIFF(item.TARIFF);
+          if (item.REMARKS != undefined) setReviewRemarks(item.REMARKS);
+          if (item.IBCNAME != undefined) setIbcName(item.IBCNAME);
+          if (item.CELL_NUMBER != undefined) setCELL_NUMBER(item.CELL_NUMBER);
+          //setTARIFF(item.TARIFF);
 
           if (item.ConsumerStatus != undefined)
             setConsumerStatus(item.ConsumerStatus);
@@ -1502,8 +1626,11 @@ const ApiScreenA40 = ({route, navigation}) => {
           if (item.IsServiceType != undefined)
             setIsServiceType(item.IsServiceType);
 
-          setIndustryType(item.IndustryType);
-          setTariff(item.Tariff);
+          //setIndustryType(item.IndustryType);
+          //setTariff(item.Tariff);
+          setValueTarif(item.Tariff);
+          setValuePremiseType(item.PremiseType);
+
           setFedFromPMTSS(item.FedFromPMTSS);
           setPMTSSCode(item.PMTSSCode);
           setRunningLoadKW(item.RunningLoadKW);
@@ -1616,6 +1743,18 @@ const ApiScreenA40 = ({route, navigation}) => {
       setApiRes(filterData);
     });
 */
+
+    // Saad Comment Loading Tarif Data
+    AsyncStorage.getItem('Tariff').then(items => {
+      var data = items ? JSON.parse(items) : [];
+      setItemsTarif(data);
+    });
+    // Saad Comment Loading PremiseType Data
+    AsyncStorage.getItem('PremiseType').then(items => {
+      var data = items ? JSON.parse(items) : [];
+      setItemsPremiseType(data);
+    });
+
     // Saad Comment Loading MRNote Data
     AsyncStorage.getItem('MRNote').then(items => {
       var data = items ? JSON.parse(items) : [];
@@ -2039,7 +2178,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                 //   flexDirection: 'row',
                 alignSelf: 'center',
                 alignContent: 'center',
-
+                //marginBottom: -10,
                 //   paddingVertical: 10,
               }}>
               <Text
@@ -2125,6 +2264,14 @@ const ApiScreenA40 = ({route, navigation}) => {
                     color: 'black',
                   }}>
                   {'Assign To: ' + data.AssignMio + '-' + data.MIO_NAME}
+                </Text>
+                <Text
+                  style={{
+                    marginTop: 4,
+                    fontSize: 13,
+                    color: 'black',
+                  }}>
+                  {'Cell No: ' + CELL_NUMBER}
                 </Text>
                 <Text
                   style={{
@@ -2505,25 +2652,20 @@ const ApiScreenA40 = ({route, navigation}) => {
 
                     <View style={{flexDirection: 'row', flex: 1, width: '88%'}}>
                       <View style={{flex: 2.5, alignItems: 'flex-start'}}>
-                        <TextInput
-                          style={styles.inputLoadDetail}
-                          placeholder={'Please enter'}
-                          keyboardType={'email-address'}
-                          placeholderTextColor="grey"
-                          onChangeText={text => {
-                            setIndustryType(text);
-                            if (validate(text, 8)) {
-                              setIndustryTypeError(
-                                'Input must be at least 8 characters long.',
-                              );
-                            } else setIndustryTypeError('');
+                        <DropDownPicker
+                          disabled={!isEditable}
+                          listMode="MODAL"
+                          open={openPremiseType}
+                          value={valuePremiseType}
+                          items={itemsPremiseType}
+                          setOpen={setOpenPremiseType}
+                          setValue={setValuePremiseType}
+                          setItems={setItemsPremiseType}
+                          searchable
+                          onChangeValue={item => {
+                            console.log('PremiseType:onChangeValue: ' + item);
                           }}
-                          value={industryType}
-                          editable={isEditable}
                         />
-                        {industryTypeError !== '' && (
-                          <Text style={styles.error}>{industryTypeError}</Text>
-                        )}
                       </View>
 
                       <View
@@ -2532,25 +2674,20 @@ const ApiScreenA40 = ({route, navigation}) => {
                           alignItems: 'flex-start',
                           marginLeft: 20,
                         }}>
-                        <TextInput
-                          style={styles.inputLoadDetail}
-                          placeholder={'Please enter'}
-                          keyboardType={'email-address'}
-                          placeholderTextColor="grey"
-                          onChangeText={text => {
-                            setTariff(text);
-                            if (validate(text, 10)) {
-                              setTariffError(
-                                'Input must be at least 10 characters long.',
-                              );
-                            } else setTariffError('');
+                        <DropDownPicker
+                          disabled={!isEditable}
+                          listMode="MODAL"
+                          searchable
+                          open={openTarif}
+                          value={valueTarif}
+                          items={itemsTarif}
+                          setOpen={setOpenTarif}
+                          setValue={setValueTarif}
+                          setItems={setItemsTarif}
+                          onChangeValue={item => {
+                            console.log('Tarif:valueTarif:: ' + valueTarif);
                           }}
-                          value={tariff}
-                          editable={isEditable}
                         />
-                        {tariffError !== '' && (
-                          <Text style={styles.error}>{tariffError}</Text>
-                        )}
                       </View>
                     </View>
 
@@ -7091,7 +7228,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     marginVertical: 3,
     width: 400,
-    height: 230,
+    height: 270,
     marginTop: 10,
     justifyContent: 'center',
     // borderWidth: .5,

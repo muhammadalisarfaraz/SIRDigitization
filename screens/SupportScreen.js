@@ -32,6 +32,7 @@ function SupportScreen({navigation}) {
   const [pendingOrders, setPendingOrders] = useState([]);
   const [user, setUser] = useState('');
   const [ibc, setIbc] = useState('');
+  const [ibcName, setIbcName] = useState('');
 
   const [currentDate, setCurrentDate] = useState('');
   const {supportScreen} = React.useContext(AuthContext);
@@ -48,6 +49,7 @@ function SupportScreen({navigation}) {
       data1 = items ? JSON.parse(items) : [];
       setUser(data1[0].User);
       setIbc(data1[0].begru);
+      setIbcName(data1[0].IBC_Name);
     });
 
     var date = new Date();
@@ -95,7 +97,7 @@ function SupportScreen({navigation}) {
                 fontSize: 13,
                 color: 'black',
               }}>
-              {'IBC: ' + ibc}
+              {'IBC: ' + ibcName}
             </Text>
           </View>
         </View>

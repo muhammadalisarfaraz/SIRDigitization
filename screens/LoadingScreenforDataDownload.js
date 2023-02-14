@@ -336,6 +336,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
                 TARIFF: parent.TARIFF,
                 IBCNAME: parent.IBCNAME,
                 REMARKS: parent.REMARKS,
+                CELL_NUMBER: parent.CELL_NUMBER,
                 OnsiteMeterDetail: [],
                 ApplianceDetail: [],
                 DescripancyDetail: [],

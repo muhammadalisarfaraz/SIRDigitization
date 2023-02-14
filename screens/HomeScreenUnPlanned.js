@@ -45,6 +45,7 @@ const HomeScreen = ({navigation}) => {
   const [meterNo, setMeterNo] = useState('');
 
   const [ibc, setIbc] = useState();
+  const [Begru, setBegru] = useState();
   const [user, setUser] = useState();
   const [contractnumberError, setcontractnumberError] = useState('');
   var SystemMeterData = [];
@@ -61,6 +62,8 @@ const HomeScreen = ({navigation}) => {
       var data1 = [];
       data1 = items ? JSON.parse(items) : [];
       setIbc(data1[0].begru);
+      setBegru(data1[0].begru);
+
       setUser(data1[0].User);
     });
   };
@@ -72,6 +75,7 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   const getMeterNo = (Sirnr, MIO_NAME, Meterno) => {
+    console.log('getMeterNo:Service:Called');
     axios({
       method: 'get',
       url:
@@ -103,7 +107,9 @@ const HomeScreen = ({navigation}) => {
     return;
   };
   const getContract = (Sirnr, MIO_NAME, ContractNo) => {
+    console.log('getContract:Service:Called');
     let CustomData = [];
+    let isSystemMeterServiceCall = false;
     axios({
       method: 'get',
       url:
@@ -122,27 +128,37 @@ const HomeScreen = ({navigation}) => {
       .then(res => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
-            CustomData.push({
-              Vertrag: singleResult.Vertrag,
-              Vkont: singleResult.Vkont,
-              Erdat: Moment().format('YYYYMMDD'),
-              AssignMio: singleResult.AssignMio,
-              ADDRESS: singleResult.ADDRESS,
-              NAME: singleResult.NAME,
-              CONSUMER_NO: singleResult.CONSUMER_NO,
-              Sirnr: Sirnr,
-              Ibc: ibc,
-              MIO_NAME: MIO_NAME,
-              CLUSTER: singleResult.Cluster,
-            });
+            if (singleResult.RESULT == 'Success') {
+              CustomData.push({
+                Vertrag: singleResult.Vertrag,
+                Vkont: singleResult.Vkont,
+                Erdat: Moment().format('YYYYMMDD'),
+                AssignMio: singleResult.AssignMio,
+                ADDRESS: singleResult.ADDRESS,
+                NAME: singleResult.NAME,
+                CONSUMER_NO: singleResult.CONSUMER_NO,
+                Sirnr: Sirnr,
+                Ibc: ibc,
+                MIO_NAME: MIO_NAME,
+                CLUSTER: singleResult.Cluster,
+                Begru: Begru,
+                CELL_NUMBER: singleResult.CELL_NUMBER,
+              });
+              isSystemMeterServiceCall = true;
+            } else {
+              alert(singleResult.RESULT);
+              isSystemMeterServiceCall = false;
+              return false;
+            }
           });
         }
       })
       .then(res => {
-        getSystemMeter(ContractNo, CustomData, SIRFormat);
+        if (isSystemMeterServiceCall)
+          getSystemMeter(ContractNo, CustomData, SIRFormat);
       })
       .catch(error => {
-        console.error('axios:error: ' + error);
+        console.error('axios:getContract:error: ' + error);
       });
 
     return;
@@ -252,7 +268,7 @@ const HomeScreen = ({navigation}) => {
             }
           })
           .catch(error => {
-            console.error('axios:error:getSystemMeter: ' + error);
+            console.error('axios:error:get System Meter: ' + error);
           });
       });
   };

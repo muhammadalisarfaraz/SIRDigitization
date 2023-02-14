@@ -67,6 +67,7 @@ import SafetyHazardPosted from './screens/SafetyHazardPosted';
 import LoadingScreenforDataDownload from './screens/LoadingScreenforDataDownload';
 import DownloadMasterData from './screens/DownloadMasterData';
 import DeleteSIRs from './screens/DeleteSIRs';
+import ChangePassword from './screens/ChangePassword';
 
 import {AuthContext} from './components/context';
 
@@ -362,6 +363,8 @@ const App = () => {
               />
 
               <Drawer.Screen name="DeleteSIRs" component={DeleteSIRs} />
+
+              <Drawer.Screen name="ChangePassword" component={ChangePassword} />
 
               <Drawer.Screen
                 name="Un-Planned SIR"
