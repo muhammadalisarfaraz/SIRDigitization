@@ -37,6 +37,7 @@ import {
   Select,
 } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-community/async-storage';
+
 import ImagePicker from 'react-native-image-crop-picker';
 
 import ImageViewer from 'react-native-image-zoom-viewer';
@@ -192,7 +193,7 @@ const DeleteSIRs = ({navigation}) => {
                       },
                     ]}>
                     {' '}
-                    Delete SIRs Screen
+                    Sync. SIR Screen
                   </Text>
                 </LinearGradient>
               </View>
@@ -220,7 +221,7 @@ const DeleteSIRs = ({navigation}) => {
                 }}>
                 <Text
                   style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Total cases SIR Count: {postedSIRCount}
+                  Total Cases SIR Count: {postedSIRCount}
                 </Text>
               </View>
               <View
@@ -257,7 +258,7 @@ const DeleteSIRs = ({navigation}) => {
                           color: '#fff',
                         },
                       ]}>
-                      Posted SIR's to be Deleted
+                      Approved SIR to Removed
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -276,7 +277,7 @@ const DeleteSIRs = ({navigation}) => {
                 }}>
                 <Text
                   style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Total cases to be Deleted Count: {postedSIRtobeDeletedCount}
+                  Total Cases to be Removed Count: {postedSIRtobeDeletedCount}
                 </Text>
               </View>
 

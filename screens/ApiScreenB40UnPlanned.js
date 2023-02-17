@@ -1,15 +1,21 @@
-import React, { useState, useRef, useEffect, createRef } from 'react';
+import React, {useState, useRef, useEffect, createRef} from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  TextInput, Button,
-  ScrollView, Image, ImageBackground, SafeAreaView,
-  TouchableOpacity, Platform,
+  TextInput,
+  Button,
+  ScrollView,
+  Image,
+  ImageBackground,
+  SafeAreaView,
+  TouchableOpacity,
+  Platform,
   PermissionsAndroid,
-  ActivityIndicator, Dimensions
+  ActivityIndicator,
+  Dimensions,
 } from 'react-native';
-import { CheckBox } from 'react-native-elements'
+import {CheckBox} from 'react-native-elements';
 import {
   Provider,
   Appbar,
@@ -20,30 +26,35 @@ import {
 } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-community/async-storage';
+
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
-import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
+import RadioForm, {
+  RadioButton,
+  RadioButtonInput,
+  RadioButtonLabel,
+} from 'react-native-simple-radio-button';
 import MultiSelect from 'react-native-multiple-select';
 import axios from 'axios';
 import ImageViewConsumer from 'react-native-image-viewing';
 import Geolocation from '@react-native-community/geolocation';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DropDownPicker from 'react-native-dropdown-picker'; 
+import DropDownPicker from 'react-native-dropdown-picker';
 import {
   launchCamera,
   launchImageLibrary,
-  Select
+  Select,
 } from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Moment from 'moment';
-import { set } from 'react-native-reanimated';
+import {set} from 'react-native-reanimated';
 import SignatureCapture from 'react-native-signature-capture';
 
 let current = 100;
-const ApiScreenB40  = ({ navigation }) => {
+const ApiScreenB40 = ({navigation}) => {
   const scrollRef = useRef(null);
   const [pos, setPos] = React.useState(0);
   const [tab, setTab] = useState('Consumer Detail');
@@ -60,152 +71,141 @@ const ApiScreenB40  = ({ navigation }) => {
 
     setTimeout(() => {
       setSign();
-      setIsSignature("N");
+      setIsSignature('N');
     }, 1000);
   };
-  const _onSaveEvent = (result) => {
+  const _onSaveEvent = result => {
     // alert('Signature Captured Successfully');
     setSign(result.encoded);
     let consSign = result.encoded;
-    setIsSignature("Y");
-    setConsumerSignature([{ consSign }]);
+    setIsSignature('Y');
+    setConsumerSignature([{consSign}]);
     setSignModalVisible(!isSignModalVisible);
-  }
+  };
   const _onDragEvent = () => {
     // This callback will be called when the user enters signature
     console.log('dragged');
   };
 
   var radio_props = [
-    { label: 'Yes', value: 0 },
-    { label: 'No', value: 1 }
+    {label: 'Yes', value: 0},
+    {label: 'No', value: 1},
   ];
 
   var radio_propsS = [
-    { label: 'Yes', value: 0 },
-    { label: 'No', value: 1 }
+    {label: 'Yes', value: 0},
+    {label: 'No', value: 1},
   ];
 
   var radio_propsServiceType = [
-    { label: 'O/H', value: 0 },
-    { label: 'U/G', value: 1 }
+    {label: 'O/H', value: 0},
+    {label: 'U/G', value: 1},
   ];
 
   var radio_propsMeterInstalled = [
-    { label: 'FMR', value: 0 },
-    { label: 'MTV', value: 1 }
+    {label: 'FMR', value: 0},
+    {label: 'MTV', value: 1},
   ];
 
-  const [checkBoxselectedList, setcheckBoxSelectedList] = useState([])
-  const [selectedList, setSelectedList] = useState([])
+  const [checkBoxselectedList, setcheckBoxSelectedList] = useState([]);
+  const [selectedList, setSelectedList] = useState([]);
   const [checkBoxList, setCheckBoxList] = useState([
     {
-      name: "Burnt", // label for checkbox item
+      name: 'Burnt', // label for checkbox item
       value: 1,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "Direct Use/Extra Phase",
+      name: 'Direct Use/Extra Phase',
       value: 2,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "Doubtful",
+      name: 'Doubtful',
       value: 3,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "Hole",
+      name: 'Hole',
       value: 4,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "N/Break", // label for checkbox item
+      name: 'N/Break', // label for checkbox item
       value: 5,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "New Connection",
+      name: 'New Connection',
       value: 6,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "Stop",
+      name: 'Stop',
       value: 7,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "Shunt", // label for checkbox item
+      name: 'Shunt', // label for checkbox item
       value: 8,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "Sticky",
+      name: 'Sticky',
       value: 9,
 
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "Smoky", // label for checkbox item
+      name: 'Smoky', // label for checkbox item
       value: 10,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "Slow",
+      name: 'Slow',
       value: 11,
-      ischeck: false
+      ischeck: false,
     },
     {
-      name: "T-Strip/Damaged/Open", // label for checkbox item
+      name: 'T-Strip/Damaged/Open', // label for checkbox item
       value: 12,
-      ischeck: false
+      ischeck: false,
     },
-  ])
+  ]);
 
   let onSelectCheckBox = (name, id) => {
     setcheckBoxSelectedList([{name}, ...checkBoxselectedList]);
-    
+
     setCheckBoxList(
       checkBoxList.map((li, index) =>
-   
         li.name == name
           ? {
-            ...li,
-            ischeck: !li.ischeck,
-
-          }
+              ...li,
+              ischeck: !li.ischeck,
+            }
           : {
-            ...li,
-          },
-          
+              ...li,
+            },
       ),
-      
     );
-    setSelectedList(checkBoxList.filter(val => {
-     
-      
-      return val.ischeck == true;
-    })
-    )
-
+    setSelectedList(
+      checkBoxList.filter(val => {
+        return val.ischeck == true;
+      }),
+    );
   };
 
-
   var radio_propsConsumerDetail = [
-    { label: 'Active', value: 0 },
-    { label: 'In-Active', value: 1 }
+    {label: 'Active', value: 0},
+    {label: 'In-Active', value: 1},
   ];
 
   const [pitems, setPItems] = useState([
     //        { label: '-- Please Select --', value: '', imageCount: 0 },
-    { label: 'Main Cover', value: 'Main Cover' },
-    { label: 'Terminal cover', value: 'Terminal cover' },
-    { label: 'Panel door', value: 'Panel door' },
-
+    {label: 'Main Cover', value: 'Main Cover'},
+    {label: 'Terminal cover', value: 'Terminal cover'},
+    {label: 'Panel door', value: 'Panel door'},
   ]);
-
-
-
 
   const items = [
     {
@@ -247,16 +247,16 @@ const ApiScreenB40  = ({ navigation }) => {
   ];
 
   const [selectedItems, setSelectedItems] = useState([]);
-  
-  const [isSelecteditems, setIsSelecteditems] = useState("N");
+
+  const [isSelecteditems, setIsSelecteditems] = useState('N');
 
   let onSelectedItemsChange = selectedItems => {
-    console.log("selectedItems", selectedItems);
+    console.log('selectedItems', selectedItems);
     if (selectedItems.length > 5) {
       return;
     } else {
       setSelectedItems(selectedItems);
-      setIsSelecteditems("Y");
+      setIsSelecteditems('Y');
     }
   };
 
@@ -266,7 +266,6 @@ const ApiScreenB40  = ({ navigation }) => {
       name: 'Consumer Detail',
       active: true,
     },
-     
 
     {
       id: 3,
@@ -289,7 +288,6 @@ const ApiScreenB40  = ({ navigation }) => {
       active: false,
     },
 
-
     {
       id: 7,
       name: 'Customer Acknowlegment',
@@ -301,10 +299,7 @@ const ApiScreenB40  = ({ navigation }) => {
       name: 'SIR Pictures',
       active: false,
     },
-
-    
   ]);
-
 
   const [apiRes, setApiRes] = useState([]);
   const [filePath, setFilePath] = useState([]);
@@ -313,11 +308,11 @@ const ApiScreenB40  = ({ navigation }) => {
   const [images1, setImages1] = useState([]);
   const [consumerImages, setConsumerImages] = useState([]);
   const [indexSelected, setIndexSelected] = useState(0);
-  const [isImage, setIsImage] = useState("N");
-  const [IsImage1, setIsImage1] = useState("N");
+  const [isImage, setIsImage] = useState('N');
+  const [IsImage1, setIsImage1] = useState('N');
   const [imageview, setimageview] = useState(false);
   const [indexer1, setindexer1] = useState(0);
-  const { width } = Dimensions.get('window');
+  const {width} = Dimensions.get('window');
   const [ImagedeletionLoader, setImagedeletionLoader] = useState(false);
   const [image1Show, setImage1Show] = useState(false);
   const [visible1, setIsVisible1] = useState(false);
@@ -328,89 +323,87 @@ const ApiScreenB40  = ({ navigation }) => {
   const [value, setValue] = useState();
   /* Consumer Detail */
 
-
-  const [consumerStatus, setConsumerStatus] = useState("");
-  const [industryType, setIndustryType] = useState("");
-  const [tariff, setTariff] = useState("");
-  const [serviceType, setServiceType] = useState("");
-  const [sizeofService, setSizeofService] = useState("");
-  const [fedFromPMTSS, setFedFromPMTSS] = useState("");
-  const [pmtSSCode, setPMTSSCode] = useState("");
-  const [connectedLoad, setConnectedLoad] = useState("");
-  const [contractLoad, setContractLoad] = useState("");
-  const [connectedLoadKW, setConnectedLoadKW] = useState("");
-  const [runningLoadKW, setRunningLoadKW] = useState("");
+  const [consumerStatus, setConsumerStatus] = useState('');
+  const [industryType, setIndustryType] = useState('');
+  const [tariff, setTariff] = useState('');
+  const [serviceType, setServiceType] = useState('');
+  const [sizeofService, setSizeofService] = useState('');
+  const [fedFromPMTSS, setFedFromPMTSS] = useState('');
+  const [pmtSSCode, setPMTSSCode] = useState('');
+  const [connectedLoad, setConnectedLoad] = useState('');
+  const [contractLoad, setContractLoad] = useState('');
+  const [connectedLoadKW, setConnectedLoadKW] = useState('');
+  const [runningLoadKW, setRunningLoadKW] = useState('');
   /* Conumer Detail ------------ End  */
 
   /* Power Meter ------------ Start */
 
-  const [powerKENo, setPowerKENo] = useState("");
-  const [powerMeterMake, setPowerMeterMake] = useState("");
-  const [powerMC, setPowerMC] = useState("");
-  const [powerReading, setPowerReading] = useState("");
-  const [powerMDIOnReading, setPowerMDIOnReading] = useState("");
-  const [currentReading, setCurrentReading] = useState("");
-  const [peakReading, setPeakReading] = useState("");
+  const [powerKENo, setPowerKENo] = useState('');
+  const [powerMeterMake, setPowerMeterMake] = useState('');
+  const [powerMC, setPowerMC] = useState('');
+  const [powerReading, setPowerReading] = useState('');
+  const [powerMDIOnReading, setPowerMDIOnReading] = useState('');
+  const [currentReading, setCurrentReading] = useState('');
+  const [peakReading, setPeakReading] = useState('');
 
   /* Power Meter ------------ End */
 
   /* Light Meter ------------ Start */
-  const [lightKENo, setLightKENo] = useState("");
-  const [lightMeterMake, setLightMeterMake] = useState("");
-  const [lightMC, setLightMC] = useState("");
-  const [lightReading, setLightReading] = useState("");
-  const [lightMDIOnReading, setLightMDIOnReading] = useState("");
-  const [lightPeakReading, setLightPeakReading] = useState("");
-  const [lightCurrentReading, setLightCurrentReading] = useState("");
-  const [lightConsumerNo, setLightConsumerNo] = useState("");
-
+  const [lightKENo, setLightKENo] = useState('');
+  const [lightMeterMake, setLightMeterMake] = useState('');
+  const [lightMC, setLightMC] = useState('');
+  const [lightReading, setLightReading] = useState('');
+  const [lightMDIOnReading, setLightMDIOnReading] = useState('');
+  const [lightPeakReading, setLightPeakReading] = useState('');
+  const [lightCurrentReading, setLightCurrentReading] = useState('');
+  const [lightConsumerNo, setLightConsumerNo] = useState('');
 
   /* Light Meter ------------ End */
   /* Meter Testing Result ------------ Start */
-  const [meterTestingResultTC, setMeterTestingResultTC] = useState("");
-  const [meterTestingperError, setMeterTestingperError] = useState("");
-  const [meterTestingTo, setMeterTestingTo] = useState("");
-  const [meterInstalled1, setMeterInstalled1] = useState("");
-  const [meterInstalled2, setMeterInstalled2] = useState("");
-  const [meterInstalled, setMeterInstalled] = useState("");
-  const [fmrNo, setFMRNo] = useState("");
-  const [statusPostalorder, setStatusPostalorder] = useState("");
-  const [metertestingResultremarks, setmetertestingResultremarks] = useState("");
-
+  const [meterTestingResultTC, setMeterTestingResultTC] = useState('');
+  const [meterTestingperError, setMeterTestingperError] = useState('');
+  const [meterTestingTo, setMeterTestingTo] = useState('');
+  const [meterInstalled1, setMeterInstalled1] = useState('');
+  const [meterInstalled2, setMeterInstalled2] = useState('');
+  const [meterInstalled, setMeterInstalled] = useState('');
+  const [fmrNo, setFMRNo] = useState('');
+  const [statusPostalorder, setStatusPostalorder] = useState('');
+  const [metertestingResultremarks, setmetertestingResultremarks] =
+    useState('');
 
   /* Meter Testing Result ------------ End */
 
-
-
   /* Discrepancy and Findings ------------ Start */
 
-  const [discrepancyfindingsRemarks, setdiscrepancyfindingsRemarks] = useState("");
+  const [discrepancyfindingsRemarks, setdiscrepancyfindingsRemarks] =
+    useState('');
   /* Discrepancy and Findings ------------ End */
 
   /* Customer Acknowlegment ------------ Start */
 
-  const [consumerName, setConsumerName] = useState("");
-  const [mobileNo, setMobileNo] = useState("");
-  const [consumerNameCNIC, setconsumerNamecNIC] = useState("");
-  const [consumerRemarks, setConsumerRemarks] = useState("");
-  const [consumerRefuseYN, setConsumerRefuseYN] = useState("");
-  const [consumerSign, setConsumerSign] = useState("");
+  const [consumerName, setConsumerName] = useState('');
+  const [mobileNo, setMobileNo] = useState('');
+  const [consumerNameCNIC, setconsumerNamecNIC] = useState('');
+  const [consumerRemarks, setConsumerRemarks] = useState('');
+  const [consumerRefuseYN, setConsumerRefuseYN] = useState('');
+  const [consumerSign, setConsumerSign] = useState('');
 
   /* Customer Acknowlegment ------------ End */
 
-  const [SIR, setSIR] = useState("900000000335");
-  const [cosnumerno, setCosnumerno] = useState("LA414951");
+  const [SIR, setSIR] = useState('900000000335');
+  const [cosnumerno, setCosnumerno] = useState('LA414951');
 
-  const [clusterIBC, setClusterIBC] = useState("C1 / F.B.Area");
-  const [consumernameBilling, setConsumernameBilling] = useState("Syed M. Shoaib");
+  const [clusterIBC, setClusterIBC] = useState('C1 / F.B.Area');
+  const [consumernameBilling, setConsumernameBilling] =
+    useState('Syed M. Shoaib');
 
+  const [accountno, setAccountno] = useState('400001061656');
+  const [address, setAddress] = useState(
+    'Flat No. D-8, Anarkali Flat, Block-16, F.B.Area',
+  );
 
-  const [accountno, setAccountno] = useState("400001061656");
-  const [address, setAddress] = useState("Flat No. D-8, Anarkali Flat, Block-16, F.B.Area");
-
-  const [assigndate, setAssigndate] = useState("20.02.2022");
-  const [assignto, setAssignto] = useState("80012790 - Syed M. Shoaib");
-
+  const [assigndate, setAssigndate] = useState('20.02.2022');
+  const [assignto, setAssignto] = useState('80012790 - Syed M. Shoaib');
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
@@ -418,10 +411,9 @@ const ApiScreenB40  = ({ navigation }) => {
   const [isSignModalVisible, setSignModalVisible] = useState(false);
   const [error, setError] = useState('');
   const [uploadingMsg, setUploadingMsg] = useState('');
- 
-  const [consumerSignature, setConsumerSignature] = useState([]);
-  const [isSignature, setIsSignature] = useState("N");
 
+  const [consumerSignature, setConsumerSignature] = useState([]);
+  const [isSignature, setIsSignature] = useState('N');
 
   const SPACING = 10;
   const THUMB_SIZE = 80;
@@ -433,34 +425,31 @@ const ApiScreenB40  = ({ navigation }) => {
     carouselRef?.current?.snapToItem(touched);
   };
 
-
   const [date1, setDate] = useState();
 
-
-  const handleConfirm = (date) => {
-
-    console.warn("A date has been picked: ", date);
+  const handleConfirm = date => {
+    console.warn('A date has been picked: ', date);
 
     // searchFilterFunctionDate(moment(date).format("YYYYMMDD"));
-    console.log("ali");
+    console.log('ali');
 
-    console.log("alitest", Moment(date).format("DD-MM-YYYY"));
-    setDate(Moment(date).format("DD-MM-YYYY"));
+    console.log('alitest', Moment(date).format('DD-MM-YYYY'));
+    setDate(Moment(date).format('DD-MM-YYYY'));
 
     hideDatePicker();
     // setChosenDate(moment(datetime).format('dddd Do MMMM YYYY à HH:mm'))
     // setChosenDate(moment(date).format("YYYYMMDD"));
   };
 
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
 
-  const hideDatePicker = () => { setDatePickerVisibility(false); };
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
 
-
-  const showDatePicker = () => { setDatePickerVisibility(true); };
-
-
-
-  const chooseFile = (type) => {
+  const chooseFile = type => {
     let options = {
       mediaType: type,
       maxWidth: 300,
@@ -468,7 +457,7 @@ const ApiScreenB40  = ({ navigation }) => {
       quality: 1,
     };
 
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, response => {
       console.log('Response = ', response);
 
       if (response.didCancel) {
@@ -485,35 +474,47 @@ const ApiScreenB40  = ({ navigation }) => {
         return;
       }
 
-
-
-
-      setIsImage("Y");
+      setIsImage('Y');
 
       var Allimages = images;
-      setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+      setFilePath([
+        {
+          uri: response.assets[0].uri,
+          url: response.assets[0].uri,
+          fileName: response.assets[0].fileName,
+          base64: response.assets[0].base64,
+          Status: 'Pending',
+          RoshniBajiWebID: '',
+        },
+        ...Allimages,
+      ]);
 
-      setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
-
-
+      setImages([
+        {
+          uri: response.assets[0].uri,
+          url: response.assets[0].uri,
+          fileName: response.assets[0].fileName,
+          base64: response.assets[0].base64,
+          Status: 'Pending',
+          RoshniBajiWebID: '',
+        },
+        ...Allimages,
+      ]);
     });
   };
-
-
 
   const onSelect = indexSelected => {
     setIndexSelected(indexSelected);
     flatListRef?.current?.scrollToOffset({
       offset: indexSelected * THUMB_SIZE,
-      animated: true
+      animated: true,
     });
   };
-  const [latitude, setlatitude] = useState("");
-  const [longitude, setlongitude] = useState("");
-
+  const [latitude, setlatitude] = useState('');
+  const [longitude, setlongitude] = useState('');
 
   const getUserCurrentLocation = async () => {
-    let latitude, longitude
+    let latitude, longitude;
 
     //let isPermissionPermitted= await requestLocationPermission();
 
@@ -524,17 +525,14 @@ const ApiScreenB40  = ({ navigation }) => {
     //  console.log("isPermissionPermitted", isPermissionPermitted);
     Geolocation.getCurrentPosition(
       info => {
-        const { coords } = info
+        const {coords} = info;
 
-        latitude = coords.latitude
-        longitude = coords.longitude
-
+        latitude = coords.latitude;
+        longitude = coords.longitude;
 
         setlatitude(latitude);
         setlongitude(longitude);
         // console.log(latitude);
-
-
 
         // getUserCurrentAddress(latitude, longitude)
       },
@@ -542,20 +540,11 @@ const ApiScreenB40  = ({ navigation }) => {
       {
         enableHighAccuracy: false,
         timeout: 2000,
-        maximumAge: 3600000
-      }
-    )
+        maximumAge: 3600000,
+      },
+    );
     //}
-  }
-
-
-
-
-
-
-
-
-
+  };
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -596,37 +585,33 @@ const ApiScreenB40  = ({ navigation }) => {
     } else return true;
   };
 
-
   const requestAuthorization = async () => {
     if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.requestAuthorization()(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
-            'title': 'Location Permission',
-            'message': 'This App needs access to your location ' +
-              'so we can know where you are.'
-          }
-        )
+            title: 'Location Permission',
+            message:
+              'This App needs access to your location ' +
+              'so we can know where you are.',
+          },
+        );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use locations ")
+          console.log('You can use locations ');
           return granted === PermissionsAndroid.RESULTS.GRANTED;
-
         } else {
-          console.log("Location permission denied")
+          console.log('Location permission denied');
           return false;
         }
       } catch (err) {
         return false;
-        console.warn(err)
-
+        console.warn(err);
       }
     }
-  }
-
+  };
 
   const captureImage = async (type, imageNo) => {
-
     let options = {
       mediaType: type,
       maxWidth: 300,
@@ -641,21 +626,16 @@ const ApiScreenB40  = ({ navigation }) => {
     let isCameraPermitted = await requestCameraPermission();
     let isStoragePermitted = await requestExternalWritePermission();
 
-    console.log("isCameraPermitted", isCameraPermitted);
-    console.log("isStoragePermitted", isStoragePermitted);
+    console.log('isCameraPermitted', isCameraPermitted);
+    console.log('isStoragePermitted', isStoragePermitted);
     // && isStoragePermitted
     if (isCameraPermitted) {
-
       ImagePicker.openCamera({
         width: 300,
         height: 400,
         cropping: true,
         includeBase64: true,
       }).then(response => {
-
-
-
-
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
 
@@ -673,40 +653,59 @@ const ApiScreenB40  = ({ navigation }) => {
           return;
         }
 
-
-
-
-
-
-
         var Allimages = images;
 
         if (imageNo == '1') {
-          setIsImage1("Y");
+          setIsImage1('Y');
           console.log(response.path);
           //setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
-          setFilePath1([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }]);
-          setImages1({ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data });
-          setConsumerImages([{ uri: response.path, url: response.path, fileName: 'consumerImage.jpg', base64: response.data }]);
-
+          setFilePath1([
+            {
+              uri: response.path,
+              url: response.path,
+              fileName: 'BFDC.jpg',
+              base64: response.data,
+            },
+          ]);
+          setImages1({
+            uri: response.path,
+            url: response.path,
+            fileName: 'BFDC.jpg',
+            base64: response.data,
+          });
+          setConsumerImages([
+            {
+              uri: response.path,
+              url: response.path,
+              fileName: 'consumerImage.jpg',
+              base64: response.data,
+            },
+          ]);
+        } else {
+          setIsImage('Y');
+          setFilePath([
+            {
+              uri: response.path,
+              url: response.path,
+              fileName: 'BFDC.jpg',
+              base64: response.data,
+            },
+            ...Allimages,
+          ]);
+          setImages([
+            {
+              uri: response.path,
+              url: response.path,
+              fileName: 'BFDC.jpg',
+              base64: response.data,
+            },
+            ...Allimages,
+          ]);
         }
-        else {
-          setIsImage("Y");
-          setFilePath([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }, ...Allimages]);
-          setImages([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }, ...Allimages]);
-
-
-        }
-        console.log("images1.uri", images1.uri);
+        console.log('images1.uri', images1.uri);
       });
     }
   };
-
-
-
-
-
-
 
   useEffect(() => {
     // getApiData();
@@ -734,40 +733,84 @@ const ApiScreenB40  = ({ navigation }) => {
 
   const [tableList, setTableList] = useState([
     {
-      id: Date.now(), LoadDetail: 'Fan', Quantity: '', Rating: '80 W', TotalWatts: ''
+      id: Date.now(),
+      LoadDetail: 'Fan',
+      Quantity: '',
+      Rating: '80 W',
+      TotalWatts: '',
     },
-    { id: Date.now(), LoadDetail: 'Bulb', Quantity: '', Rating: '', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Energy Saver', Quantity: '', Rating: '', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Tube Light', Quantity: '', Rating: '40 W', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Heater', Quantity: '', Rating: '', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'AC-Window', Quantity: '', Rating: '2500 W', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: '1 1/2 Ton', Quantity: '', Rating: '1800 W', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: '1 Ton', Quantity: '', Rating: '1200 W', TotalWatts: '' },
-
+    {
+      id: Date.now(),
+      LoadDetail: 'Bulb',
+      Quantity: '',
+      Rating: '',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: 'Energy Saver',
+      Quantity: '',
+      Rating: '',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: 'Tube Light',
+      Quantity: '',
+      Rating: '40 W',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: 'Heater',
+      Quantity: '',
+      Rating: '',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: 'AC-Window',
+      Quantity: '',
+      Rating: '2500 W',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: '1 1/2 Ton',
+      Quantity: '',
+      Rating: '1800 W',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: '1 Ton',
+      Quantity: '',
+      Rating: '1200 W',
+      TotalWatts: '',
+    },
   ]);
-  const [ispowermeterdetail, setIspowermeterdetail] = useState("N");
+  const [ispowermeterdetail, setIspowermeterdetail] = useState('N');
 
   const [powermeterdetail, setPowermeterDetail] = useState([
     {
-      id: Date.now(), CurrentType: 'R', AMP: '', VOLT: '', PF: ''
+      id: Date.now(),
+      CurrentType: 'R',
+      AMP: '',
+      VOLT: '',
+      PF: '',
     },
-    { id: Date.now(), CurrentType: 'Y', AMP: '', VOLT: '', PF: '' },
-    { id: Date.now(), CurrentType: 'B', AMP: '', VOLT: '', PF: '' },
-    { id: Date.now(), CurrentType: 'N', AMP: '', VOLT: '', PF: '' },
-
+    {id: Date.now(), CurrentType: 'Y', AMP: '', VOLT: '', PF: ''},
+    {id: Date.now(), CurrentType: 'B', AMP: '', VOLT: '', PF: ''},
+    {id: Date.now(), CurrentType: 'N', AMP: '', VOLT: '', PF: ''},
   ]);
-  const [islightmeterdetail, setIslightmeterdetail] = useState("N");
-
+  const [islightmeterdetail, setIslightmeterdetail] = useState('N');
 
   const [lightmeterdetail, setLightmeterdetail] = useState([
-    { id: Date.now(), CurrentType: 'R', AMP: '', VOLT: '', PF: '' },
-    { id: Date.now(), CurrentType: 'Y', AMP: '', VOLT: '', PF: '' },
-    { id: Date.now(), CurrentType: 'B', AMP: '', VOLT: '', PF: '' },
-    { id: Date.now(), CurrentType: 'N', AMP: '', VOLT: '', PF: '' },
-
+    {id: Date.now(), CurrentType: 'R', AMP: '', VOLT: '', PF: ''},
+    {id: Date.now(), CurrentType: 'Y', AMP: '', VOLT: '', PF: ''},
+    {id: Date.now(), CurrentType: 'B', AMP: '', VOLT: '', PF: ''},
+    {id: Date.now(), CurrentType: 'N', AMP: '', VOLT: '', PF: ''},
   ]);
-
-
 
   const onAddmore = () => {
     setTableList([
@@ -782,70 +825,63 @@ const ApiScreenB40  = ({ navigation }) => {
     ]);
   };
 
-
   // console.log('list table', tableList);
-
 
   const updateCurrentTypeLoadDetail = (text, index) => {
     let newArray = [...powermeterdetail];
-    newArray[index] = { ...newArray[index], CurrentType: text };
+    newArray[index] = {...newArray[index], CurrentType: text};
     setPowermeterDetail(newArray);
   };
   const updateAmp = (text, index) => {
     let newArray = [...powermeterdetail];
-    newArray[index] = { ...newArray[index], AMP: text };
+    newArray[index] = {...newArray[index], AMP: text};
     setPowermeterDetail(newArray);
   };
   const updateVolt = (text, index) => {
     let newArray = [...powermeterdetail];
-    newArray[index] = { ...newArray[index], VOLT: text };
+    newArray[index] = {...newArray[index], VOLT: text};
     setPowermeterDetail(newArray);
   };
   const updatePF = (text, index) => {
     let newArray = [...powermeterdetail];
-    newArray[index] = { ...newArray[index], PF: text };
+    newArray[index] = {...newArray[index], PF: text};
     setPowermeterDetail(newArray);
   };
 
   const updateLAmp = (text, index) => {
     let newArray = [...lightmeterdetail];
-    newArray[index] = { ...newArray[index], AMP: text };
+    newArray[index] = {...newArray[index], AMP: text};
     setLightmeterdetail(newArray);
   };
   const updateLVolt = (text, index) => {
     let newArray = [...lightmeterdetail];
-    newArray[index] = { ...newArray[index], VOLT: text };
+    newArray[index] = {...newArray[index], VOLT: text};
     setLightmeterdetail(newArray);
   };
   const updateLPF = (text, index) => {
     let newArray = [...lightmeterdetail];
-    newArray[index] = { ...newArray[index], PF: text };
+    newArray[index] = {...newArray[index], PF: text};
     setLightmeterdetail(newArray);
   };
 
-
-
-
-
-
   const updateLoadDetail = (text, index) => {
     let newArray = [...tableList];
-    newArray[index] = { ...newArray[index], LoadDetail: text };
+    newArray[index] = {...newArray[index], LoadDetail: text};
     setTableList(newArray);
   };
   const updateQuantity = (text, index) => {
     let newArray = [...tableList];
-    newArray[index] = { ...newArray[index], Quantity: text };
+    newArray[index] = {...newArray[index], Quantity: text};
     setTableList(newArray);
   };
   const updateRating = (text, index) => {
     let newArray = [...tableList];
-    newArray[index] = { ...newArray[index], Rating: text };
+    newArray[index] = {...newArray[index], Rating: text};
     setTableList(newArray);
   };
   const updateTotalWatts = (text, index) => {
     let newArray = [...tableList];
-    newArray[index] = { ...newArray[index], TotalWatts: text };
+    newArray[index] = {...newArray[index], TotalWatts: text};
     setTableList(newArray);
   };
 
@@ -853,24 +889,24 @@ const ApiScreenB40  = ({ navigation }) => {
     setTab(name);
     console.log(pos);
     if (id == 1) {
-      scrollRef.current.scrollTo({ x: pos });
+      scrollRef.current.scrollTo({x: pos});
     } else if (id == list.length - 1) {
-      scrollRef.current.scrollTo({ x: pos - 120 });
+      scrollRef.current.scrollTo({x: pos - 120});
     } else {
-      scrollRef.current.scrollTo({ x: pos + 120 });
+      scrollRef.current.scrollTo({x: pos + 120});
     }
 
     setList(
       list.map((li, index) =>
         li.name == name
           ? {
-            ...li,
-            active: true,
-          }
+              ...li,
+              active: true,
+            }
           : {
-            ...li,
-            active: false,
-          },
+              ...li,
+              active: false,
+            },
       ),
     );
     // setList(update);
@@ -883,8 +919,8 @@ const ApiScreenB40  = ({ navigation }) => {
       <View>
         {/* <Animatable.View animation="fadeInRightBig"> */}
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        <View style={styles.footer}>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={styles.footer}>
+            <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
                   // flex: 0.45,
@@ -950,9 +986,9 @@ const ApiScreenB40  = ({ navigation }) => {
               </View>
             </View>
 
-            <View style={{ paddingTop: 20 }}></View>
-            <View style={{ padding: 5, marginBottom: 10 }}></View>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
+            <View style={{paddingTop: 20}}></View>
+            <View style={{padding: 5, marginBottom: 10}}></View>
+            <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
                   // flex: 0.45,
@@ -1007,7 +1043,7 @@ const ApiScreenB40  = ({ navigation }) => {
                     <Text
                       style={[
                         styles.text_style,
-                        { color: li.active == true ? '#fff' : '#000' },
+                        {color: li.active == true ? '#fff' : '#000'},
                       ]}>
                       {li.name}
                     </Text>
@@ -1029,21 +1065,27 @@ const ApiScreenB40  = ({ navigation }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-
                   <View style={styles.footerInput}>
-
-
-
-                    <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: -80 }}>
-
-                      <View style={{ marginLeft: 2, flex: 2, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        width: '88%',
+                        marginTop: -80,
+                      }}>
+                      <View
+                        style={{
+                          marginLeft: 2,
+                          flex: 2,
+                          alignItems: 'flex-start',
+                        }}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
                           Consumer Status
                         </Text>
                       </View>
 
-                      <View style={{ flexDirection: 'row', flex: 2.5, width: '50%' }}>
-
+                      <View
+                        style={{flexDirection: 'row', flex: 2.5, width: '50%'}}>
                         <RadioForm
                           radio_props={radio_propsConsumerDetail}
                           initial={radio_propsConsumerDetail}
@@ -1052,7 +1094,6 @@ const ApiScreenB40  = ({ navigation }) => {
                           // borderWidth={5}
                           buttonInnerColor={'#1565C0'}
                           selectedButtonColor={'#1565C0'}
-
                           // labelColor={'#50C900'}
 
                           borderWidth={1}
@@ -1060,41 +1101,48 @@ const ApiScreenB40  = ({ navigation }) => {
                           buttonSize={13}
                           buttonOuterSize={20}
                           //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
-                          buttonWrapStyle={{ marginLeft: 10 }}
-                          onPress={(value) => {
-
-                            ({ value: value })
+                          buttonWrapStyle={{marginLeft: 10}}
+                          onPress={value => {
+                            ({value: value});
                             if (value == 0) {
-                              setConsumerStatus("Active")
+                              setConsumerStatus('Active');
+                            } else {
+                              setConsumerStatus('In-Active');
                             }
-                            else {
-                              setConsumerStatus("In-Active")
-                            }
-                          }
-
-                          }
+                          }}
                         />
                       </View>
-
-
                     </View>
 
                     <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                      <View style={{ flex: 0.5, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Premise/Industry Type  </Text>
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        width: '88%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Premise/Industry Type{' '}
+                        </Text>
                       </View>
 
-                      <View style={{ flex: 0.5, alignItems: 'flex-start', marginLeft: 20 }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Tariff </Text>
-
+                      <View
+                        style={{
+                          flex: 0.5,
+                          alignItems: 'flex-start',
+                          marginLeft: 20,
+                        }}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Tariff{' '}
+                        </Text>
                       </View>
                     </View>
 
-
-                    <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%' }}>
-                      <View style={{ flex: 2.5, alignItems: 'flex-start' }}>
+                    <View style={{flexDirection: 'row', flex: 1, width: '88%'}}>
+                      <View style={{flex: 2.5, alignItems: 'flex-start'}}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1105,7 +1153,12 @@ const ApiScreenB40  = ({ navigation }) => {
                           }}></TextInput>
                       </View>
 
-                      <View style={{ flex: 2.4, alignItems: 'flex-start', marginLeft: 20 }}>
+                      <View
+                        style={{
+                          flex: 2.4,
+                          alignItems: 'flex-start',
+                          marginLeft: 20,
+                        }}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1117,28 +1170,39 @@ const ApiScreenB40  = ({ navigation }) => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 1, alignItems: 'flex-start' }}>
-
+                    <View style={{flex: 1, alignItems: 'flex-start'}}>
                       <Text style={styles.text_left}>Service Detail</Text>
-
-                    </View>
-
-
-                    <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                      <View style={{ flex: 0.5, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Service Type </Text>
-                      </View>
-
-                      <View style={{ flex: 0.5, alignItems: 'flex-start', marginLeft: 20 }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Size of Service </Text>
-                      </View>
                     </View>
 
                     <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%' }}>
-                      <View style={{ flex: 2.5, alignItems: 'flex-start' }}>
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        width: '88%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Service Type{' '}
+                        </Text>
+                      </View>
 
+                      <View
+                        style={{
+                          flex: 0.5,
+                          alignItems: 'flex-start',
+                          marginLeft: 20,
+                        }}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Size of Service{' '}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={{flexDirection: 'row', flex: 1, width: '88%'}}>
+                      <View style={{flex: 2.5, alignItems: 'flex-start'}}>
                         <RadioForm
                           radio_props={radio_propsServiceType}
                           initial={radio_propsServiceType}
@@ -1147,7 +1211,6 @@ const ApiScreenB40  = ({ navigation }) => {
                           // borderWidth={5}
                           buttonInnerColor={'#1565C0'}
                           selectedButtonColor={'#1565C0'}
-
                           // labelColor={'#50C900'}
 
                           borderWidth={1}
@@ -1155,23 +1218,24 @@ const ApiScreenB40  = ({ navigation }) => {
                           buttonSize={13}
                           buttonOuterSize={20}
                           //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
-                          buttonWrapStyle={{ marginLeft: 10 }}
-                          onPress={(value) => {
-
-                            ({ value: value })
+                          buttonWrapStyle={{marginLeft: 10}}
+                          onPress={value => {
+                            ({value: value});
                             if (value == 0) {
-                              setServiceType("O/H")
+                              setServiceType('O/H');
+                            } else {
+                              setServiceType('U/G');
                             }
-                            else {
-                              setServiceType("U/G")
-                            }
-                          }
-                          }
+                          }}
                         />
-
                       </View>
 
-                      <View style={{ flex: 2.4, alignItems: 'flex-start', marginLeft: 20 }}>
+                      <View
+                        style={{
+                          flex: 2.4,
+                          alignItems: 'flex-start',
+                          marginLeft: 20,
+                        }}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1184,19 +1248,34 @@ const ApiScreenB40  = ({ navigation }) => {
                     </View>
 
                     <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                      <View style={{ flex: 0.5, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Fed From PMT/SS </Text>
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        width: '88%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Fed From PMT/SS{' '}
+                        </Text>
                       </View>
 
-                      <View style={{ flex: 0.5, alignItems: 'flex-start', marginLeft: 20 }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> PMT/SS Code </Text>
+                      <View
+                        style={{
+                          flex: 0.5,
+                          alignItems: 'flex-start',
+                          marginLeft: 20,
+                        }}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          PMT/SS Code{' '}
+                        </Text>
                       </View>
                     </View>
 
-                    <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%' }}>
-                      <View style={{ flex: 2.5, alignItems: 'flex-start' }}>
+                    <View style={{flexDirection: 'row', flex: 1, width: '88%'}}>
+                      <View style={{flex: 2.5, alignItems: 'flex-start'}}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1207,7 +1286,12 @@ const ApiScreenB40  = ({ navigation }) => {
                           }}></TextInput>
                       </View>
 
-                      <View style={{ flex: 2.4, alignItems: 'flex-start', marginLeft: 20 }}>
+                      <View
+                        style={{
+                          flex: 2.4,
+                          alignItems: 'flex-start',
+                          marginLeft: 20,
+                        }}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1219,29 +1303,34 @@ const ApiScreenB40  = ({ navigation }) => {
                       </View>
                     </View>
 
-
-                    <View style={{ flex: 1, alignItems: 'flex-start' }}>
-
+                    <View style={{flex: 1, alignItems: 'flex-start'}}>
                       <Text style={styles.text_left}>Load Detail</Text>
-
-                    </View>
-
-
-
-                    <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                      <View style={{ flex: 0.5, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Connected Load </Text>
-                      </View>
-
-                      <View style={{ flex: 0.5, alignItems: 'center' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Sanction Load (KW) </Text>
-                      </View>
                     </View>
 
                     <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%' }}>
-                      <View style={{ flex: 2.5, alignItems: 'flex-start' }}>
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        width: '88%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Connected Load{' '}
+                        </Text>
+                      </View>
+
+                      <View style={{flex: 0.5, alignItems: 'center'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Sanction Load (KW){' '}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={{flexDirection: 'row', flex: 1, width: '88%'}}>
+                      <View style={{flex: 2.5, alignItems: 'flex-start'}}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1252,7 +1341,12 @@ const ApiScreenB40  = ({ navigation }) => {
                           }}></TextInput>
                       </View>
 
-                      <View style={{ flex: 2.4, alignItems: 'flex-start', marginLeft: 20 }}>
+                      <View
+                        style={{
+                          flex: 2.4,
+                          alignItems: 'flex-start',
+                          marginLeft: 20,
+                        }}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1264,22 +1358,30 @@ const ApiScreenB40  = ({ navigation }) => {
                       </View>
                     </View>
 
-
-
                     <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                      <View style={{ flex: 0.5, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Connected Load (KW) </Text>
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        width: '88%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{flex: 0.5, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Connected Load (KW){' '}
+                        </Text>
                       </View>
 
-                      <View style={{ flex: 0.5, alignItems: 'center' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}> Running Load (KW)</Text>
+                      <View style={{flex: 0.5, alignItems: 'center'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
+                          {' '}
+                          Running Load (KW)
+                        </Text>
                       </View>
                     </View>
 
-                    <View
-                      style={{ flexDirection: 'row', flex: 1, width: '88%' }}>
-                      <View style={{ flex: 2.5, alignItems: 'flex-start' }}>
+                    <View style={{flexDirection: 'row', flex: 1, width: '88%'}}>
+                      <View style={{flex: 2.5, alignItems: 'flex-start'}}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1290,7 +1392,12 @@ const ApiScreenB40  = ({ navigation }) => {
                           }}></TextInput>
                       </View>
 
-                      <View style={{ flex: 2.4, alignItems: 'flex-start', marginLeft: 20 }}>
+                      <View
+                        style={{
+                          flex: 2.4,
+                          alignItems: 'flex-start',
+                          marginLeft: 20,
+                        }}>
                         <TextInput
                           style={styles.inputLoadDetail}
                           placeholder={'Please enter'}
@@ -1301,21 +1408,12 @@ const ApiScreenB40  = ({ navigation }) => {
                           }}></TextInput>
                       </View>
                     </View>
-
-
-
-
                   </View>
                 </View>
               </View>
             </ScrollView>
           )}
 
-
-
-
-
-           
           {tab == 'Meter Testing Result' && (
             <ScrollView
               showsVerticalScrollIndicator={true}
@@ -1328,7 +1426,7 @@ const ApiScreenB40  = ({ navigation }) => {
                     justifyContent: 'center',
                   }}>
                   <View style={styles.footerInput}>
-                    <View style={{ flex: 6 }}>
+                    <View style={{flex: 6}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1343,14 +1441,14 @@ const ApiScreenB40  = ({ navigation }) => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
                                 color: 'black',
                                 marginLeft: 35,
                                 fontSize: 12,
-                                fontWeight: 'bold'
+                                fontWeight: 'bold',
                               }}>
                               TC
                             </Text>
@@ -1364,7 +1462,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             </Text>
                           </View>
 
-                          <View style={{ flex: 2, widht: '100%' }}>
+                          <View style={{flex: 2, widht: '100%'}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'TC'}
@@ -1378,7 +1476,7 @@ const ApiScreenB40  = ({ navigation }) => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1393,7 +1491,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1414,7 +1512,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             </Text>
                           </View>
 
-                          <View style={{ flex: 2, widht: '100%' }}>
+                          <View style={{flex: 2, widht: '100%'}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'% Error'}
@@ -1427,7 +1525,7 @@ const ApiScreenB40  = ({ navigation }) => {
                         </View>
                       </View>
                     </View>
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1442,7 +1540,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1454,7 +1552,7 @@ const ApiScreenB40  = ({ navigation }) => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'To'}
@@ -1470,14 +1568,20 @@ const ApiScreenB40  = ({ navigation }) => {
 
                     <LinearGradient
                       colors={['#1565C0', '#64b5f6']}
-                      style={styles.signIn}
-                    >
-                      <Text style={[styles.textSign, {
-                        color: '#fff'
-                      }]}>  Meter Installed   </Text>
+                      style={styles.signIn}>
+                      <Text
+                        style={[
+                          styles.textSign,
+                          {
+                            color: '#fff',
+                          },
+                        ]}>
+                        {' '}
+                        Meter Installed{' '}
+                      </Text>
                     </LinearGradient>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1492,7 +1596,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1504,7 +1608,7 @@ const ApiScreenB40  = ({ navigation }) => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'Detail'}
@@ -1518,7 +1622,7 @@ const ApiScreenB40  = ({ navigation }) => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1533,7 +1637,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1545,7 +1649,7 @@ const ApiScreenB40  = ({ navigation }) => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'Detail'}
@@ -1558,7 +1662,7 @@ const ApiScreenB40  = ({ navigation }) => {
                         </View>
                       </View>
                     </View>
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1573,22 +1677,28 @@ const ApiScreenB40  = ({ navigation }) => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
                                 color: 'black',
                                 fontSize: 12,
                                 marginTop: 12,
-                                fontWeight: 'bold'
+                                fontWeight: 'bold',
                               }}>
                               Action Required
                             </Text>
                           </View>
 
                           <View
-                            style={{ flexDirection: 'row', flex: 2.5, width: '88%', marginTop: 10, marginLeft: 30 }}>
-                            <View style={{ flex: 2.5, alignItems: 'flex-start' }}>
+                            style={{
+                              flexDirection: 'row',
+                              flex: 2.5,
+                              width: '88%',
+                              marginTop: 10,
+                              marginLeft: 30,
+                            }}>
+                            <View style={{flex: 2.5, alignItems: 'flex-start'}}>
                               <RadioForm
                                 radio_props={radio_propsMeterInstalled}
                                 initial={radio_propsMeterInstalled}
@@ -1597,7 +1707,6 @@ const ApiScreenB40  = ({ navigation }) => {
                                 // borderWidth={5}
                                 buttonInnerColor={'#1565C0'}
                                 selectedButtonColor={'#1565C0'}
-
                                 // labelColor={'#50C900'}
 
                                 borderWidth={1}
@@ -1605,34 +1714,42 @@ const ApiScreenB40  = ({ navigation }) => {
                                 buttonSize={13}
                                 buttonOuterSize={20}
                                 //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
-                                buttonWrapStyle={{ marginLeft: 10 }}
-                                onPress={(value) => {
-
-                                  ({ value: value })
+                                buttonWrapStyle={{marginLeft: 10}}
+                                onPress={value => {
+                                  ({value: value});
                                   if (value == 0) {
-                                    setMeterInstalled("FMR")
+                                    setMeterInstalled('FMR');
+                                  } else {
+                                    setMeterInstalled('MTV');
                                   }
-                                  else {
-                                    setMeterInstalled("MTV")
-                                  }
-                                }
-                                }
+                                }}
                               />
                             </View>
                           </View>
-
-
                         </View>
-
                       </View>
                     </View>
 
-
-                    <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                      <View style={{ flex: 0.5, textAlign: 'right' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15, textAlign: 'left' }}>  Status of Postal Order/ Seal</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        width: '88%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{flex: 0.5, textAlign: 'right'}}>
+                        <Text
+                          style={{
+                            fontWeight: 'normal',
+                            color: 'black',
+                            marginTop: 15,
+                            textAlign: 'left',
+                          }}>
+                          {' '}
+                          Status of Postal Order/ Seal
+                        </Text>
                       </View>
-                      <View style={{ flex: 0.5 }}>
+                      <View style={{flex: 0.5}}>
                         <DropDownPicker
                           open={open}
                           value={value}
@@ -1641,19 +1758,35 @@ const ApiScreenB40  = ({ navigation }) => {
                           setValue={setValue}
                           setItems={setPItems}
                           onChangeValue={item => {
-                            console.log("onChangeValue: " + item);
+                            console.log('onChangeValue: ' + item);
                             setStatusPostalorder(item);
                           }}
-                          onSelectItem={item => {// setSIRFormat(item.value);
+                          onSelectItem={item => {
+                            // setSIRFormat(item.value);
                           }}
                         />
                       </View>
                     </View>
-                    <View style={{ flexDirection: 'row', flex: 1, width: '88%', marginTop: 10 }}>
-                      <View style={{ flex: 0.5, textAlign: 'right' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black', marginTop: 15, textAlign: 'left' }}>  Remarks</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 1,
+                        width: '88%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{flex: 0.5, textAlign: 'right'}}>
+                        <Text
+                          style={{
+                            fontWeight: 'normal',
+                            color: 'black',
+                            marginTop: 15,
+                            textAlign: 'left',
+                          }}>
+                          {' '}
+                          Remarks
+                        </Text>
                       </View>
-                      <View style={{ flex: 0.5 }}>
+                      <View style={{flex: 0.5}}>
                         <TextInput
                           multiline={true}
                           onChangeText={text => {
@@ -1672,7 +1805,7 @@ const ApiScreenB40  = ({ navigation }) => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1687,7 +1820,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1699,7 +1832,7 @@ const ApiScreenB40  = ({ navigation }) => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'FMR no'}
@@ -1713,9 +1846,7 @@ const ApiScreenB40  = ({ navigation }) => {
                       </View>
                     </View>
 
-
-
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1730,7 +1861,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1742,8 +1873,13 @@ const ApiScreenB40  = ({ navigation }) => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: 2, marginLeft: 30 }}>
-                            <Text style={{ color: 'black' }}>{date1}</Text>
+                            style={{
+                              flex: 2,
+                              widht: '100%',
+                              marginTop: 2,
+                              marginLeft: 30,
+                            }}>
+                            <Text style={{color: 'black'}}>{date1}</Text>
                           </View>
                           <TouchableOpacity onPress={showDatePicker}>
                             <Icon name="calendar" size={30} color="blue" />
@@ -1784,25 +1920,26 @@ const ApiScreenB40  = ({ navigation }) => {
                         marginLeft: 2,
                       }}>
                       <View
-                        style={{ flexDirection: 'row', flex: 1, width: '88%' }}>
-                        <View style={{ flex: 2.5, flexDirection: 'column' }}>
-
+                        style={{flexDirection: 'row', flex: 1, width: '88%'}}>
+                        <View style={{flex: 2.5, flexDirection: 'column'}}>
                           {checkBoxList.map(data => {
                             return (
-                              <View style={{ flexDirection: 'column' }}>
+                              <View style={{flexDirection: 'column'}}>
                                 <CheckBox
                                   title={data.name}
-
                                   checked={data.ischeck}
-                                  containerStyle={{ backgroundColor: 'white', borderColor: 'white', padding: .1, fontWeight: 'bold' }}
+                                  containerStyle={{
+                                    backgroundColor: 'white',
+                                    borderColor: 'white',
+                                    padding: 0.1,
+                                    fontWeight: 'bold',
+                                  }}
                                   onPress={() => onSelectCheckBox(data.name)}
-
                                 />
                               </View>
-                            )
+                            );
                           })}
                         </View>
-
                       </View>
                       <View
                         style={{
@@ -1811,7 +1948,6 @@ const ApiScreenB40  = ({ navigation }) => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-
                         <View
                           style={{
                             height: 35,
@@ -1819,25 +1955,23 @@ const ApiScreenB40  = ({ navigation }) => {
                             // position: 'absolute',
                             backgroundColor: '#1565C0',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
                           }}>
-
-
-
-
-
                           <LinearGradient
                             colors={['#1565C0', '#64b5f6']}
-                            style={styles.signIn}
-                          >
-                            <Text style={[styles.textSign, {
-                              color: '#fff'
-                            }]}>  Discrepancy</Text>
+                            style={styles.signIn}>
+                            <Text
+                              style={[
+                                styles.textSign,
+                                {
+                                  color: '#fff',
+                                },
+                              ]}>
+                              {' '}
+                              Discrepancy
+                            </Text>
                           </LinearGradient>
-
                         </View>
-
-
                       </View>
 
                       <View
@@ -1847,12 +1981,14 @@ const ApiScreenB40  = ({ navigation }) => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
                           <View style={styles.multiSelectContainer}>
                             <MultiSelect
                               items={items}
                               uniqueKey="id"
-                              onSelectedItemsChange={e => onSelectedItemsChange(e)}
+                              onSelectedItemsChange={e =>
+                                onSelectedItemsChange(e)
+                              }
                               selectedItems={selectedItems}
                               selectText="Search Items..."
                               searchInputPlaceholderText="Search Items..."
@@ -1863,16 +1999,13 @@ const ApiScreenB40  = ({ navigation }) => {
                               selectedItemTextColor="#1565C0"
                               selectedItemIconColor="#000"
                               itemTextColor="#000"
-                              searchInputStyle={{ color: 'black' }}
+                              searchInputStyle={{color: 'black'}}
                               submitButtonColor="#000"
                               submitButtonText="Submit"
                             />
                           </View>
                         </View>
-
-
                       </View>
-
 
                       <View
                         style={{
@@ -1881,7 +2014,6 @@ const ApiScreenB40  = ({ navigation }) => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-
                         <View
                           style={{
                             height: 35,
@@ -1889,22 +2021,23 @@ const ApiScreenB40  = ({ navigation }) => {
                             // position: 'absolute',
                             backgroundColor: '#1565C0',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
                           }}>
-
-
                           <LinearGradient
                             colors={['#1565C0', '#64b5f6']}
-                            style={styles.signIn}
-                          >
-                            <Text style={[styles.textSign, {
-                              color: '#fff'
-                            }]}>   Remarks{' '}</Text>
+                            style={styles.signIn}>
+                            <Text
+                              style={[
+                                styles.textSign,
+                                {
+                                  color: '#fff',
+                                },
+                              ]}>
+                              {' '}
+                              Remarks{' '}
+                            </Text>
                           </LinearGradient>
-
                         </View>
-
-
                       </View>
 
                       <View
@@ -1914,8 +2047,6 @@ const ApiScreenB40  = ({ navigation }) => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-
-
                         <View
                           style={{
                             flexDirection: 'row',
@@ -1923,7 +2054,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '88%',
                             alignSelf: 'center',
                           }}>
-                          <View style={{ flex: 2, alignItems: 'flex-start' }}>
+                          <View style={{flex: 2, alignItems: 'flex-start'}}>
                             <TextInput
                               multiline={true}
                               onChangeText={text => {
@@ -1953,8 +2084,6 @@ const ApiScreenB40  = ({ navigation }) => {
             <ScrollView
               showsVerticalScrollIndicator={true}
               showsHorizontalScrollIndicator={false}>
-
-
               <View style={styles.container1}>
                 <View style={styles.mainbox}>
                   <View
@@ -1979,8 +2108,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             //  marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               KE No{' '}
                             </Text>
                           </View>
@@ -2024,8 +2154,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Make{' '}
                             </Text>
                           </View>
@@ -2069,8 +2200,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Meter CT Ratio{' '}
                             </Text>
                           </View>
@@ -2114,8 +2246,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Current/off-Peak Reading{' '}
                             </Text>
                           </View>
@@ -2152,7 +2285,6 @@ const ApiScreenB40  = ({ navigation }) => {
                           </View>
                         </View>
 
-
                         <View
                           style={{
                             flexDirection: 'row',
@@ -2160,8 +2292,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Peak Reading{' '}
                             </Text>
                           </View>
@@ -2205,8 +2338,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               MDI/MDI-Off Reading{' '}
                             </Text>
                           </View>
@@ -2250,8 +2384,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               MDI-On Reading{' '}
                             </Text>
                           </View>
@@ -2287,43 +2422,43 @@ const ApiScreenB40  = ({ navigation }) => {
                             </View>
                           </View>
                         </View>
-
                       </View>
-
-
-
 
                       <Card>
                         <DataTable>
                           <DataTable.Header style={styles.databeHeader}>
-                            <DataTable.Title style={{ flex: 5, color: 'black', textAlign: 'left' }}>
+                            <DataTable.Title
+                              style={{
+                                flex: 5,
+                                color: 'black',
+                                textAlign: 'left',
+                              }}>
                               CurrentType
                             </DataTable.Title>
-                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                            <DataTable.Title style={{flex: 5, color: 'black'}}>
                               AMP
                             </DataTable.Title>
-                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                            <DataTable.Title style={{flex: 5, color: 'black'}}>
                               VOLT
                             </DataTable.Title>
-                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                            <DataTable.Title style={{flex: 5, color: 'black'}}>
                               PF
                             </DataTable.Title>
                           </DataTable.Header>
                           {powermeterdetail.map((l, i) => (
                             <DataTable.Row style={styles.databeBox} key={i}>
-                              <View style={{ flex: 5 }}>
+                              <View style={{flex: 5}}>
                                 <TextInput
                                   style={styles.input}
                                   // onChangeText={t => updateCurrentTypeLoadDetail(t, i)}
                                   placeholder="Current Type"
                                   placeholderTextColor="black"
                                   fontSize={10}
-
                                   value={l.CurrentType}
                                 />
                                 {/* {l.test} */}
                               </View>
-                              <View style={{ flex: 5 }}>
+                              <View style={{flex: 5}}>
                                 <TextInput
                                   style={styles.input}
                                   onChangeText={t => updateAmp(t, i)}
@@ -2331,10 +2466,10 @@ const ApiScreenB40  = ({ navigation }) => {
                                   keyboardType={'numeric'}
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                 value={l.AMP}
+                                  value={l.AMP}
                                 />
                               </View>
-                              <View style={{ flex: 5 }}>
+                              <View style={{flex: 5}}>
                                 <TextInput
                                   style={styles.input}
                                   onChangeText={t => updateVolt(t, i)}
@@ -2345,25 +2480,22 @@ const ApiScreenB40  = ({ navigation }) => {
                                   value={l.VOLT}
                                 />
                               </View>
-                              <View style={{ flex: 5 }}>
+                              <View style={{flex: 5}}>
                                 <TextInput
                                   style={styles.input}
                                   onChangeText={t => updatePF(t, i)}
                                   placeholder="P.F"
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                value={l.PF}
+                                  value={l.PF}
                                 />
                               </View>
                             </DataTable.Row>
                           ))}
                         </DataTable>
-
                       </Card>
                     </View>
                   </View>
-
-
                 </View>
               </View>
             </ScrollView>
@@ -2373,8 +2505,6 @@ const ApiScreenB40  = ({ navigation }) => {
             <ScrollView
               showsVerticalScrollIndicator={true}
               showsHorizontalScrollIndicator={false}>
-
-
               <View style={styles.container1}>
                 <View style={styles.mainbox}>
                   <View
@@ -2399,8 +2529,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             //  marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               KE No{' '}
                             </Text>
                           </View>
@@ -2444,8 +2575,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Make{' '}
                             </Text>
                           </View>
@@ -2489,8 +2621,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Meter CT Ratio{' '}
                             </Text>
                           </View>
@@ -2528,7 +2661,6 @@ const ApiScreenB40  = ({ navigation }) => {
                           </View>
                         </View>
 
-
                         <View
                           style={{
                             flexDirection: 'row',
@@ -2536,8 +2668,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Current/off-Peak Reading{' '}
                             </Text>
                           </View>
@@ -2574,7 +2707,6 @@ const ApiScreenB40  = ({ navigation }) => {
                           </View>
                         </View>
 
-
                         <View
                           style={{
                             flexDirection: 'row',
@@ -2582,8 +2714,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Peak Reading{' '}
                             </Text>
                           </View>
@@ -2627,8 +2760,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               MDI/MDI-Off Reading{' '}
                             </Text>
                           </View>
@@ -2672,8 +2806,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               MDI-On Reading{' '}
                             </Text>
                           </View>
@@ -2717,8 +2852,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '96%',
                             marginTop: 20,
                           }}>
-                          <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                            <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
                               Consumer No{' '}
                             </Text>
                           </View>
@@ -2754,43 +2890,43 @@ const ApiScreenB40  = ({ navigation }) => {
                             </View>
                           </View>
                         </View>
-
                       </View>
-
-
-
 
                       <Card>
                         <DataTable>
                           <DataTable.Header style={styles.databeHeader}>
-                            <DataTable.Title style={{ flex: 5, color: 'black', textAlign: 'left' }}>
+                            <DataTable.Title
+                              style={{
+                                flex: 5,
+                                color: 'black',
+                                textAlign: 'left',
+                              }}>
                               CurrentType
                             </DataTable.Title>
-                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                            <DataTable.Title style={{flex: 5, color: 'black'}}>
                               AMP
                             </DataTable.Title>
-                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                            <DataTable.Title style={{flex: 5, color: 'black'}}>
                               VOLT
                             </DataTable.Title>
-                            <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                            <DataTable.Title style={{flex: 5, color: 'black'}}>
                               PF
                             </DataTable.Title>
                           </DataTable.Header>
                           {lightmeterdetail.map((l, i) => (
                             <DataTable.Row style={styles.databeBox} key={i}>
-                              <View style={{ flex: 5 }}>
+                              <View style={{flex: 5}}>
                                 <TextInput
                                   style={styles.input}
                                   // onChangeText={t => updateCurrentTypeLoadDetail(t, i)}
                                   placeholder="Current Type"
                                   placeholderTextColor="black"
                                   fontSize={10}
-
                                   value={l.CurrentType}
                                 />
                                 {/* {l.test} */}
                               </View>
-                              <View style={{ flex: 5 }}>
+                              <View style={{flex: 5}}>
                                 <TextInput
                                   style={styles.input}
                                   onChangeText={t => updateLAmp(t, i)}
@@ -2798,10 +2934,10 @@ const ApiScreenB40  = ({ navigation }) => {
                                   keyboardType={'numeric'}
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                 value={l.AMP}
+                                  value={l.AMP}
                                 />
                               </View>
-                              <View style={{ flex: 5 }}>
+                              <View style={{flex: 5}}>
                                 <TextInput
                                   style={styles.input}
                                   onChangeText={t => updateLVolt(t, i)}
@@ -2809,10 +2945,10 @@ const ApiScreenB40  = ({ navigation }) => {
                                   keyboardType={'numeric'}
                                   placeholderTextColor="black"
                                   fontSize={10}
-                                   value={l.VOLT}
+                                  value={l.VOLT}
                                 />
                               </View>
-                              <View style={{ flex: 5 }}>
+                              <View style={{flex: 5}}>
                                 <TextInput
                                   style={styles.input}
                                   onChangeText={t => updateLPF(t, i)}
@@ -2825,12 +2961,9 @@ const ApiScreenB40  = ({ navigation }) => {
                             </DataTable.Row>
                           ))}
                         </DataTable>
-
                       </Card>
                     </View>
                   </View>
-
-
                 </View>
               </View>
             </ScrollView>
@@ -3600,8 +3733,7 @@ const ApiScreenB40  = ({ navigation }) => {
           )}      
           */}
 
-
-{tab == 'Customer Acknowlegment' && (
+          {tab == 'Customer Acknowlegment' && (
             <ScrollView
               showsVerticalScrollIndicator={true}
               showsHorizontalScrollIndicator={false}>
@@ -3628,8 +3760,8 @@ const ApiScreenB40  = ({ navigation }) => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Consumer Name{' '}
                           </Text>
                         </View>
@@ -3672,8 +3804,8 @@ const ApiScreenB40  = ({ navigation }) => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Mobile No{' '}
                           </Text>
                         </View>
@@ -3711,15 +3843,15 @@ const ApiScreenB40  = ({ navigation }) => {
                         </View>
                       </View>
 
-
-                      <View style={{
-                        flexDirection: 'row',
-                        flex: 2,
-                        width: '96%',
-                        marginTop: 20,
-                      }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flex: 2,
+                          width: '96%',
+                          marginTop: 20,
+                        }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             CNIC #{' '}
                           </Text>
                         </View>
@@ -3741,8 +3873,10 @@ const ApiScreenB40  = ({ navigation }) => {
                               placeholder={'Enter CNIC #'}
                               keyboardType={'numeric'}
                               maxLength={13}
-                              placeholderTextColor='grey'
-                              onChangeText={(text) => { setconsumerNamecNIC(text) }}
+                              placeholderTextColor="grey"
+                              onChangeText={text => {
+                                setconsumerNamecNIC(text);
+                              }}
                               style={{
                                 //height: 24,
                                 width: '100%',
@@ -3762,8 +3896,8 @@ const ApiScreenB40  = ({ navigation }) => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Consumer Remarks{' '}
                           </Text>
                         </View>
@@ -3775,7 +3909,7 @@ const ApiScreenB40  = ({ navigation }) => {
                             width: '88%',
                             alignSelf: 'center',
                           }}>
-                          <View style={{ flex: 2, alignItems: 'flex-start' }}>
+                          <View style={{flex: 2, alignItems: 'flex-start'}}>
                             <TextInput
                               multiline={true}
                               onChangeText={text => {
@@ -3803,8 +3937,8 @@ const ApiScreenB40  = ({ navigation }) => {
                         width: '96%',
                         marginTop: 10,
                       }}>
-                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                      <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
                           Refuse to Sign on Notice{' '}
                         </Text>
                       </View>
@@ -3830,7 +3964,6 @@ const ApiScreenB40  = ({ navigation }) => {
                             // borderWidth={5}
                             buttonInnerColor={'#1565C0'}
                             selectedButtonColor={'#1565C0'}
-
                             // labelColor={'#50C900'}
 
                             borderWidth={1}
@@ -3838,19 +3971,15 @@ const ApiScreenB40  = ({ navigation }) => {
                             buttonSize={13}
                             buttonOuterSize={20}
                             //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
-                            buttonWrapStyle={{ marginLeft: 10 }}
-                            onPress={(value) => {
-
-                              ({ value: value })
+                            buttonWrapStyle={{marginLeft: 10}}
+                            onPress={value => {
+                              ({value: value});
                               if (value == 0) {
-                                setConsumerRefuseYN("Yes")
+                                setConsumerRefuseYN('Yes');
+                              } else {
+                                setConsumerRefuseYN('No');
                               }
-                              else {
-                                setConsumerRefuseYN("No")
-                              }
-                            }
-
-                            }
+                            }}
                           />
                         </View>
                       </View>
@@ -3863,8 +3992,8 @@ const ApiScreenB40  = ({ navigation }) => {
                         width: '96%',
                         marginTop: 10,
                       }}>
-                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                      <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
                           Signed / Delivered Notice{' '}
                         </Text>
                       </View>
@@ -3890,7 +4019,6 @@ const ApiScreenB40  = ({ navigation }) => {
                             // borderWidth={5}
                             buttonInnerColor={'#1565C0'}
                             selectedButtonColor={'#1565C0'}
-
                             // labelColor={'#50C900'}
 
                             borderWidth={1}
@@ -3898,81 +4026,70 @@ const ApiScreenB40  = ({ navigation }) => {
                             buttonSize={13}
                             buttonOuterSize={20}
                             //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
-                            buttonWrapStyle={{ marginLeft: 10 }}
-                            onPress={(value) => {
-
-                              ({ value: value })
+                            buttonWrapStyle={{marginLeft: 10}}
+                            onPress={value => {
+                              ({value: value});
                               if (value == 0) {
-                                setConsumerSign("Yes")
+                                setConsumerSign('Yes');
+                              } else {
+                                setConsumerSign('No');
                               }
-                              else {
-                                setConsumerSign("No")
-                              }
-                            }
-
-                            }
+                            }}
                           />
                         </View>
                       </View>
                     </View>
 
-
-
-
                     <View style={[styles.container1]}>
-                      <View style={{ flexDirection: 'row', flex: 0.2, width: '96%' }}>
-                        <View style={{ flex: 1, alignItems: 'flex-start' }}>
-
-                          <Text style={styles.text_left}>Picture (Optional)</Text>
-
+                      <View
+                        style={{flexDirection: 'row', flex: 0.2, width: '96%'}}>
+                        <View style={{flex: 1, alignItems: 'flex-start'}}>
+                          <Text style={styles.text_left}>
+                            Picture (Optional)
+                          </Text>
                         </View>
-                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
-
-                          <TouchableOpacity onPress={() => captureImage('photo', '1')} >
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            alignItems: 'flex-start',
+                          }}>
+                          <TouchableOpacity
+                            onPress={() => captureImage('photo', '1')}>
                             <Image
-                              source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
+                              source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
                               style={styles.imageStyle}
                             />
                           </TouchableOpacity>
-
-
 
                           <ImageViewConsumer
                             images={images1} // images1[0].uri //images1
                             imageIndex={0}
                             visible={visible1}
-
                             onRequestClose={() => setIsVisible1(false)}
                           />
-                          <View style={{ flex: 2.5 }}>
-
-
-                            <TouchableOpacity onPress={() => setIsVisible1(true)} >
-
-
-
+                          <View style={{flex: 2.5}}>
+                            <TouchableOpacity
+                              onPress={() => setIsVisible1(true)}>
                               <Image
-                                source={{ uri: images1.uri }}/// source={{uri: filePath.uri}}
+                                source={{uri: images1.uri}} /// source={{uri: filePath.uri}}
                                 style={styles.imageStyle}
                               />
-
-
-
                             </TouchableOpacity>
-
                           </View>
                         </View>
                       </View>
                     </View>
 
-                    <View style={{
-                      flexDirection: 'row',
-                      flex: 2,
-                      width: '96%',
-                      marginTop: 10,
-                    }}>
-                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flex: 2,
+                        width: '96%',
+                        marginTop: 10,
+                      }}>
+                      <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
                           Consumer Signature {''}
                         </Text>
                       </View>
@@ -3984,21 +4101,27 @@ const ApiScreenB40  = ({ navigation }) => {
                           width: '88%',
                           alignSelf: 'center',
                         }}>
-                        <TouchableOpacity onPress={() => {
-                          setSignModalVisible(true);
-                        }}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSignModalVisible(true);
+                          }}>
                           <View
                             style={{
                               flex: 2,
                               alignItems: 'flex-start',
                               //  marginTop: -10,
                             }}>
-                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'blue' }}>
-                              Take Signature </Text>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                color: 'blue',
+                              }}>
+                              Take Signature{' '}
+                            </Text>
                           </View>
                         </TouchableOpacity>
                       </View>
-
                     </View>
 
                     <View
@@ -4008,9 +4131,8 @@ const ApiScreenB40  = ({ navigation }) => {
                         width: '96%',
                         marginTop: 20,
                       }}>
-                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-
-                      </View>
+                      <View
+                        style={{flex: 0.9, alignItems: 'flex-start'}}></View>
 
                       <View
                         style={{
@@ -4026,27 +4148,24 @@ const ApiScreenB40  = ({ navigation }) => {
                             alignItems: 'flex-start',
                             marginLeft: -10,
                           }}>
-
                           <View style={styles.preview}>
-
                             <Image
-                              resizeMode={"contain"}
-                              style={{ width: 114, height: 114 }}
+                              resizeMode={'contain'}
+                              style={{width: 114, height: 114}}
                               //source={{ base64: signaturePreview}}
                               source={{
-                                uri: 'data:image/png;base64,' + signaturePreview,
+                                uri:
+                                  'data:image/png;base64,' + signaturePreview,
                               }}
-                            // source={require('/storage/emulated/0/Android/data/com.sirdigitization/files/saved_signature/signature.png')}
+                              // source={require('/storage/emulated/0/Android/data/com.sirdigitization/files/saved_signature/signature.png')}
                             />
-                            {isSignature == 'Y' ?
-                              (<TouchableOpacity
+                            {isSignature == 'Y' ? (
+                              <TouchableOpacity
                                 onPress={() => {
-
                                   setTimeout(() => {
                                     setSign();
-                                    setIsSignature("N");
+                                    setIsSignature('N');
                                   }, 1000);
-
                                 }}
                                 style={{
                                   width: 200,
@@ -4065,15 +4184,12 @@ const ApiScreenB40  = ({ navigation }) => {
                                   }}>
                                   Reset
                                 </Text>
-                              </TouchableOpacity>)
-                              : null}
+                              </TouchableOpacity>
+                            ) : null}
                           </View>
-
                         </View>
                       </View>
                     </View>
-
-
                   </View>
                 </View>
               </View>
@@ -4099,17 +4215,21 @@ const ApiScreenB40  = ({ navigation }) => {
                         width: '90%',
                         marginTop: -70,
                         marginLeft: 2,
-                      }}>
-                    </View>
+                      }}></View>
                     <LinearGradient
                       colors={['#1565C0', '#64b5f6']}
-                      style={styles.signIn}
-                    >
-                      <Text style={[styles.textSign, {
-                        color: '#fff'
-                      }]}> Photos of Surveyed Meter</Text>
+                      style={styles.signIn}>
+                      <Text
+                        style={[
+                          styles.textSign,
+                          {
+                            color: '#fff',
+                          },
+                        ]}>
+                        {' '}
+                        Photos of Surveyed Meter
+                      </Text>
                     </LinearGradient>
-
 
                     <View
                       style={{
@@ -4120,12 +4240,12 @@ const ApiScreenB40  = ({ navigation }) => {
                         alignItems: 'center',
                         // justifyContent: 'space-between',
                       }}>
-                      <View style={{ flex: 2, alignItems: 'center' }}>
+                      <View style={{flex: 2, alignItems: 'center'}}>
                         <TouchableOpacity
                           activeOpacity={0.5}
                           onPress={() => chooseFile('photo')}>
                           <Image
-                            source={require('../assets/Gallery.png')}// source={{uri: filePath.uri}}
+                            source={require('../assets/Gallery.png')} // source={{uri: filePath.uri}}
                             style={styles.imageStyle}
                           />
                         </TouchableOpacity>
@@ -4136,23 +4256,19 @@ const ApiScreenB40  = ({ navigation }) => {
                             textAlign: 'center',
                             width: 120,
                             textAlignVertical: 'center',
-                            color: '#1565C0'
-
+                            color: '#1565C0',
                           }}>
                           tap the picture from gallery
                         </Text>
-
                       </View>
-                      <View style={{ flex: 2, alignItems: 'center' }}>
+                      <View style={{flex: 2, alignItems: 'center'}}>
                         <TouchableOpacity
-                          style={{ marginTop: 15 }}
-                          onPress={() => captureImage('photo')
-                          }>
+                          style={{marginTop: 15}}
+                          onPress={() => captureImage('photo')}>
                           <Image
-                            source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
+                            source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
                             style={styles.imageStyle}
                           />
-
                         </TouchableOpacity>
                         <Text
                           style={{
@@ -4161,36 +4277,31 @@ const ApiScreenB40  = ({ navigation }) => {
                             textAlign: 'center',
                             width: 120,
                             textAlignVertical: 'center',
-                            color: '#1565C0'
+                            color: '#1565C0',
                           }}>
                           tap the camera to take a picture
                         </Text>
                       </View>
-
                     </View>
 
                     <View
                       style={{
-                        flex: 2, alignItems: 'center',
+                        flex: 2,
+                        alignItems: 'center',
                         justifyContent: 'center',
                         // height: 50,
                         flexDirection: 'row',
                         marginVertical: 10,
                         marginLeft: 85,
-                        // paddingHorizontal: 110,  
+                        // paddingHorizontal: 110,
                       }}>
-
-
                       <Carousel
-
                         ref={carouselRef}
-                        layout='default'
+                        layout="default"
                         data={images}
-
                         sliderWidth={width}
                         itemWidth={width}
-
-                        renderItem={({ item, index }) => {
+                        renderItem={({item, index}) => {
                           return (
                             <View>
                               <TouchableOpacity
@@ -4198,18 +4309,14 @@ const ApiScreenB40  = ({ navigation }) => {
                                   onTouchThumbnail(index);
                                   setindexer1(index);
                                   setimageview(true);
-
                                 }}
-                                activeOpacity={0.9}
-                              >
-
+                                activeOpacity={0.9}>
                                 <Image
-                                  source={{ uri: item.uri }}
-                                  style={{ height: 200, width: 200 }}></Image>
+                                  source={{uri: item.uri}}
+                                  style={{height: 200, width: 200}}></Image>
                               </TouchableOpacity>
                               <TouchableOpacity
                                 onPress={() => {
-
                                   setTimeout(() => {
                                     // setRefresh(true);
                                     setImagedeletionLoader(true);
@@ -4224,10 +4331,6 @@ const ApiScreenB40  = ({ navigation }) => {
                                     setImages(arr);
                                     setImagedeletionLoader(false);
                                   }, 2000);
-
-
-
-
                                 }}
                                 style={{
                                   width: 200,
@@ -4247,27 +4350,19 @@ const ApiScreenB40  = ({ navigation }) => {
                                   Remove
                                 </Text>
                               </TouchableOpacity>
-
                             </View>
-                          )
+                          );
                         }}
-
                         // sliderWidth={150}
                         //itemWidth={120}
                         onSnapToItem={index => onSelect(index)}
-
                       />
-
                     </View>
 
-
-                    <Modal visible={imageview} transparent={true}
-                      closeOnClick={true}
-                    >
-
-
-
-
+                    <Modal
+                      visible={imageview}
+                      transparent={true}
+                      closeOnClick={true}>
                       <ImageViewer
                         renderHeader={() => {
                           return (
@@ -4287,7 +4382,6 @@ const ApiScreenB40  = ({ navigation }) => {
                                 }}
                                 onPress={() => {
                                   setimageview(false);
-
                                 }}>
                                 <View></View>
                                 <View
@@ -4338,23 +4432,21 @@ const ApiScreenB40  = ({ navigation }) => {
                           //   padding: 15
                         }}
                         onPress={() => {
-
                           setAuthModalVisible(!isAuthModalVisible);
-
                         }}>
-
-
                         <LinearGradient
                           colors={['#1565C0', '#64b5f6']}
-                          style={styles.submit}
-                        >
-                          <Text style={[styles.textSign, {
-                            color: '#fff'
-                          }]}>Cancel</Text>
+                          style={styles.submit}>
+                          <Text
+                            style={[
+                              styles.textSign,
+                              {
+                                color: '#fff',
+                              },
+                            ]}>
+                            Cancel
+                          </Text>
                         </LinearGradient>
-
-
-
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={{
@@ -4367,39 +4459,32 @@ const ApiScreenB40  = ({ navigation }) => {
                         onPress={() => {
                           // setUploadingMsg(res.d.Return);
 
-
                           setAuthModalVisible(!isAuthModalVisible);
-
                         }}>
-
                         <LinearGradient
                           colors={['#1565C0', '#64b5f6']}
-                          style={styles.submit}
-                        >
-                          <Text style={[styles.textSign, {
-                            color: '#fff'
-                          }]}>Submit</Text>
+                          style={styles.submit}>
+                          <Text
+                            style={[
+                              styles.textSign,
+                              {
+                                color: '#fff',
+                              },
+                            ]}>
+                            Submit
+                          </Text>
                         </LinearGradient>
-
-
-
                       </TouchableOpacity>
                     </View>
-
-
                   </View>
                 </View>
               </View>
             </ScrollView>
           )}
-          
-
-
         </View>
 
-
         <Modal
-          style={{ alignItems: 'center', justifyContent: 'center' }}
+          style={{alignItems: 'center', justifyContent: 'center'}}
           isVisible={isModalVisible}>
           <View
             style={{
@@ -4412,11 +4497,11 @@ const ApiScreenB40  = ({ navigation }) => {
               paddingHorizontal: 10,
               paddingVertical: 20,
             }}>
-            <Text style={{ color: 'red', fontSize: 24, fontWeight: 'bold' }}>
+            <Text style={{color: 'red', fontSize: 24, fontWeight: 'bold'}}>
               Error
             </Text>
 
-            <Text style={{ color: 'red', fontSize: 16, textAlign: 'center' }}>
+            <Text style={{color: 'red', fontSize: 16, textAlign: 'center'}}>
               {error ? error : ''}
             </Text>
 
@@ -4431,9 +4516,13 @@ const ApiScreenB40  = ({ navigation }) => {
           </View>
         </Modal>
 
-
         <Modal
-          style={{ alignItems: 'center', justifyContent: 'center', width: '100%', marginLeft: 1 }}
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            marginLeft: 1,
+          }}
           isVisible={isSignModalVisible}>
           <View
             style={{
@@ -4446,53 +4535,49 @@ const ApiScreenB40  = ({ navigation }) => {
               paddingHorizontal: 10,
               // paddingVertical: 20,
             }}>
-            <SafeAreaView
- 
-              style={styles.container3}>
+            <SafeAreaView style={styles.container3}>
               <View style={styles.container3}>
+                <View
+                  style={{
+                    width: '100%',
+                    height: 50,
+                    // backgroundColor: 'green',
+                    // alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <TouchableOpacity
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexDirection: 'row',
+                    }}
+                    onPress={() => {
+                      //setimageview(false);
 
-              <View
-                              style={{
-                                width: '100%',
-                                height: 50,
-                                // backgroundColor: 'green',
-                                // alignItems: 'center',
-                                justifyContent: 'center',
-                              }}>
-                              <TouchableOpacity
-                                style={{
-                                  alignItems: 'center',
-                                  justifyContent: 'space-between',
-                                  flexDirection: 'row',
-                                }}
-                                onPress={() => {
-                                  //setimageview(false);
-
-                                  resetSign();
-                                }}>
-                                <View></View>
-                                <View
-                                  style={{
-                                    backgroundColor: '#1565C0',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    width: 30,
-                                    height: 30,
-                                    borderRadius: 15,
-                                    right: -1,
-                                  }}>
-                                  <Text
-                                    style={{
-                                      color: 'white',
-                                      fontSize: 16,
-                                      fontWeight: 'bold',
-                                    }}>
-                                    X
-                                  </Text>
-                                </View>
-                              </TouchableOpacity>
-                            </View>
-
+                      resetSign();
+                    }}>
+                    <View></View>
+                    <View
+                      style={{
+                        backgroundColor: '#1565C0',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 30,
+                        height: 30,
+                        borderRadius: 15,
+                        right: -1,
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                        }}>
+                        X
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
 
                 <SignatureCapture
                   style={styles.signature}
@@ -4503,12 +4588,6 @@ const ApiScreenB40  = ({ navigation }) => {
                   showTitleLabel={false}
                   viewMode={'portrait'}
                 />
-                
-
-
-
-
-
 
                 <View
                   style={{
@@ -4521,7 +4600,6 @@ const ApiScreenB40  = ({ navigation }) => {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}>
-
                   <TouchableOpacity
                     style={{
                       flexDirection: 'row',
@@ -4530,16 +4608,21 @@ const ApiScreenB40  = ({ navigation }) => {
                       //    backgroundColor: '#1565C0',
                       //  padding: 15
                     }}
-                    onPress={() => {  
+                    onPress={() => {
                       saveSign();
                     }}>
                     <LinearGradient
                       colors={['#1565C0', '#64b5f6']}
-                      style={styles.signatureSubmit}
-                    >
-                      <Text style={[styles.textSign, {
-                        color: '#fff'
-                      }]}>Ok</Text>
+                      style={styles.signatureSubmit}>
+                      <Text
+                        style={[
+                          styles.textSign,
+                          {
+                            color: '#fff',
+                          },
+                        ]}>
+                        Ok
+                      </Text>
                     </LinearGradient>
                   </TouchableOpacity>
                 </View>
@@ -4548,9 +4631,8 @@ const ApiScreenB40  = ({ navigation }) => {
           </View>
         </Modal>
 
-
         <Modal
-          style={{ alignItems: 'center', justifyContent: 'center' }}
+          style={{alignItems: 'center', justifyContent: 'center'}}
           isVisible={isSuccessModalVisible}>
           <View
             style={{
@@ -4563,11 +4645,16 @@ const ApiScreenB40  = ({ navigation }) => {
               paddingHorizontal: 10,
               paddingVertical: 20,
             }}>
-            <Text style={{ color: 'rgba(93,45,145,255)', fontSize: 24, fontWeight: 'bold' }}>
+            <Text
+              style={{
+                color: 'rgba(93,45,145,255)',
+                fontSize: 24,
+                fontWeight: 'bold',
+              }}>
               Success
             </Text>
 
-            <Text style={{ color: 'green', fontSize: 16, textAlign: 'center' }}>
+            <Text style={{color: 'green', fontSize: 16, textAlign: 'center'}}>
               {uploadingMsg == '' ? 'Saved Successfully' : uploadingMsg}
             </Text>
 
@@ -4585,7 +4672,7 @@ const ApiScreenB40  = ({ navigation }) => {
           </View>
         </Modal>
         <Modal
-          style={{ alignItems: 'center', justifyContent: 'center' }}
+          style={{alignItems: 'center', justifyContent: 'center'}}
           isVisible={isAuthModalVisible}>
           <View
             style={{
@@ -4598,10 +4685,9 @@ const ApiScreenB40  = ({ navigation }) => {
               paddingHorizontal: 10,
               paddingVertical: 20,
             }}>
-            <Text style={{ color: 'green', fontSize: 24, fontWeight: 'bold' }}>
+            <Text style={{color: 'green', fontSize: 24, fontWeight: 'bold'}}>
               Are you sure?
             </Text>
-
 
             <View
               style={{
@@ -4615,187 +4701,179 @@ const ApiScreenB40  = ({ navigation }) => {
                 title=" Yes "
                 color="green"
                 onPress={() => {
-
-
-                  var lightmeterdetailfill=[];
-                  var powermeterdetailfill=[];
+                  var lightmeterdetailfill = [];
+                  var powermeterdetailfill = [];
 
                   lightmeterdetail.map((l, i) => {
-
-                  
-                    if (l.AMP!= "" || l.VOLT!="" || l.PF!= "")
-                 
-                    {
-                      setIslightmeterdetail("Y");
-                     // updateLAmp(l.AMP, i);
-                      lightmeterdetailfill=([{CurrentType: l.CurrentType, AMP:l.AMP, VOLT: l.VOLT, PF: l.PF}, ...lightmeterdetailfill]);
-                    }
-                    
-                   })
-                   console.log("lightmeterdetailfill", lightmeterdetailfill);
-                   //setLightmeterdetail(lightmeterdetailfill);
-                   
-                   powermeterdetail.map((l, i) => {
-
-                     if (l.AMP!= "" || l.VOLT!="" || l.PF!= "")
-                  
-                     {
-                      setIspowermeterdetail("Y");
-                   
-                     powermeterdetailfill=([{CurrentType: l.CurrentType, AMP:l.AMP, VOLT: l.VOLT, PF: l.PF}, ...powermeterdetailfill]);
-                     }
-                     
-                    })
-
-
-                  AsyncStorage.getItem('SIRDigitization')
-                    .then(items => {
-                      var data1 = [];
-
-                      data1 = items ? JSON.parse(items) : [];
-
-                      data1 = [
-                        ...data1,
+                    if (l.AMP != '' || l.VOLT != '' || l.PF != '') {
+                      setIslightmeterdetail('Y');
+                      // updateLAmp(l.AMP, i);
+                      lightmeterdetailfill = [
                         {
-                          CaseType: "Un-Planned",
-                          SIRType: "Below 40",
-                          Status: "Pending",
-                          SDate: Moment(Date.now()).format('YYYY-MM-DD'),
-                          SanctionLoad: null,
-                          MeterTesting: null,
-                          Agediff: null,
-                          MeterPer: null,
-                          MeterSlow: null,
-                          ConnectedLoad: connectedLoad,
-                          RunningLoad: null,
-                          Make: null,
-                          Amperes: null,
-                          Volts: null,
-                          MeterConstant: null,
-                          SecuritySlipNo: null,
-                          MultiplyingFactor: null,
-                          MeterNo: null,
-                          CurrentReading: currentReading,
-                          PeakReading: peakReading,
-                          SystemMake: null,
-                          SystemAmperes: null,
-                          SystemVolts: null,
-                          SystemMeterConstant: null,
-                          SystemSecuritySlipNo: null,
-                          SystemMultiplyingFactor: null,
-                          SystemMeterNo: null,
-                          SystemCurrentReading: null,
-                          SystemPeakReading: null,
-                          ConsumerSign: consumerSign,
-                          ConsumerRefuseYN: consumerRefuseYN,
-                          ConsumerRemarks: consumerRemarks,
-                          MobileNo: mobileNo,
-                          ConsumerName: consumerName,
-                          ConsumerCNIC: consumerNameCNIC,
-                          ServiceType: serviceType,
-                          Tariff: tariff,
-                          PremiseType: null,
-                          PremiseCategory: null,
-                          Remarks: discrepancyfindingsRemarks,
-                          isDiscrepancyitems: isSelecteditems,
-                          Discrepancyitems: selectedItems,
-                          longitude: longitude,
-                          latitude: latitude,
-                          IsSignature: isSignature,
-                          ConsumerSignature: consumerSignature,
-                          SIRImageFlag: isImage,
-                          SIRImages: images,
-                          ConsumerImageFlag: IsImage1,
-                          ConsumerImages: consumerImages,
-                          UniqueId: Date.now(),
-                          SIRNo: SIR,
-                          ConsumerNo: cosnumerno,
-                          ClusterIBC: clusterIBC,
-                          ConsumerNameBilling: consumernameBilling,
-                          AccountNo: accountno,
-                          Address: address,
-                          AssignDate: assigndate,
-                          AssignTo: assignto,
-                          DiscrepancyRecord: apiRes,
-                          ApplianceDetail: null,
-                          ConsumerStatus: consumerStatus,
-                          IndustryType: industryType,
-                          ServiceType: serviceType,
-                          SizeofService: sizeofService,
-                          FedFromPMTSS: fedFromPMTSS,
-                          PmtSSCode: pmtSSCode,
-                          MeterTestingResultTC: meterTestingResultTC,
-                          MeterTestingperError: meterTestingperError,
-                          ContractLoad: contractLoad,
-                          ConnectedLoadKW: connectedLoadKW,
-                          RunningLoadKW: runningLoadKW,
-                          Metertestingto: meterTestingTo,
-                          Meterinstalled1: meterInstalled1,
-                          Meterinstalled2: meterInstalled2,
-                          Meterinstalled: meterInstalled,
-                          Statuspostalorder: statusPostalorder,
-                          Metertestingresultremarks: metertestingResultremarks,
-                          Fmrno: fmrNo,
-                          Date1: date1,
-                          FindingItems: checkBoxselectedList,
-                          Powerkeno: powerKENo,
-                          Powermetermake: powerMeterMake,
-                          Powermc: powerMC,
-                          Powerreading: powerReading,
-                          Powermdionreading: powerMDIOnReading,
-                          PowermeterdetailFlag: ispowermeterdetail,
-                          Powermeterdetail: powermeterdetailfill,
-                          Lightkeno: lightKENo,
-                          Lightmetermake: lightMeterMake,
-                          Lightmc: lightMC,
-                          Lightreading: lightReading,
-                          Lightmdionreading: lightMDIOnReading,
-                          Lightpeakreading: lightPeakReading,
-                          Lightcurrentreading: lightCurrentReading,
-                          Lightconsumerno: lightConsumerNo,
-                          LightmeterdetailFlag: islightmeterdetail,
-                          Lightmeterdetail: lightmeterdetailfill,
-                          PostalOrderSeal: null,
-                          PowerFactor: null,
-                          Kto: null,
-                          PerError: null,
-                          PowerCalculated: null,
-                          PowerObserved: null,
-                          MeteringEquipment: null,
-                          MeterInstalled3: null,
-                          PostalOrderSealFlag: "N",
-                          MeteringEquipmentFlag: "N", 
-
-
-
+                          CurrentType: l.CurrentType,
+                          AMP: l.AMP,
+                          VOLT: l.VOLT,
+                          PF: l.PF,
                         },
+                        ...lightmeterdetailfill,
                       ];
+                    }
+                  });
+                  console.log('lightmeterdetailfill', lightmeterdetailfill);
+                  //setLightmeterdetail(lightmeterdetailfill);
 
+                  powermeterdetail.map((l, i) => {
+                    if (l.AMP != '' || l.VOLT != '' || l.PF != '') {
+                      setIspowermeterdetail('Y');
 
+                      powermeterdetailfill = [
+                        {
+                          CurrentType: l.CurrentType,
+                          AMP: l.AMP,
+                          VOLT: l.VOLT,
+                          PF: l.PF,
+                        },
+                        ...powermeterdetailfill,
+                      ];
+                    }
+                  });
 
-                      AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1))
+                  AsyncStorage.getItem('SIRDigitization').then(items => {
+                    var data1 = [];
 
-                      // console.log("data1", data1);
+                    data1 = items ? JSON.parse(items) : [];
 
-                    });
+                    data1 = [
+                      ...data1,
+                      {
+                        CaseType: 'Un-Planned',
+                        SIRType: 'Below 40',
+                        Status: 'Pending',
+                        SDate: Moment(Date.now()).format('YYYY-MM-DD'),
+                        SanctionLoad: null,
+                        MeterTesting: null,
+                        Agediff: null,
+                        MeterPer: null,
+                        MeterSlow: null,
+                        ConnectedLoad: connectedLoad,
+                        RunningLoad: null,
+                        Make: null,
+                        Amperes: null,
+                        Volts: null,
+                        MeterConstant: null,
+                        SecuritySlipNo: null,
+                        MultiplyingFactor: null,
+                        MeterNo: null,
+                        CurrentReading: currentReading,
+                        PeakReading: peakReading,
+                        SystemMake: null,
+                        SystemAmperes: null,
+                        SystemVolts: null,
+                        SystemMeterConstant: null,
+                        SystemSecuritySlipNo: null,
+                        SystemMultiplyingFactor: null,
+                        SystemMeterNo: null,
+                        SystemCurrentReading: null,
+                        SystemPeakReading: null,
+                        ConsumerSign: consumerSign,
+                        ConsumerRefuseYN: consumerRefuseYN,
+                        ConsumerRemarks: consumerRemarks,
+                        MobileNo: mobileNo,
+                        ConsumerName: consumerName,
+                        ConsumerCNIC: consumerNameCNIC,
+                        ServiceType: serviceType,
+                        Tariff: tariff,
+                        PremiseType: null,
+                        PremiseCategory: null,
+                        Remarks: discrepancyfindingsRemarks,
+                        isDiscrepancyitems: isSelecteditems,
+                        Discrepancyitems: selectedItems,
+                        longitude: longitude,
+                        latitude: latitude,
+                        IsSignature: isSignature,
+                        ConsumerSignature: consumerSignature,
+                        SIRImageFlag: isImage,
+                        SIRImages: images,
+                        ConsumerImageFlag: IsImage1,
+                        ConsumerImages: consumerImages,
+                        UniqueId: Date.now(),
+                        SIRNo: SIR,
+                        ConsumerNo: cosnumerno,
+                        ClusterIBC: clusterIBC,
+                        ConsumerNameBilling: consumernameBilling,
+                        AccountNo: accountno,
+                        Address: address,
+                        AssignDate: assigndate,
+                        AssignTo: assignto,
+                        DiscrepancyRecord: apiRes,
+                        ApplianceDetail: null,
+                        ConsumerStatus: consumerStatus,
+                        IndustryType: industryType,
+                        ServiceType: serviceType,
+                        SizeofService: sizeofService,
+                        FedFromPMTSS: fedFromPMTSS,
+                        PmtSSCode: pmtSSCode,
+                        MeterTestingResultTC: meterTestingResultTC,
+                        MeterTestingperError: meterTestingperError,
+                        ContractLoad: contractLoad,
+                        ConnectedLoadKW: connectedLoadKW,
+                        RunningLoadKW: runningLoadKW,
+                        Metertestingto: meterTestingTo,
+                        Meterinstalled1: meterInstalled1,
+                        Meterinstalled2: meterInstalled2,
+                        Meterinstalled: meterInstalled,
+                        Statuspostalorder: statusPostalorder,
+                        Metertestingresultremarks: metertestingResultremarks,
+                        Fmrno: fmrNo,
+                        Date1: date1,
+                        FindingItems: checkBoxselectedList,
+                        Powerkeno: powerKENo,
+                        Powermetermake: powerMeterMake,
+                        Powermc: powerMC,
+                        Powerreading: powerReading,
+                        Powermdionreading: powerMDIOnReading,
+                        PowermeterdetailFlag: ispowermeterdetail,
+                        Powermeterdetail: powermeterdetailfill,
+                        Lightkeno: lightKENo,
+                        Lightmetermake: lightMeterMake,
+                        Lightmc: lightMC,
+                        Lightreading: lightReading,
+                        Lightmdionreading: lightMDIOnReading,
+                        Lightpeakreading: lightPeakReading,
+                        Lightcurrentreading: lightCurrentReading,
+                        Lightconsumerno: lightConsumerNo,
+                        LightmeterdetailFlag: islightmeterdetail,
+                        Lightmeterdetail: lightmeterdetailfill,
+                        PostalOrderSeal: null,
+                        PowerFactor: null,
+                        Kto: null,
+                        PerError: null,
+                        PowerCalculated: null,
+                        PowerObserved: null,
+                        MeteringEquipment: null,
+                        MeterInstalled3: null,
+                        PostalOrderSealFlag: 'N',
+                        MeteringEquipmentFlag: 'N',
+                      },
+                    ];
 
+                    AsyncStorage.setItem(
+                      'SIRDigitization',
+                      JSON.stringify(data1),
+                    );
 
-
-
+                    // console.log("data1", data1);
+                  });
 
                   navigation.reset({
                     index: 0,
-                    routes: [{ name: 'HomeScreen' }],
+                    routes: [{name: 'HomeScreen'}],
                   });
-
-
-
-
 
                   setAuthModalVisible(!isAuthModalVisible);
                   setSuccessModalVisible(!isSuccessModalVisible);
                 }}
-              // }
+                // }
               />
 
               <Button
@@ -4810,12 +4888,6 @@ const ApiScreenB40  = ({ navigation }) => {
             </View>
           </View>
         </Modal>
-
-
-
-
-
-     
       </View>
     </ScrollView>
   );
@@ -4846,8 +4918,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-
-
 
   sub_container: {
     alignItems: 'center',
@@ -4899,7 +4969,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderBottomWidth: 0,
     shadowColor: 'black',
-    shadowOffset: { width: 10, height: 10 },
+    shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.8,
     shadowRadius: 15,
     elevation: 10,
@@ -4914,7 +4984,6 @@ const styles = StyleSheet.create({
     paddingVertical: 100,
     width: 400,
     // height: 470,
-
   },
 
   footerInputPower: {
@@ -4926,7 +4995,6 @@ const styles = StyleSheet.create({
     paddingVertical: 70,
     width: 400,
     // height: 200,
-
   },
 
   dashboad: {
@@ -4980,7 +5048,7 @@ const styles = StyleSheet.create({
   inputLoadDetail: {
     color: 'black',
     borderBottomWidth: 0.5,
-    width: 150
+    width: 150,
     // marginTop: -5,
   },
 
@@ -5003,7 +5071,6 @@ const styles = StyleSheet.create({
     // margin: 5,
   },
 
-
   formheader: {
     flex: 1,
     //    justifyContent:'space-between',
@@ -5016,7 +5083,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     fontWeight: 'bold',
-    paddingVertical: 10
+    paddingVertical: 10,
     //padding: 15,
   },
 
@@ -5025,7 +5092,7 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
 
   submit: {
@@ -5033,7 +5100,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
 
   signatureSubmit: {
@@ -5041,13 +5108,12 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
-
 
   textSign: {
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
 
   checkboxChecked: {
@@ -5055,12 +5121,11 @@ const styles = StyleSheet.create({
   },
 
   checkboxInput: {
-    flexDirection: "row",
+    flexDirection: 'row',
 
     borderRadius: 7,
     fontSize: 16,
     marginLeft: 10,
-
   },
 
   checkboxBase: {
@@ -5072,25 +5137,22 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'black',
 
-    backgroundColor: 'black',//'transparent',
-
+    backgroundColor: 'black', //'transparent',
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-
   },
-
 
   label: {
     margin: 8,
     fontSize: 16,
-    color: 'black'
+    color: 'black',
   },
 
   textSign: {
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   titleStyle: {
     fontSize: 20,
@@ -5104,7 +5166,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     fontSize: 10,
-    height: 535
+    height: 535,
   },
   buttonStyle: {
     flex: 1,
@@ -5118,23 +5180,21 @@ const styles = StyleSheet.create({
   preview: {
     width: 335,
     //height: 204,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: -10,
-    marginLeft: -100
+    marginLeft: -100,
   },
   previewText: {
-    color: "red",
+    color: 'red',
     fontSize: 14,
     height: 40,
     lineHeight: 40,
     paddingLeft: 10,
     paddingRight: 10,
-    backgroundColor: "#69B2FF",
+    backgroundColor: '#69B2FF',
     width: 120,
-    textAlign: "center",
+    textAlign: 'center',
     marginTop: 10,
   },
-
-
 });

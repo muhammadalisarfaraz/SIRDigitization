@@ -10,6 +10,7 @@ import {
 //import {Icon} from 'react-native-elements';
 
 import AsyncStorage from '@react-native-community/async-storage';
+
 import Moment from 'moment';
 
 const SplashScreen = ({navigation}) => {

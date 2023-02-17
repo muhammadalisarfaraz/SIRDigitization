@@ -65,6 +65,7 @@ import base64 from 'react-native-base64';
 import NetInfo from '@react-native-community/netinfo';
 
 let current = 100;
+
 const ApiScreenA40 = ({route, navigation}) => {
   const scrollRef = useRef(null);
   const [pos, setPos] = React.useState(0);
@@ -1332,7 +1333,7 @@ const ApiScreenA40 = ({route, navigation}) => {
           '******************Post SIR Image updated*********************************',
         );
         //console.log(res.data);
-        PostConsumerImage();
+        PostConsumerImage(count);
       })
       .catch(error => {
         console.log('ERROR STARTS NOW');
@@ -1349,9 +1350,8 @@ const ApiScreenA40 = ({route, navigation}) => {
       });
   };
 
-  const PostConsumerImage = () => {
+  const PostConsumerImage = count => {
     let consumerImageData = [];
-    let count = 1;
     console.log('Post SIR Image Data called');
 
     consumerImages.filter(item => {
@@ -1412,6 +1412,20 @@ const ApiScreenA40 = ({route, navigation}) => {
       console.log(item);
     });
 */
+    if (latitude.toString() == '') {
+      alert('Please on your GPS location settings');
+      return false;
+    }
+
+    if (descripancylist.length < 1) {
+      alert('atleast one discrepancy is mandatory');
+      return false;
+    }
+
+    if (images.length < 1) {
+      alert('atleast one SIR image is mandatory');
+      return false;
+    }
 
     const powermeterData = powermeter.length > 0 ? powermeter : [{}];
     const appliancelistData = appliancelist.length > 0 ? appliancelist : [{}];
@@ -1489,7 +1503,7 @@ const ApiScreenA40 = ({route, navigation}) => {
             Cablesize: sizeofService,
             Sanctioned: contractLoad,
             Connected: connectedLoadKW,
-            Current1: currentAmp,
+            //Current1: currentAmp,
             Voltage1: voltageKV,
             Pctgerr: perError,
             Pwdfactor: powerFactor,
@@ -1689,6 +1703,13 @@ const ApiScreenA40 = ({route, navigation}) => {
           if (item.SIRImages != undefined) {
             setIsImage(item.SIRImageFlag);
             setImages(item.SIRImages);
+          }
+
+          if (item.latitude == undefined || item.latitude == '') {
+            getUserCurrentLocation();
+          } else {
+            setlatitude(item.latitude);
+            setlongitude(item.longitude);
           }
 
           setPowerKENo(item.PowerKENo);
@@ -2171,6 +2192,7 @@ const ApiScreenA40 = ({route, navigation}) => {
         {/* <Animatable.View animation="fadeInRightBig"> */}
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={styles.footer}>
+            {/*
             <View
               style={{
                 flex: 0.5,
@@ -2193,7 +2215,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                 {'Above 40KW'}
               </Text>
             </View>
-
+*/}
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
@@ -2290,7 +2312,8 @@ const ApiScreenA40 = ({route, navigation}) => {
                   /*paddingTop: 20*/
                 }
               }></View>
-            <View style={{padding: 5, marginBottom: 10}}></View>
+            <View
+              style={{padding: 5, marginBottom: -25, paddingRight: 10}}></View>
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
@@ -2304,7 +2327,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                   style={{
                     marginLeft: 200,
                     marginTop: -89,
-                    fontSize: 13,
+                    fontSize: 12,
                     // fontWeight: 'bold',
                     color: 'black', //'#FFFFFF',
                     //     marginBottom: 4,
@@ -3701,10 +3724,8 @@ const ApiScreenA40 = ({route, navigation}) => {
                               value={meter}
                               editable={isEditable}
                             />
-                            {discrepancyfindingsRemarksError !== '' && (
-                              <Text style={styles.error}>
-                                {discrepancyfindingsRemarksError}
-                              </Text>
+                            {meterError !== '' && (
+                              <Text style={styles.error}>{meterError}</Text>
                             )}
                           </View>
                         </View>
@@ -7228,7 +7249,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     marginVertical: 3,
     width: 400,
-    height: 270,
+    height: 210,
     marginTop: 10,
     justifyContent: 'center',
     // borderWidth: .5,

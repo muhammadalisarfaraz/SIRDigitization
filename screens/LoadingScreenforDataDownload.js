@@ -13,8 +13,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+
+import axios from 'axios';
 import base64 from 'react-native-base64';
 
 const LoadingScreenforDataDownload = ({navigation}) => {
@@ -240,12 +241,6 @@ const LoadingScreenforDataDownload = ({navigation}) => {
       .then(res => {
         console.log('Mio:: ', Mio);
         console.log('Ibc:: ', Ibc);
-        if (data1 == []) {
-          getAppliances();
-          getMRNote();
-          getPremiseType();
-          getTariff();
-        }
       });
   };
   const getMIOData = (mio, ibc) => {
@@ -278,8 +273,9 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   };
 
   const _storeData = async sapData => {
-    var data = [],
-      flag = false;
+    var data = [];
+    let count = 0;
+    var flag = false;
     console.log(
       '_storeData:sapData: ' + typeof sapData + ' length: ' + sapData.length,
     );
@@ -288,7 +284,15 @@ const LoadingScreenforDataDownload = ({navigation}) => {
       await AsyncStorage.getItem('SIRDigitization')
         .then(items => {
           data = items ? JSON.parse(items) : [];
-
+          console.log('SIR DATA***');
+          console.log(data.length);
+          if (data.length == 0) {
+            console.log('Call Appliances');
+            getAppliances();
+            getMRNote();
+            getPremiseType();
+            getTariff();
+          }
           console.log(
             'after filter :data : ' + typeof data + ' length: ' + data.length,
           );
@@ -298,7 +302,11 @@ const LoadingScreenforDataDownload = ({navigation}) => {
             data.forEach((child, index) => {
               console.log('child loop' + child.Sirnr);
               if (child.Sirnr == parent.Sirnr) {
+                console.log('parent.Sirnr' + parent.Sirnr);
+                console.log('parent.SirStatus' + parent.SirStatus);
+                console.log('data[index].Status' + data[index].Status);
                 if (parent.SirStatus == 'REVW') {
+                  count++;
                   data[index].Status = 'Save';
                   data[index].SirStatus = parent.SirStatus;
                   data[index].REMARKS = parent.REMARKS;
@@ -310,6 +318,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
             });
             if (flag == false) {
               console.log('parent flag' + flag);
+              count++;
               data.push({
                 SANCTION_LOAD: parent.SANCTION_LOAD,
                 CONNECTED_LOAD: parent.CONNECTED_LOAD,
@@ -355,7 +364,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
         .then(res => {
           console.log('final:data: ' + typeof data + ' length: ' + data.length);
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data));
-          setSIRDigitizationData('final: length: ' + data.length);
+          setSIRDigitizationData(count);
         });
     } catch (error) {
       // Error saving data
@@ -641,7 +650,13 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   return (
     <View style={styles.container}>
       {loader ? (
-        <View style={{flex: 1, backgroundColor: '#1565C0', marginTop: 70}}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: '#1565C0',
+            marginTop: 70,
+            paddingLeft: 20,
+          }}>
           <ActivityIndicator
             size="large"
             style={{transform: [{scaleX: 5}, {scaleY: 5}]}}
@@ -653,7 +668,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
           <Text style={{color: 'white', fontSize: 15}}>IBC: {Ibc}</Text>
           <Text style={{color: 'white', fontSize: 15}}>MIO: {Mio}</Text>
           <Text style={{color: 'white', fontSize: 15}}>
-            SIRDigitizationData: {SIRDigitizationData}
+            Total SIR cases downloaded : {SIRDigitizationData}
           </Text>
         </>
       )}
@@ -664,7 +679,9 @@ const LoadingScreenforDataDownload = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue',
+    backgroundColor: '#1565C0',
+    paddingLeft: 10,
+    paddingTop: 10,
   },
 });
 

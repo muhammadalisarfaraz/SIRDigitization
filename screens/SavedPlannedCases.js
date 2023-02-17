@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -17,31 +17,28 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 const base64 = require('base-64');
 import Swipeable from 'react-native-swipeable';
-import { FlatList } from 'react-native-gesture-handler';
-import { useNavigationState } from '@react-navigation/native';
+import {FlatList} from 'react-native-gesture-handler';
+import {useNavigationState} from '@react-navigation/native';
 //import axios from 'axios';
 
 let i = 0;
 let j = 10;
 let dataslice;
 
-function Update1({ route, navigation }) {
+function Update1({route, navigation}) {
   const [loader, setLoader] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tableData, settableData] = useState([]);
   const item = {};
   const [temptableData, settemptableData] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const [completeData, setCompleteData] = useState([])
+  const [completeData, setCompleteData] = useState([]);
 
   const loadData = val => {
-
     setLoading(true);
     let data1;
     var data = [];
     AsyncStorage.getItem('SIRDigitization').then(items => {
-
-
       data = items ? JSON.parse(items) : {};
       //console.log("data", data);
 
@@ -50,20 +47,15 @@ function Update1({ route, navigation }) {
         setLoading(false);
 
         return;
-      }
-      else {
+      } else {
         setCompleteData(data);
 
         data1 = data.filter(x => x.Status == 'Pending');
-
-
-
 
         if (val) {
           i += 10;
 
           dataslice = data1.splice(i, j);
-
 
           setLoading(false);
         } else {
@@ -79,15 +71,12 @@ function Update1({ route, navigation }) {
         settableData([...tableData, ...dataslice]);
         settemptableData([...temptableData, ...dataslice]);
         setLoader(false);
-
       }
     });
   };
 
   useEffect(() => {
     setLoader(true);
-
-
 
     loadData();
   }, []);
@@ -101,7 +90,6 @@ function Update1({ route, navigation }) {
       //console.log("if statement", tableData)
       settableData(temptableData);
       setTimeout(() => {
-
         setRefresh(false);
       }, 1000);
     } else {
@@ -116,7 +104,7 @@ function Update1({ route, navigation }) {
 
         return itemData.indexOf(textData) > -1;
       });
-      console.log("else statement", tableData)
+      console.log('else statement', tableData);
       settableData(newData);
       setTimeout(() => {
         setRefresh(false);
@@ -160,7 +148,7 @@ function Update1({ route, navigation }) {
         <ActivityIndicator />
       ) : (
         <FlatList
-          style={{ flex: 1, width: '100%' }}
+          style={{flex: 1, width: '100%'}}
           data={tableData.length > 0 ? tableData : 0}
           //data.splice(index, 1);0
           extraData={tableData}
@@ -183,11 +171,18 @@ function Update1({ route, navigation }) {
                 {tableData ? (
                   tableData.length > 0 ? (
                     <TouchableOpacity onPress={() => loadData('more')}>
-                      <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold' }}>Load More</Text>
+                      <Text
+                        style={{
+                          color: 'black',
+                          fontSize: 18,
+                          fontWeight: 'bold',
+                        }}>
+                        Load More
+                      </Text>
                       {loading ? (
                         <ActivityIndicator
                           color="black"
-                          style={{ marginLeft: 8 }}
+                          style={{marginLeft: 8}}
                         />
                       ) : null}
                     </TouchableOpacity>
@@ -200,7 +195,7 @@ function Update1({ route, navigation }) {
               </View>
             );
           }}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             // var date = +item.PreqDate.replace(/\/Date\((.*?)\)\//g, '$1');
 
             return (
@@ -226,51 +221,45 @@ function Update1({ route, navigation }) {
                       ).then(() => {
                         setLoader(false);
                       });
-
-
                     }}>
-                    {<Image
-                      style={{ height: 30, width: 30 }}
-                      source={require('../assets/dustbin.png')}
-                    />}
-                    <Text style={{ color: 'black' }} >Delete</Text>
+                    {
+                      <Image
+                        style={{height: 30, width: 30}}
+                        source={require('../assets/dustbin.png')}
+                      />
+                    }
+                    <Text style={{color: 'black'}}>Delete</Text>
                   </TouchableOpacity>,
                 ]}>
                 <TouchableOpacity
                   // disabled={true}
                   onPress={() => {
-                    if (item.SIRType == "Below 40") {
+                    if (item.SIRType == 'Below 40') {
                       navigation.reset({
                         index: 0,
-                        routes: [{ name: 'SIR Below 40 View' }],
+                        routes: [{name: 'SIR Below 40 View'}],
                       });
                       navigation.navigate('SIR Below 40 View', {
                         data: item,
                         index: index,
-
                       });
-
-                    }
-                    else if (item.SIRType == "Ordinary") {
+                    } else if (item.SIRType == 'Ordinary') {
                       navigation.reset({
                         index: 0,
-                        routes: [{ name: 'SIR Ordinary View' }],
+                        routes: [{name: 'SIR Ordinary View'}],
                       });
                       navigation.navigate('SIR Ordinary View', {
                         data: item,
                         index: index,
-
                       });
-                    }
-                    else if (item.SIRType == "Above 40") {
+                    } else if (item.SIRType == 'Above 40') {
                       navigation.reset({
                         index: 0,
-                        routes: [{ name: 'SIR Above 40 View' }],
+                        routes: [{name: 'SIR Above 40 View'}],
                       });
                       navigation.navigate('SIR Above 40 View', {
                         data: item,
                         index: index,
-
                       });
                     }
                   }}
@@ -288,14 +277,14 @@ function Update1({ route, navigation }) {
                     borderColor: '#ddd',
                     borderBottomWidth: 0,
                     shadowColor: '#000',
-                    shadowOffset: { width: 10, height: 10 },
+                    shadowOffset: {width: 10, height: 10},
                     shadowOpacity: 0.8,
                     shadowRadius: 15,
                     elevation: 10,
                     // borderBottomColor: 'grey',
                     // borderBottomWidth: 0.5,
                   }}>
-                  <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <View style={{flex: 1, flexDirection: 'row'}}>
                     <View
                       style={{
                         backgroundColor: 'rgba(248,147,30,255)', //backgroundColor: '#1565C0',
@@ -346,9 +335,6 @@ function Update1({ route, navigation }) {
                         {'Name: ' + item.ConsumerNameBilling}
                       </Text>
 
-
-
-
                       <Text
                         style={{
                           marginLeft: 2,
@@ -365,22 +351,15 @@ function Update1({ route, navigation }) {
                           fontSize: 12,
                         }}>
                         {'Account No : ' + item.AccountNo}
-                      
-
-                    
-
-                    </Text>
-
+                      </Text>
 
                       <Text
                         style={{
                           marginLeft: 2,
                           color: 'red',
                           fontSize: 14,
-                          fontWeight: 'bold'
-                        }}>
-                       
-                      </Text>    
+                          fontWeight: 'bold',
+                        }}></Text>
                     </View>
                     <View
                       style={{
@@ -398,13 +377,10 @@ function Update1({ route, navigation }) {
                           width: 180,
                           borderRadius: 15,
                         }}>
-
-
                         <TouchableOpacity
                           // disabled={loader}
 
-                          style={styles.loginBtn}
-                         >
+                          style={styles.loginBtn}>
                           <View
                             style={{
                               height: 30,
@@ -427,7 +403,7 @@ function Update1({ route, navigation }) {
                                 style={{height: 20, width: 20}}
                                 source={require('../assets/edit.png')}
                               /> */}
-                             {item.CaseType} {item.SIRType}
+                              {item.CaseType} {item.SIRType}
                             </Text>
                           </View>
                         </TouchableOpacity>
@@ -477,36 +453,19 @@ function Update1({ route, navigation }) {
                           fontSize: 12,
                           //  fontWeight: 'bold',
                           color: 'black',
-                        }}>
-
-                      </Text>
-
-
+                        }}></Text>
 
                       <Text
                         style={{
                           // marginLeft: 5,
                           fontSize: 12,
 
-
                           color: 'black',
                         }}>
                         {'Assign Date : ' + item.AssignDate}
                       </Text>
-
                     </View>
                   </View>
-
-
-
-
-
-
-
-
-
-
-
                 </TouchableOpacity>
               </Swipeable>
             );
@@ -519,10 +478,10 @@ function Update1({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, width: '100%', backgroundColor: '#fff' },
-  head: { height: 40, backgroundColor: '#f1f8ff' },
-  text: { margin: 6 },
-  row: { flexDirection: 'row', backgroundColor: '#FFF1C1' },
+  container: {flex: 1, width: '100%', backgroundColor: '#fff'},
+  head: {height: 40, backgroundColor: '#f1f8ff'},
+  text: {margin: 6},
+  row: {flexDirection: 'row', backgroundColor: '#FFF1C1'},
   //   container: {
   //     flex: 1,
   //     backgroundColor: 'white',
@@ -536,7 +495,7 @@ const styles = StyleSheet.create({
     color: '#465881',
     marginBottom: 40,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -545,7 +504,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -581,7 +540,7 @@ const styles = StyleSheet.create({
     color: '#465881',
     fontSize: 11,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -595,10 +554,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     justifyContent: 'center',
     marginTop: 40,
-    marginLeft:-40,
+    marginLeft: -40,
     marginBottom: 10,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.2,
     shadowRadius: 50,

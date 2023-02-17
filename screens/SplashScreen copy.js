@@ -54,10 +54,9 @@ const SplashScreen = ({navigation}) => {
         resizeMode="center"
       />
     </View>
-  );ali
+  );
+  ali;
 };
-
- 
 
 const styles = StyleSheet.create({
   container: {
@@ -67,7 +66,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 });
-
- 
 
 export default SplashScreen;

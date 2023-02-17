@@ -28,6 +28,7 @@ import {
 } from 'react-native-paper';
 
 import AsyncStorage from '@react-native-community/async-storage';
+
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
 import RadioForm, {
@@ -1204,7 +1205,7 @@ const ApiScreenB40 = ({route, navigation}) => {
           '******************Post SIR Image updated*********************************',
         );
         //console.log(res.data);
-        PostConsumerImage();
+        PostConsumerImage(count);
       })
       .catch(error => {
         console.log('ERROR STARTS NOW');
@@ -1221,9 +1222,8 @@ const ApiScreenB40 = ({route, navigation}) => {
       });
   };
 
-  const PostConsumerImage = () => {
+  const PostConsumerImage = count => {
     let consumerImageData = [];
-    let count = 1;
     console.log('Post SIR Image Data called');
 
     consumerImages.filter(item => {
@@ -1279,6 +1279,20 @@ const ApiScreenB40 = ({route, navigation}) => {
       console.log(item);
     });
     */
+    if (latitude.toString() == '') {
+      alert('Please on your GPS location settings');
+      return false;
+    }
+
+    if (descripancylist.length < 1) {
+      alert('atleast one discrepancy is mandatory');
+      return false;
+    }
+
+    if (images.length < 1) {
+      alert('atleast one SIR image is mandatory');
+      return false;
+    }
 
     const powermeterData = powermeter.length > 0 ? powermeter : [{}];
     const appliancelistData = appliancelist.length > 0 ? appliancelist : [{}];
@@ -1509,6 +1523,13 @@ const ApiScreenB40 = ({route, navigation}) => {
           if (item.SIRImages != undefined) {
             setIsImage(item.SIRImageFlag);
             setImages(item.SIRImages);
+          }
+
+          if (item.latitude == undefined || item.latitude == '') {
+            getUserCurrentLocation();
+          } else {
+            setlatitude(item.latitude);
+            setlongitude(item.longitude);
           }
 
           setPowerKENo(item.PowerKENo);
@@ -1790,7 +1811,7 @@ const ApiScreenB40 = ({route, navigation}) => {
         {/* <Animatable.View animation="fadeInRightBig"> */}
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={styles.footer}>
-            <View
+            {/*<View
               style={{
                 flex: 0.5,
                 paddingLeft: 10,
@@ -1812,6 +1833,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                 {'Below 40KW'}
               </Text>
             </View>
+              */}
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
@@ -1908,12 +1930,13 @@ const ApiScreenB40 = ({route, navigation}) => {
                   /*paddingTop: 20*/
                 }
               }></View>
-            <View style={{padding: 5, marginBottom: 10}}></View>
+            <View
+              style={{padding: 5, marginBottom: -25, paddingRight: 10}}></View>
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
                   // flex: 0.45,
-                  paddingTop: -50,
+                  paddingTop: -90,
                   //   flexDirection: 'row',
                   //  justifyContent: 'space-between',
                   paddingVertical: 10,
@@ -1922,7 +1945,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                   style={{
                     marginLeft: 200,
                     marginTop: -89,
-                    fontSize: 13,
+                    fontSize: 12,
                     // fontWeight: 'bold',
                     color: 'black', //'#FFFFFF',
                     //     marginBottom: 4,
@@ -6395,7 +6418,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     marginVertical: 3,
     width: 400,
-    height: 270,
+    height: 210,
     marginTop: 10,
     justifyContent: 'center',
     // borderWidth: .5,

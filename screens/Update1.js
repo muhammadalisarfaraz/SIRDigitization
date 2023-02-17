@@ -18,7 +18,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 const base64 = require('base-64');
 import Swipeable from 'react-native-swipeable';
 import {FlatList} from 'react-native-gesture-handler';
-import { useNavigationState } from '@react-navigation/native';
+import {useNavigationState} from '@react-navigation/native';
 //import axios from 'axios';
 
 let i = 0;
@@ -32,26 +32,24 @@ function Update1({route, navigation}) {
   const item = {};
   const [temptableData, settemptableData] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const [completeData, setCompleteData] = useState([])
+  const [completeData, setCompleteData] = useState([]);
 
   const loadData = val => {
     console.log('values == >', i, j);
     setLoading(true);
     let data1;
-   
+
     AsyncStorage.getItem('SafetyHazard').then(items => {
       var data = [];
 
       data = items ? JSON.parse(items) : {};
-     // alert(data.length);
-//      console.log('data', data);
+      // alert(data.length);
+      //      console.log('data', data);
       setCompleteData(data);
 
       data1 = data.filter(x => x.Status == 'Pending');
-    //  console.log("data1", data1);
+      //  console.log("data1", data1);
 
-     
-      
       if (val) {
         i += 10;
 
@@ -67,7 +65,7 @@ function Update1({route, navigation}) {
         console.log('else', dataslice);
         setLoading(false);
       }
-     
+
       console.log('data', i, j);
       settableData([...tableData, ...dataslice]);
       settemptableData([...temptableData, ...dataslice]);
@@ -78,42 +76,37 @@ function Update1({route, navigation}) {
   useEffect(() => {
     setLoader(true);
 
-    navigation.addListener(
-      'focus',
-      payload => {
-           loadData() 
-      }
-  );
-
+    navigation.addListener('focus', payload => {
+      loadData();
+    });
 
     loadData();
   }, []);
 
   const searchFilterFunction = text => {
     setRefresh(true);
-   // console.log("temptableData", temptableData);
+    // console.log("temptableData", temptableData);
     if (text == '' || text == null) {
       // setRefresh(true);
       //alert('');
-    console.log("if statement", tableData)
-     settableData(temptableData);
-     setTimeout(() => {
-  
+      console.log('if statement', tableData);
+      settableData(temptableData);
+      setTimeout(() => {
         setRefresh(false);
       }, 1000);
     } else {
       var arrayholder = completeData;
 
-    //  console.log("arrayholder", temptableData);
+      //  console.log("arrayholder", temptableData);
 
       const newData = arrayholder.filter(item => {
-      const itemData = `${item.PremiseConsumerNumber.toUpperCase()}  ${item.AccidentLocationAddress.toUpperCase()}`;
+        const itemData = `${item.PremiseConsumerNumber.toUpperCase()}  ${item.AccidentLocationAddress.toUpperCase()}`;
 
-      const textData = text.toUpperCase();
+        const textData = text.toUpperCase();
 
-      return itemData.indexOf(textData) > -1;
+        return itemData.indexOf(textData) > -1;
       });
-      console.log("else statement", tableData)
+      console.log('else statement', tableData);
       settableData(newData);
       setTimeout(() => {
         setRefresh(false);
@@ -180,7 +173,14 @@ function Update1({route, navigation}) {
                 {tableData ? (
                   tableData.length > 0 ? (
                     <TouchableOpacity onPress={() => loadData('more')}>
-                      <Text  style={{color: 'black', fontSize: 18, fontWeight: 'bold'}}>Load More</Text>
+                      <Text
+                        style={{
+                          color: 'black',
+                          fontSize: 18,
+                          fontWeight: 'bold',
+                        }}>
+                        Load More
+                      </Text>
                       {loading ? (
                         <ActivityIndicator
                           color="black"
@@ -230,11 +230,13 @@ function Update1({route, navigation}) {
                       //   setLoader(false);
                       // }, 500);
                     }}>
-                    { <Image
-                      style={{height: 30, width: 30}}
-                      source={require('../assets/dustbin.png')}
-                    /> }
-                    <Text style={{color:'black'}} >Delete</Text>
+                    {
+                      <Image
+                        style={{height: 30, width: 30}}
+                        source={require('../assets/dustbin.png')}
+                      />
+                    }
+                    <Text style={{color: 'black'}}>Delete</Text>
                   </TouchableOpacity>,
                 ]}>
                 <TouchableOpacity
@@ -248,7 +250,6 @@ function Update1({route, navigation}) {
                     navigation.navigate('Safety Hazards Detail', {
                       data: item,
                       index: index,
-                      
                     });
                   }}
                   style={{
@@ -299,7 +300,7 @@ function Update1({route, navigation}) {
                     </View>
                     <View
                       style={{
-                        flex: 0.45,
+                        flex: 1,
                         paddingLeft: 10,
                         justifyContent: 'space-between',
                         paddingVertical: 10,
@@ -310,7 +311,7 @@ function Update1({route, navigation}) {
                           color: 'black',
                           fontSize: 13,
                         }}>
-                        {'PMT: \n' + item.PMT}
+                        {'PMT: ' + item.PMT}
                       </Text>
 
                       <Text
@@ -318,8 +319,9 @@ function Update1({route, navigation}) {
                           marginLeft: 5,
                           fontSize: 13,
                           color: 'black',
+                          //backgroundColor: 'black',
                         }}>
-                        {'Location Address: \n' + item.AccidentLocationAddress}
+                        {'Address: ' + item.AccidentLocationAddress}
                       </Text>
                       <Text
                         style={{
@@ -358,9 +360,7 @@ function Update1({route, navigation}) {
                             marginLeft: 70,
                             fontSize: 13,
                             color: 'black',
-                          }}>
-                          
-                        </Text>
+                          }}></Text>
                         <Text
                           style={{
                             fontSize: 15,
@@ -403,9 +403,7 @@ function Update1({route, navigation}) {
                               marginLeft: 70,
                               fontSize: 13,
                               color: 'black',
-                            }}>
-                             
-                          </Text>
+                            }}></Text>
                           <Text
                             style={{
                               fontSize: 15,
@@ -418,25 +416,25 @@ function Update1({route, navigation}) {
                         <TouchableOpacity
                           // disabled={loader}
 
-                          style={styles.loginBtn}
+                          //style={styles.loginBtn}
                           onPress={() => {
                             //alert('asfasf');
 
                             navigation.navigate('Edit Safety Hazard', {
                               data: item,
                               index: index,
-                              
                             });
                           }}>
+                          {/*
                           <View
                             style={{
                               height: 30,
                               //width: '97%',
-                             borderColor: 'white',
+                              borderColor: 'white',
                               // height: 15,
                               width: 140,
                               borderRadius: 30,
-                              
+
                               alignItems: 'center',
                               justifyContent: 'center',
                             }}>
@@ -446,13 +444,11 @@ function Update1({route, navigation}) {
                                 fontSize: 12,
                                 fontWeight: 'bold',
                               }}>
-                              {/* <Image
-                                style={{height: 20, width: 20}}
-                                source={require('../assets/edit.png')}
-                              /> */}
+                             
                               Edit Record
                             </Text>
                           </View>
+                            */}
                         </TouchableOpacity>
                       </View>
                     </View>

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
+
 import moment from 'moment';
 
 const HomeScreenPlannedSummary = ({navigation}) => {
@@ -146,14 +147,14 @@ const styles = StyleSheet.create({
     //shadowRadius: 20,
   },
   text_left: {
-    color: '#111012',
+    color: 'white',
     fontWeight: 'bold',
     fontSize: 15,
     textAlign: 'center',
     padding: 15,
   },
   text_right: {
-    color: '#111012',
+    color: 'white',
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center',

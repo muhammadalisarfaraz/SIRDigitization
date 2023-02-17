@@ -14,6 +14,7 @@ import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
+
 import axios from 'axios';
 import base64 from 'react-native-base64';
 import DeviceInfo from 'react-native-device-info';
@@ -215,7 +216,7 @@ const SignInScreen = ({navigation}) => {
     <View style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>SIR Digitization!</Text>
+        <Text style={styles.text_header}>SIR Digitization</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"

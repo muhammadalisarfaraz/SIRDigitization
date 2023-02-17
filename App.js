@@ -74,6 +74,7 @@ import {AuthContext} from './components/context';
 import RootStackScreen from './screens/RootStackScreen';
 
 import AsyncStorage from '@react-native-community/async-storage';
+
 import BackgroundGeolocation, {
   Location,
   Subscription,
@@ -327,10 +328,20 @@ const App = () => {
             <Drawer.Navigator
               drawerContent={props => <DrawerContent {...props} />}>
               <Drawer.Screen
+                name="SupportScreen"
+                component={SupportScreen}
+                options={{
+                  title: 'Dashboard Screen',
+                  //headerStyle: {backgroundColor: 'green'},
+                  //headerTintColor: '#fff',
+                  //headerTitleStyle: {fontWeight: 'bold'},
+                }}
+              />
+              <Drawer.Screen
                 name="SIR Digitization"
                 component={MainTabScreen}
               />
-              <Drawer.Screen name="SupportScreen" component={SupportScreen} />
+
               <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
               <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
 
@@ -338,7 +349,13 @@ const App = () => {
                 name="Safety Hazard Case"
                 component={SafetyHazardCase}
               />
-              <Drawer.Screen name="Saved Safety Hazard" component={Update1} />
+              <Drawer.Screen
+                name="Saved Safety Hazard"
+                component={Update1}
+                options={{
+                  title: 'Posted Safety Hazard',
+                }}
+              />
               <Drawer.Screen
                 name="Safety Hazards Detail"
                 component={SafetyHazardDetail}
@@ -355,25 +372,58 @@ const App = () => {
               <Drawer.Screen
                 name="LoadingScreenforDataDownload"
                 component={LoadingScreenforDataDownload}
+                options={{
+                  title: 'Download SIR Data',
+                  //headerStyle: {backgroundColor: 'green'},
+                  //headerTintColor: '#fff',
+                  //headerTitleStyle: {fontWeight: 'bold'},
+                }}
               />
 
               <Drawer.Screen
                 name="DownloadMasterData"
                 component={DownloadMasterData}
+                options={{
+                  title: 'Master Data',
+                }}
               />
 
-              <Drawer.Screen name="DeleteSIRs" component={DeleteSIRs} />
+              <Drawer.Screen
+                name="DeleteSIRs"
+                component={DeleteSIRs}
+                options={{
+                  title: 'Syncronize SIR Data',
+                  //headerStyle: {backgroundColor: 'green'},
+                  //headerTintColor: '#fff',
+                  //headerTitleStyle: {fontWeight: 'bold'},
+                }}
+              />
 
-              <Drawer.Screen name="ChangePassword" component={ChangePassword} />
+              <Drawer.Screen
+                name="ChangePassword"
+                component={ChangePassword}
+                options={{
+                  title: 'Change Password',
+                }}
+              />
 
               <Drawer.Screen
                 name="Un-Planned SIR"
                 component={HomeScreenUnPlanned}
+                options={{
+                  title: 'Un-Planned SIR',
+                }}
               />
 
               <Drawer.Screen
                 name="SIR Digitization Ordinary"
                 component={ApiScreen}
+                options={{
+                  title: 'Site Inspection Report (ORD)',
+                  headerStyle: {backgroundColor: '#1565C0'},
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {fontWeight: 'bold'},
+                }}
               />
               <Drawer.Screen
                 name="SIR Digitization Ordinaryss"
@@ -404,6 +454,12 @@ const App = () => {
               <Drawer.Screen
                 name="Site Inspection Report"
                 component={ApiScreenB40}
+                options={{
+                  title: 'Site Inspection Report (B40)',
+                  headerStyle: {backgroundColor: '#1565C0'},
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {fontWeight: 'bold'},
+                }}
               />
               <Drawer.Screen
                 name="Below 40 Un-Planned"
@@ -412,35 +468,71 @@ const App = () => {
               <Drawer.Screen
                 name="Site Inspection Above 40"
                 component={ApiScreenA40}
+                options={{
+                  title: 'Site Inspection Report (A40)',
+                  headerStyle: {backgroundColor: '#1565C0'},
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {fontWeight: 'bold'},
+                }}
               />
               <Drawer.Screen
                 name="Above 40 Un-Planned"
                 component={ApiScreenA40UnPlanned}
               />
-              <Drawer.Screen name="HomeScreen" component={HomeScreen} />
+              <Drawer.Screen
+                name="HomeScreen"
+                component={HomeScreen}
+                options={{
+                  title: 'Assigned Cases Screen',
+                }}
+              />
               <Drawer.Screen
                 name="HomeScreenPlannedSaved"
                 component={HomeScreenPlannedSaved}
+                options={{
+                  title: 'Saved Cases Screen',
+                }}
               />
               <Drawer.Screen
                 name="HomeScreenPlannedCompleted"
                 component={HomeScreenPlannedCompleted}
+                options={{
+                  title: 'Post Cases Screen',
+                }}
               />
               <Drawer.Screen
                 name="HomeScreenUnPlannedSaved"
                 component={HomeScreenUnPlannedSaved}
+                options={{
+                  title: 'Saved Un-Planned SIR',
+                }}
               />
               <Drawer.Screen
                 name="HomeScreenUnPlannedCompleted"
                 component={HomeScreenUnPlannedCompleted}
+                options={{
+                  title: 'Post Un-Planned SIR',
+                }}
               />
               <Drawer.Screen
                 name="HomeScreenPlannedSummary"
                 component={HomeScreenPlannedSummary}
+                options={{
+                  title: 'Planned SIR Summary',
+                  //headerStyle: {backgroundColor: 'green'},
+                  //headerTintColor: '#fff',
+                  //headerTitleStyle: {fontWeight: 'bold'},
+                }}
               />
               <Drawer.Screen
                 name="HomeScreenUnPlannedSummary"
                 component={HomeScreenUnPlannedSummary}
+                options={{
+                  title: 'Un-Planned SIR Summary',
+                  //headerStyle: {backgroundColor: 'green'},
+                  //headerTintColor: '#fff',
+                  //headerTitleStyle: {fontWeight: 'bold'},
+                }}
               />
             </Drawer.Navigator>
           ) : (

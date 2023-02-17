@@ -20,6 +20,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
+
 import Swipeable from 'react-native-swipeable';
 import {FlatList} from 'react-native-gesture-handler';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -52,7 +53,7 @@ const HomeScreen = ({navigation}) => {
 
   const [items, setItems] = useState([
     //        { label: '-- Please Select --', value: '', imageCount: 0 },
-    {label: 'Ordinary', value: 'Ordinary'},
+    {label: 'Ordinary', value: 'ORD'},
     {label: 'Below 40', value: 'B40'},
     {label: 'Above 40', value: 'A40'},
   ]);
@@ -242,7 +243,7 @@ const HomeScreen = ({navigation}) => {
               'SystemMeter',
               JSON.stringify(SystemMeterData),
             );
-            if (SIRFormat == 'Ordinary') {
+            if (SIRFormat == 'ORD') {
               /*
               var filterData = CustomData.filter(item => {
                 console.log(item);

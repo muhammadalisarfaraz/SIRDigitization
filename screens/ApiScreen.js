@@ -28,7 +28,6 @@ import {
 } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import AsyncStorage from '@react-native-community/async-storage';
 import Moment from 'moment';
 import Modal from 'react-native-modal';
 import RadioForm, {
@@ -59,6 +58,8 @@ import {set} from 'react-native-reanimated';
 import base64 from 'react-native-base64';
 import moment from 'moment';
 import NetInfo from '@react-native-community/netinfo';
+
+import AsyncStorage from '@react-native-community/async-storage';
 
 let current = 100;
 const ApiScreen = ({route, navigation}) => {
@@ -228,7 +229,7 @@ const ApiScreen = ({route, navigation}) => {
     },
     {
       id: 3,
-      name: 'Descrepancy and Findings',
+      name: 'Discrepancy and Findings',
       active: false,
     },
     {
@@ -699,10 +700,24 @@ const ApiScreen = ({route, navigation}) => {
   };
 
   const PostSIRSimultaneous = () => {
+    if (latitude.toString() == '') {
+      alert('Please on your GPS location settings');
+      return false;
+    }
     console.log('PostSIRSimultaneous called *** ');
     var filterData = descripancylist.filter(item => {
       console.log(item);
     });
+
+    if (descripancylist.length < 1) {
+      alert('atleast one discrepancy is mandatory');
+      return false;
+    }
+
+    if (images.length < 1) {
+      alert('atleast one SIR image is mandatory');
+      return false;
+    }
     const onsitemeterData = onsitemeter.length > 0 ? onsitemeter : [{}];
     const appliancelistData = appliancelist.length > 0 ? appliancelist : [{}];
     const descripancylistData =
@@ -773,7 +788,7 @@ const ApiScreen = ({route, navigation}) => {
             Runload: runningLoad,
 
             Voltage1: onsitevolts,
-            Current1: valueOnsitePhase,
+            //Current1: valueOnsitePhase,
           },
         ],
         SIR_Meter_SealSet: [{}],
@@ -922,7 +937,7 @@ const ApiScreen = ({route, navigation}) => {
           '******************Post SIR Image updated*********************************',
         );
         //console.log(res.data);
-        PostConsumerImage();
+        PostConsumerImage(count);
       })
       .catch(error => {
         console.log('ERROR STARTS NOW');
@@ -939,9 +954,8 @@ const ApiScreen = ({route, navigation}) => {
       });
   };
 
-  const PostConsumerImage = () => {
+  const PostConsumerImage = count => {
     let consumerImageData = [];
-    let count = 1;
     console.log('Post SIR Image Data called');
 
     consumerImages.filter(item => {
@@ -1129,14 +1143,14 @@ const ApiScreen = ({route, navigation}) => {
 
   const getUserCurrentLocation = async () => {
     let latitude, longitude;
+    console.log('getUserCurrentLocation:Func:call');
 
-    //let isPermissionPermitted= await requestLocationPermission();
+    //let isPermissionPermitted = await requestLocationPermission();
 
-    // console.log(isPermissionPermitted);
+    //console.log(isPermissionPermitted);
 
     //if (isPermissionPermitted) {
-
-    //  console.log("isPermissionPermitted", isPermissionPermitted);
+    //console.log('isPermissionPermitted', isPermissionPermitted);
     Geolocation.getCurrentPosition(
       info => {
         const {coords} = info;
@@ -1146,11 +1160,15 @@ const ApiScreen = ({route, navigation}) => {
 
         setlatitude(latitude);
         setlongitude(longitude);
-        // console.log(latitude);
+        console.log(latitude);
+        console.log(longitude);
 
         // getUserCurrentAddress(latitude, longitude)
       },
-      error => console.log(error),
+      error => {
+        console.log('getUserCurrentLocation:Error:');
+        console.log(error);
+      },
       {
         enableHighAccuracy: false,
         timeout: 2000,
@@ -1245,10 +1263,11 @@ const ApiScreen = ({route, navigation}) => {
     // && isStoragePermitted
     if (isCameraPermitted) {
       ImagePicker.openCamera({
-        width: 300,
-        height: 400,
+        width: 700,
+        height: 700,
         cropping: true,
         includeBase64: true,
+        compressImageQuality: 1,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -1345,14 +1364,12 @@ const ApiScreen = ({route, navigation}) => {
     setSirDate(moment().format('DD.MM.YYYY'));
     setSirTime(moment().format('hh:mm:ss'));
 
-    getUserCurrentLocation();
-
     AsyncStorage.getItem('SIRDigitization').then(items => {
       var localData = items ? JSON.parse(items) : [];
       var filterData = localData.filter(item => {
         if (item.Sirnr == data.Sirnr) {
           console.log('item.SirStatus: ' + item.SirStatus);
-          console.log('item.REMARKS: ' + item.REMARKS);
+          console.log('item.latitude: ' + item.latitude);
           if (item.Status != 'Post') {
             setIsEditable(true);
           }
@@ -1418,6 +1435,13 @@ const ApiScreen = ({route, navigation}) => {
           if (item.SIRImages != undefined) {
             setIsImage(item.SIRImageFlag);
             setImages(item.SIRImages);
+          }
+
+          if (item.latitude == undefined || item.latitude == '') {
+            getUserCurrentLocation();
+          } else {
+            setlatitude(item.latitude);
+            setlongitude(item.longitude);
           }
 
           setSelectedItems(item.Discrepancyitems);
@@ -1812,7 +1836,8 @@ const ApiScreen = ({route, navigation}) => {
                   /*paddingTop: -15*/
                 }
               }></View>
-            <View style={{padding: 5, marginBottom: 10}}></View>
+            <View
+              style={{padding: 5, marginBottom: -25, paddingRight: 10}}></View>
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
@@ -1826,7 +1851,7 @@ const ApiScreen = ({route, navigation}) => {
                   style={{
                     marginLeft: 200,
                     marginTop: -89,
-                    fontSize: 13,
+                    fontSize: 12,
                     // fontWeight: 'bold',
                     color: 'black', //'#FFFFFF',
                     //     marginBottom: 4,
@@ -1998,16 +2023,24 @@ const ApiScreen = ({route, navigation}) => {
                     <DataTable>
                       <DataTable.Header style={styles.databeHeader}>
                         <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Discrepancy
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Discrepancy
+                          </Text>
                         </DataTable.Title>
                         <DataTable.Title style={{flex: 4, color: 'black'}}>
-                          Ticket
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Ticket
+                          </Text>
                         </DataTable.Title>
                         <DataTable.Title style={{flex: 4, color: 'black'}}>
-                          Description
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Description
+                          </Text>
                         </DataTable.Title>
                         <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Priority
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Priority
+                          </Text>
                         </DataTable.Title>
                       </DataTable.Header>
                       {apiRes.length !== 0 &&
@@ -2474,7 +2507,7 @@ const ApiScreen = ({route, navigation}) => {
               </View>
             </ScrollView>
           )}
-          {tab == 'Descrepancy and Findings' && (
+          {tab == 'Discrepancy and Findings' && (
             <ScrollView
               showsVerticalScrollIndicator={true}
               showsHorizontalScrollIndicator={false}>
@@ -3306,7 +3339,8 @@ const ApiScreen = ({route, navigation}) => {
                     <View style={styles.mainbox}>
                       <Card>
                         <DataTable>
-                          <DataTable.Header style={{backgroundColor: 'blue'}}>
+                          <DataTable.Header
+                            style={{backgroundColor: '#1565C0'}}>
                             <DataTable.Title>
                               <Text
                                 style={{

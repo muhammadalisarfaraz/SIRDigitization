@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
@@ -15,18 +15,19 @@ import {
   ImageBackground,
   StatusBar,
   Alert,
-  Platform
+  Platform,
 } from 'react-native';
- import Modal from 'react-native-modal';
+import Modal from 'react-native-modal';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
+
 //import Config from 'react-native-config';
 import Moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import { useTheme } from 'react-native-paper';
-import { and } from 'react-native-reanimated';
+import {useTheme} from 'react-native-paper';
+import {and} from 'react-native-reanimated';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -34,7 +35,7 @@ const base64 = require('base-64');
 
 // var AES = require('react-native-aes');
 // var CryptoJS = require('crypto-js');
-function Login({ navigation }) {
+function Login({navigation}) {
   const [name, setName] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [loader, setLoader] = useState(false);
@@ -42,7 +43,7 @@ function Login({ navigation }) {
   const [error, setError] = useState('');
 
   const [UniqueId, setUniqueId] = useState('');
-  const { colors } = useTheme();
+  const {colors} = useTheme();
 
   const item = {};
   const LoginRequest = (
@@ -52,8 +53,6 @@ function Login({ navigation }) {
     userPassword,
     loader,
   ) => {
-
-
     // alert("name", name); alert("userPassword", userPassword);
     if (name == '') {
       // loader();
@@ -85,22 +84,22 @@ function Login({ navigation }) {
 
     //var apiURLN=Config.API_LoginURL;
     // console.log("apiURLN", apiURLN);
-    
+
     // AsyncStorage.setItem('User', JSON.stringify(name));
   };
-  const handleValidUser = (val) => {
+  const handleValidUser = val => {
     if (val.trim().length >= 4) {
       setData({
         ...data,
-        isValidUser: true
+        isValidUser: true,
       });
     } else {
       setData({
         ...data,
-        isValidUser: false
+        isValidUser: false,
       });
     }
-  }
+  };
   useEffect(() => {
     /* AsyncStorage.getItem('User').then(items => {
 
@@ -121,8 +120,6 @@ function Login({ navigation }) {
     });
     */
 
-
-
     let VuniqueId = DeviceInfo.getUniqueId();
     // console.log("uniqueId", VuniqueId);
 
@@ -131,129 +128,122 @@ function Login({ navigation }) {
   }, []);
   return (
     <View style={styles.container}>
-
-<StatusBar backgroundColor='black' barStyle="light-content" />
+      <StatusBar backgroundColor="black" barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>SIR Digitization!</Text>
+        <Text style={styles.text_header}>Site Inspection Report!</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
-        style={[styles.footer, {
-          backgroundColor: "white"//colors.background
-        }]}
-      >
-          
-          <View style={{ marginTop: 65 }}>
+        style={[
+          styles.footer,
+          {
+            backgroundColor: 'white', //colors.background
+          },
+        ]}>
+        <View style={{marginTop: 65}}></View>
+        <View style={styles.inputView}>
+          <Image
+            style={{width: 26, height: 26}}
+            source={require('../assets/user.png')}
+          />
+
+          <TextInput
+            style={styles.inputText}
+            placeholder="User Name"
+            placeholderTextColor="#1565C0"
+            onChangeText={text => setName(text)}
+          />
         </View>
-      <View style={styles.inputView}>
-        <Image
-          style={{ width: 26, height: 26 }}
-          source={require('../assets/user.png')}
-        />
-     
-        <TextInput
-          style={styles.inputText}
-          placeholder="User Name"
-          placeholderTextColor="#1565C0"
-          onChangeText={text => setName(text)}
-        />
-      </View>
-      <View style={styles.inputView}>
-        <Image
-          style={{ width: 24, height: 24 }}
-          source={require('../assets/key.png')}
-        />
-        <TextInput
-          style={styles.inputText}
-          secureTextEntry={true}
-          placeholder="Password"
-          placeholderTextColor="#1565C0"
-          onChangeText={text => setUserPassword(text)}
-        />
-      </View>
-      <View style={styles.button}>
+        <View style={styles.inputView}>
+          <Image
+            style={{width: 24, height: 24}}
+            source={require('../assets/key.png')}
+          />
+          <TextInput
+            style={styles.inputText}
+            secureTextEntry={true}
+            placeholder="Password"
+            placeholderTextColor="#1565C0"
+            onChangeText={text => setUserPassword(text)}
+          />
+        </View>
+        <View style={styles.button}>
           <TouchableOpacity
             style={styles.signIn}
             onPress={() => {
               console.log('Login Pressed');
               setLoader(true);
-    
-    
+
               LoginRequest(
                 () => {
                   navigation.reset({
                     index: 0,
-                    routes: [{ name: 'Menu' }],
+                    routes: [{name: 'Menu'}],
                   });
                 },
                 () => {
                   navigation.reset({
                     index: 0,
-                    routes: [{ name: 'PinGeneration' }],
+                    routes: [{name: 'PinGeneration'}],
                   });
                 },
                 name,
                 userPassword,
                 () => {
                   return setLoader(false);
-    
                 },
               );
             }}>
-  
-  
-  
-  
             <LinearGradient
               colors={['#1565C0', '#64b5f6']}
-              style={styles.signIn}
-            >
-              <Text style={[styles.textSign, {
-                color: '#fff'
-              }]}>Sign In</Text>
+              style={styles.signIn}>
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: '#fff',
+                  },
+                ]}>
+                Sign In
+              </Text>
             </LinearGradient>
           </TouchableOpacity>
- 
         </View>
         <Animatable.View animation="fadeInLeft" duration={100}>
-      
-      <Modal
-        style={{ alignItems: 'center', justifyContent: 'center' }}
-        isVisible={isModalVisible}>
-        <View
-          style={{
-            width: '80%',
-            height: 250,
-            backgroundColor: 'white',
-            borderRadius: 10,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingHorizontal: 10,
-            paddingVertical: 20,
-          }}>
+          <Modal
+            style={{alignItems: 'center', justifyContent: 'center'}}
+            isVisible={isModalVisible}>
+            <View
+              style={{
+                width: '80%',
+                height: 250,
+                backgroundColor: 'white',
+                borderRadius: 10,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingHorizontal: 10,
+                paddingVertical: 20,
+              }}>
+              <Text style={{color: 'red', fontSize: 24, fontWeight: 'bold'}}>
+                Error
+              </Text>
 
-            
-          <Text style={{ color: 'red', fontSize: 24, fontWeight: 'bold' }}>
-            Error
-          </Text>
+              <Text style={{color: 'black', fontSize: 16, textAlign: 'center'}}>
+                {error ? error : ''}
+              </Text>
 
-          <Text style={{ color: 'black', fontSize: 16, textAlign: 'center' }}>
-            {error ? error : ''}
-          </Text>
-
-          <Button
-            title="Close"
-            color="red"
-            onPress={() => {
-              setModalVisible(!isModalVisible);
-              setError('');
-            }}
-          />
-        </View>
-      </Modal>
+              <Button
+                title="Close"
+                color="red"
+                onPress={() => {
+                  setModalVisible(!isModalVisible);
+                  setError('');
+                }}
+              />
+            </View>
+          </Modal>
+        </Animatable.View>
       </Animatable.View>
-      </Animatable.View>
-
     </View>
   );
 }
@@ -262,7 +252,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1565C0',
- 
   },
   logo: {
     fontWeight: 'bold',
@@ -271,7 +260,7 @@ const styles = StyleSheet.create({
     color: '#0A8FCF',
     marginBottom: 40,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -280,7 +269,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -289,23 +278,23 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     height: 50,
     marginBottom: 20,
-    marginLeft:'5%',
-   
-// /    justifyContent: 'center',
+    marginLeft: '5%',
+
+    // /    justifyContent: 'center',
     padding: 20,
-   },
+  },
   inputText: {
     width: '98%',
     paddingLeft: 10,
     height: 50,
-    color: 'black', 
+    color: 'black',
     // color: 'black',
   },
   forgot: {
     color: '#0A8FCF',
     fontSize: 11,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -320,14 +309,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
   },
-
-
-
 
   header: {
     flex: 1,
@@ -335,7 +321,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 50,
     alignItems: 'center',
-   // justifyContent: 'center',
+    // justifyContent: 'center',
   },
   footer: {
     flex: 3,
@@ -343,7 +329,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
-    paddingVertical: 30
+    paddingVertical: 30,
   },
   text_header: {
     color: '#fff',
@@ -354,21 +340,21 @@ const styles = StyleSheet.create({
   },
   text_footer: {
     color: '#05375a',
-    fontSize: 18
+    fontSize: 18,
   },
   action: {
     flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#1565C0',
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   actionError: {
     flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#FF0000',
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   textInput: {
     flex: 1,
@@ -382,19 +368,19 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    marginTop: 50
+    marginTop: 50,
   },
   signIn: {
     width: '100%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
   textSign: {
     fontSize: 18,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 
 export default Login;

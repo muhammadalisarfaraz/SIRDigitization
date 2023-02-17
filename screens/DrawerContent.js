@@ -29,8 +29,8 @@ export function DrawerContent(props) {
           <View style={styles.userInfoSection}>
             <View style={{flexDirection: 'row', marginTop: 15}}>
               <View style={{marginLeft: 15, flexDirection: 'column'}}>
-                <Title style={styles.title}>Login User</Title>
-                <Caption style={styles.caption}>Login User</Caption>
+                <Title style={styles.title}>SIR Application</Title>
+                <Caption style={styles.caption}>Menu Options</Caption>
               </View>
             </View>
           </View>
@@ -42,7 +42,43 @@ export function DrawerContent(props) {
               )}
               label="Dashboard"
               onPress={() => {
-                props.navigation.navigate('Home');
+                props.navigation.navigate('SupportScreen');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="account-check-outline" color={color} size={size} />
+              )}
+              label="Download SIR"
+              onPress={() => {
+                props.navigation.navigate('LoadingScreenforDataDownload');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="account-check-outline" color={color} size={size} />
+              )}
+              label="Update Master Data"
+              onPress={() => {
+                props.navigation.navigate('DownloadMasterData');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="account-check-outline" color={color} size={size} />
+              )}
+              label="Syncronize SIR Data"
+              onPress={() => {
+                props.navigation.navigate('DeleteSIRs');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="bookmark-outline" color={color} size={size} />
+              )}
+              label="Change Password"
+              onPress={() => {
+                props.navigation.navigate('ChangePassword');
               }}
             />
             <DrawerItem
@@ -65,15 +101,8 @@ export function DrawerContent(props) {
               }}
             />
             */}
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="bookmark-outline" color={color} size={size} />
-              )}
-              label="Change Password"
-              onPress={() => {
-                props.navigation.navigate('ChangePassword');
-              }}
-            />
+
+            {/*
             <DrawerItem
               icon={({color, size}) => (
                 <Icon name="location-enter" color={color} size={size} />
@@ -83,44 +112,9 @@ export function DrawerContent(props) {
                 props.navigation.navigate('SettingsScreen');
               }}
             />
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="account-check-outline" color={color} size={size} />
-              )}
-              label="Dashboard"
-              onPress={() => {
-                props.navigation.navigate('SupportScreen');
-              }}
-            />
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="account-check-outline" color={color} size={size} />
-              )}
-              label="Refresh SIR Data"
-              onPress={() => {
-                props.navigation.navigate('DeleteSIRs');
-              }}
-            />
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="account-check-outline" color={color} size={size} />
-              )}
-              label="Download Master Data"
-              onPress={() => {
-                props.navigation.navigate('DownloadMasterData');
-              }}
-            />
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="account-check-outline" color={color} size={size} />
-              )}
-              label="Download SIR"
-              onPress={() => {
-                props.navigation.navigate('LoadingScreenforDataDownload');
-              }}
-            />
+              */}
           </Drawer.Section>
-          <Drawer.Section title="Consumer Survey">
+          <Drawer.Section title="Application Theme">
             <TouchableRipple
               onPress={() => {
                 toggleTheme();

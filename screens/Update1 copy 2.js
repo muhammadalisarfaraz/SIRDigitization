@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,24 +11,22 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   TouchableHighlight,
-
   Switch,
-  Image, ImageBackground,
+  Image,
+  ImageBackground,
   Picker,
   ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+
 import Modal from 'react-native-modal';
 const base64 = require('base-64');
 import Swipeable from 'react-native-swipeable';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import Moment from 'moment';
-import { FlatList } from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 
-
-function Update1({ route, navigation }) {
-
-
+function Update1({route, navigation}) {
   const [loader, setLoader] = useState(false);
   const [tableData, settableData] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -42,8 +40,6 @@ function Update1({ route, navigation }) {
   const [dataSource, setDataSource] = useState([]);
 
   const [datavalue, setdatavalue] = useState([]);
-
-
 
   //const tableData = [['1', '2', '3'], ['a', 'b', 'c'], ['1', '2', '3']];
   const [refresh, setRefresh] = useState(false);
@@ -59,33 +55,30 @@ function Update1({ route, navigation }) {
     </TouchableOpacity>
   );
   useEffect(() => {
-   console.log('test1');
-   const isFocused = navigation.isFocused();
+    console.log('test1');
+    const isFocused = navigation.isFocused();
 
-   // manually judge if the screen is focused
-   // if did, fire api call
-   if (isFocused) {
+    // manually judge if the screen is focused
+    // if did, fire api call
+    if (isFocused) {
       // do the same API calls here
       //settableData(route.params.data.dataSource);
-      getData();      
+      getData();
       console.log('focused section');
+    }
+    const navFocusListener = navigation.addListener('didFocus', () => {
+      // do some API calls here
+      //API_CALL();
 
-   }
-const navFocusListener = navigation.addListener('didFocus', () => {
-  // do some API calls here
-  //API_CALL();
+      console.log('hooooks');
+    });
 
-  
-  console.log('hooooks');
-});
+    return () => {
+      // navFocusListener.remove();
+    };
+    console.log('route.params.data:', route.params.data);
 
-return () => {
- // navFocusListener.remove();
-};
-console.log("route.params.data:", route.params.data);
- 
-
-/*route.params.data.dataSource.map((dataN, indexval) => {
+    /*route.params.data.dataSource.map((dataN, indexval) => {
   if (indexval >= offsetStart && indexval <= offsetEnd) {
     setdatavalue(datavalue => [...datavalue, dataN]);
   }
@@ -112,53 +105,36 @@ settableData(datavalue);
     }, 100);
  
   */
-   
-  
- 
   }, []);
 
   function getData() {
+    AsyncStorage.getItem('RoshniBajiA').then(items => {
+      var data = [];
+      data = items ? JSON.parse(items) : {};
+      //        getDatafirst(data);
+      setDataSource(data);
+      settemptableData(data);
+      setLoader(false);
 
-     AsyncStorage.getItem('RoshniBajiA')
-      .then(items => {
-        var data = [];
-        data = items ? JSON.parse(items) : {};
-        //        getDatafirst(data);
-        setDataSource(data);
-        settemptableData(data);
-        setLoader(false);
-      
-          data.map((dataN, indexval) => {
-          if (indexval >= offsetStart && indexval <= offsetEnd) {
-            setdatavalue(datavalue => [...datavalue, dataN]);
-          }
-        });
-        console.log("offsetStart: ", offsetStart);
-        console.log("offsetEnd: ", offsetEnd);
-        settableData(datavalue);
-         setoffsetStart(offsetStart + 5);
-        setoffsetEnd(offsetEnd + 5);
-        
-      
-       
-      
-     
-        
-      
-      
-      })
-     /* .then(res => {
+      data.map((dataN, indexval) => {
+        if (indexval >= offsetStart && indexval <= offsetEnd) {
+          setdatavalue(datavalue => [...datavalue, dataN]);
+        }
+      });
+      console.log('offsetStart: ', offsetStart);
+      console.log('offsetEnd: ', offsetEnd);
+      settableData(datavalue);
+      setoffsetStart(offsetStart + 5);
+      setoffsetEnd(offsetEnd + 5);
+    });
+    /* .then(res => {
         getData1();
         console.log("USER EFFECT THEN");
       });*/
-
-
-
-  };
+  }
 
   const getData1 = () => {
-
-setLoader(true);
+    setLoader(true);
     setoffsetStart(offsetStart + 5);
     setoffsetEnd(offsetEnd + 5);
     dataSource.map((dataN, indexval) => {
@@ -166,17 +142,13 @@ setLoader(true);
         setdatavalue(datavalue => [...datavalue, dataN]);
       }
     });
-    console.log("offsetStart: ", offsetStart);
-    console.log("offsetEnd: ", offsetEnd);
+    console.log('offsetStart: ', offsetStart);
+    console.log('offsetEnd: ', offsetEnd);
     settableData(datavalue);
     setTimeout(() => {
-    setLoader(false);
-  }, 20);
- 
+      setLoader(false);
+    }, 20);
   };
- 
-
-
 
   const searchFilterFunction = text => {
     setRefresh(true);
@@ -188,8 +160,7 @@ setLoader(true);
       setTimeout(() => {
         setRefresh(false);
       }, 1000);
-    }
-    else {
+    } else {
       var arrayholder = temptableData;
 
       const newData = arrayholder.filter(item => {
@@ -218,21 +189,17 @@ setLoader(true);
           style={styles.loadMoreBtn}>
           <Text style={styles.btnText}>Load More 123</Text>
           {loader ? (
-            <ActivityIndicator
-              color="white"
-              style={{ marginLeft: 8 }} />
+            <ActivityIndicator color="white" style={{marginLeft: 8}} />
           ) : null}
         </TouchableOpacity>
       </View>
     );
   };
 
-  const ItemView = ({ item }) => {
+  const ItemView = ({item}) => {
     return (
       // Flat List Item
-      <Text
-        style={styles.itemStyle}
-        onPress={() => getItem(item)}>
+      <Text style={styles.itemStyle} onPress={() => getItem(item)}>
         {item.id}
         {'.'}
         {item.title.toUpperCase()}
@@ -253,15 +220,12 @@ setLoader(true);
     );
   };
 
-  const getItem = (item) => {
+  const getItem = item => {
     //Function for click on an item
     alert('Id : ' + item.id + ' Title : ' + item.title);
   };
 
-
   return (
-
-
     <View style={styles.container}>
       <ImageBackground
         source={require('../assets/Pic4.jpg')}
@@ -276,7 +240,7 @@ setLoader(true);
           onChangeText={text => searchFilterFunction(text)}
           autoCorrect={false}
           placeholder="Search"
-          placeholderTextColor='black'
+          placeholderTextColor="black"
           style={{
             backgroundColor: '#C2C2C2',
             textAlignVertical: 'center',
@@ -296,16 +260,15 @@ setLoader(true);
           <ActivityIndicator />
         ) : (
           <FlatList
-            style={{ flex: 1, width: '100%' }}
+            style={{flex: 1, width: '100%'}}
             //  data={(tableData.length) > 0 ? tableData : 0}
             //data.splice(index, 1);0
             data={tableData}
-
             extraData={tableData}
             keyExtractor={item => item.id}
-           // ItemSeparatorComponent={ItemSeparatorView}
-          //  enableEmptySections={true}
-           // renderItem={ItemView}
+            // ItemSeparatorComponent={ItemSeparatorView}
+            //  enableEmptySections={true}
+            // renderItem={ItemView}
             ListFooterComponent={renderFooter}
             /*ListFooterComponent={() => {
               return (
@@ -335,7 +298,7 @@ setLoader(true);
             }}
             */
 
-            renderItem={({ item, index }) => {
+            renderItem={({item, index}) => {
               // var date = +item.PreqDate.replace(/\/Date\((.*?)\)\//g, '$1');
 
               return (
@@ -351,7 +314,6 @@ setLoader(true);
                         flexDirection: 'column',
                       }}
                       onPress={() => {
-
                         setLoader(true);
                         let data = tableData;
                         data.splice(index, 1);
@@ -361,10 +323,7 @@ setLoader(true);
                           'RoshniBajiA',
                           JSON.stringify(data),
                         ).then(() => {
-
-
                           route.params.update();
-
 
                           setLoader(false);
                         });
@@ -374,12 +333,11 @@ setLoader(true);
                         // }, 500);
                       }}>
                       <Image
-                        style={{ height: 30, width: 30 }}
+                        style={{height: 30, width: 30}}
                         source={require('../assets/dustbin.png')}
                       />
                       <Text>Delete</Text>
                     </TouchableOpacity>,
-
                   ]}>
                   <TouchableOpacity
                     // disabled={true}
@@ -387,15 +345,13 @@ setLoader(true);
                       //  alert('asdfasd');
                       navigation.reset({
                         index: 0,
-                        routes: [{ name: 'ConsumerDetail' }],
-                      })
+                        routes: [{name: 'ConsumerDetail'}],
+                      });
                       navigation.navigate('ConsumerDetail', {
                         data: item,
                         index: index,
                         otherParam: item.filterkey,
                       });
-
-
                     }}
                     style={{
                       // height: selectedsub.name == 'OMR' ? 160 : 140,
@@ -411,18 +367,14 @@ setLoader(true);
                       borderColor: '#ddd',
                       borderBottomWidth: 0,
                       shadowColor: '#000',
-                      shadowOffset: { width: 10, height: 10 },
+                      shadowOffset: {width: 10, height: 10},
                       shadowOpacity: 0.8,
                       shadowRadius: 15,
                       elevation: 10,
                       // borderBottomColor: 'grey',
                       // borderBottomWidth: 0.5,
                     }}>
-
-
-
-                    <View style={{ flex: 1, flexDirection: 'row' }}>
-
+                    <View style={{flex: 1, flexDirection: 'row'}}>
                       <View
                         style={{
                           backgroundColor: 'rgba(248,147,30,255)',
@@ -445,7 +397,9 @@ setLoader(true);
                             color: '#FFFFFF', //'#FFFFFF',
                             marginBottom: 4,
                           }}>
-                          {item.ConsumerName1 == '' ? item.NConsumerName1 : item.ConsumerName1}
+                          {item.ConsumerName1 == ''
+                            ? item.NConsumerName1
+                            : item.ConsumerName1}
                         </Text>
                       </View>
                       <View
@@ -486,7 +440,6 @@ setLoader(true);
                             color: '#0873C3',
                           }}
                         />
-
                       </View>
                       <View
                         style={{
@@ -522,7 +475,8 @@ setLoader(true);
                           />
                         </View>
                       </View>
-                      {Moment(item.SDate).format('YYYY-MM-DD') == Moment(item.SDate).format('YYYY-MM-DD') ?
+                      {Moment(item.SDate).format('YYYY-MM-DD') ==
+                      Moment(item.SDate).format('YYYY-MM-DD') ? (
                         <View
                           style={{
                             flex: 0.55,
@@ -539,9 +493,6 @@ setLoader(true);
                               width: 180,
                               borderRadius: 15,
                             }}>
-
-
-
                             <View
                               style={{
                                 // backgroundColor: '#0873C3',
@@ -582,8 +533,6 @@ setLoader(true);
                                   index: index,
                                   otherParam: item.filterkey,
                                 });
-
-
                               }}>
                               <View
                                 style={{
@@ -596,24 +545,26 @@ setLoader(true);
                                   //  borderWidth: 2,
                                   alignItems: 'center',
                                   justifyContent: 'center',
-
                                 }}>
-
-                                <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>
+                                <Text
+                                  style={{
+                                    color: 'white',
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                  }}>
                                   <Image
-                                    style={{ height: 20, width: 20 }}
+                                    style={{height: 20, width: 20}}
                                     source={require('../assets/edit.png')}
                                   />
                                   Edit Record
-
                                 </Text>
                               </View>
                             </TouchableOpacity>
-
-
-
                           </View>
-                        </View> : <view></view>}
+                        </View>
+                      ) : (
+                        <view></view>
+                      )}
                       <View
                         style={{
                           backgroundColor: '#5d2d91',
@@ -642,11 +593,10 @@ setLoader(true);
                 </Swipeable>
               );
             }}
-
           />
         )}
         <Modal
-          style={{ alignItems: 'center', justifyContent: 'center' }}
+          style={{alignItems: 'center', justifyContent: 'center'}}
           isVisible={isModalVisible}>
           <View
             style={{
@@ -659,11 +609,11 @@ setLoader(true);
               paddingHorizontal: 10,
               paddingVertical: 20,
             }}>
-            <Text style={{ color: 'red', fontSize: 24, fontWeight: 'bold' }}>
+            <Text style={{color: 'red', fontSize: 24, fontWeight: 'bold'}}>
               Error
             </Text>
 
-            <Text style={{ color: 'red', fontSize: 16, textAlign: 'center' }}>
+            <Text style={{color: 'red', fontSize: 16, textAlign: 'center'}}>
               {error ? error : ''}
             </Text>
 
@@ -678,7 +628,7 @@ setLoader(true);
           </View>
         </Modal>
         <Modal
-          style={{ alignItems: 'center', justifyContent: 'center' }}
+          style={{alignItems: 'center', justifyContent: 'center'}}
           isVisible={isSuccessModalVisible}>
           <View
             style={{
@@ -691,11 +641,11 @@ setLoader(true);
               paddingHorizontal: 10,
               paddingVertical: 20,
             }}>
-            <Text style={{ color: 'green', fontSize: 24, fontWeight: 'bold' }}>
+            <Text style={{color: 'green', fontSize: 24, fontWeight: 'bold'}}>
               Success
             </Text>
 
-            <Text style={{ color: 'green', fontSize: 16, textAlign: 'center' }}>
+            <Text style={{color: 'green', fontSize: 16, textAlign: 'center'}}>
               {uploadingMsg == '' ? 'Saved Successfully' : uploadingMsg}
             </Text>
 
@@ -712,17 +662,16 @@ setLoader(true);
             />
           </View>
         </Modal>
-
       </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, width: '100%', backgroundColor: '#fff' },
-  head: { height: 40, backgroundColor: '#f1f8ff' },
-  text: { margin: 6 },
-  row: { flexDirection: 'row', backgroundColor: '#FFF1C1' },
+  container: {flex: 1, width: '100%', backgroundColor: '#fff'},
+  head: {height: 40, backgroundColor: '#f1f8ff'},
+  text: {margin: 6},
+  row: {flexDirection: 'row', backgroundColor: '#FFF1C1'},
   //   container: {
   //     flex: 1,
   //     backgroundColor: 'white',
@@ -736,7 +685,7 @@ const styles = StyleSheet.create({
     color: '#465881',
     marginBottom: 40,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -745,7 +694,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -781,7 +730,7 @@ const styles = StyleSheet.create({
     color: '#465881',
     fontSize: 11,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -797,14 +746,13 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 10,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.2,
     shadowRadius: 50,
     right: -1,
     bottom: 0,
     borderBottomRightRadius: 15,
-
   },
 });
 

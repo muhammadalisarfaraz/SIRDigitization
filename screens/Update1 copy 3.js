@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -10,17 +10,16 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  Image, ImageBackground,
-
+  Image,
+  ImageBackground,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const base64 = require('base-64');
 import Swipeable from 'react-native-swipeable';
-import { FlatList } from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 
-
-function Update1({ route, navigation }) {
+function Update1({route, navigation}) {
   const [loader, setLoader] = useState(false);
   const [tableData, settableData] = useState([]);
   const item = {};
@@ -32,14 +31,11 @@ function Update1({ route, navigation }) {
     AsyncStorage.getItem('RoshniBajiA').then(items => {
       var data = [];
       data = items ? JSON.parse(items) : {};
-      console.log("data", data);
+      console.log('data', data);
       settableData(data);
       settemptableData(data);
       setLoader(false);
-
     });
-
-
   }, []);
 
   const searchFilterFunction = text => {
@@ -52,8 +48,7 @@ function Update1({ route, navigation }) {
       setTimeout(() => {
         setRefresh(false);
       }, 1000);
-    }
-    else {
+    } else {
       var arrayholder = temptableData;
 
       const newData = arrayholder.filter(item => {
@@ -71,11 +66,7 @@ function Update1({ route, navigation }) {
     // this.setState({data: newData});
   };
 
-
-
   return (
-
-
     <View style={styles.container}>
       <ImageBackground
         source={require('../assets/Pic4.jpg')}
@@ -90,7 +81,7 @@ function Update1({ route, navigation }) {
           onChangeText={text => searchFilterFunction(text)}
           autoCorrect={false}
           placeholder="Search"
-          placeholderTextColor='black'
+          placeholderTextColor="black"
           style={{
             backgroundColor: '#C2C2C2',
             textAlignVertical: 'center',
@@ -110,16 +101,14 @@ function Update1({ route, navigation }) {
           <ActivityIndicator />
         ) : (
           <FlatList
-            style={{ flex: 1, width: '100%' }}
-            data={(tableData.length) > 0 ? tableData : 0}
+            style={{flex: 1, width: '100%'}}
+            data={tableData.length > 0 ? tableData : 0}
             //data.splice(index, 1);0
             extraData={tableData}
             keyExtractor={item => item.id}
             maxToRenderPerBatch={2}
             initialNumToRender={2}
             onEndReachedThreshold={0.5}
-            
-
             ListFooterComponent={() => {
               return (
                 <View
@@ -141,14 +130,10 @@ function Update1({ route, navigation }) {
                   ) : (
                     <Text>No Record to Show</Text>
                   )}
-
-
                 </View>
               );
             }}
-
-
-            renderItem={({ item, index }) => {
+            renderItem={({item, index}) => {
               // var date = +item.PreqDate.replace(/\/Date\((.*?)\)\//g, '$1');
 
               return (
@@ -156,7 +141,6 @@ function Update1({ route, navigation }) {
                   rightButtons={[
                     <TouchableOpacity
                       style={{
-
                         width: 80,
                         marginVertical: 17,
                         alignItems: 'center',
@@ -164,7 +148,6 @@ function Update1({ route, navigation }) {
                         flexDirection: 'column',
                       }}
                       onPress={() => {
-
                         setLoader(true);
                         let data = tableData;
                         data.splice(index, 1);
@@ -174,10 +157,7 @@ function Update1({ route, navigation }) {
                           'RoshniBajiA',
                           JSON.stringify(data),
                         ).then(() => {
-
-
                           route.params.update();
-
 
                           setLoader(false);
                         });
@@ -187,12 +167,11 @@ function Update1({ route, navigation }) {
                         // }, 500);
                       }}>
                       <Image
-                        style={{ height: 30, width: 30 }}
+                        style={{height: 30, width: 30}}
                         source={require('../assets/dustbin.png')}
                       />
                       <Text>Delete</Text>
                     </TouchableOpacity>,
-
                   ]}>
                   <TouchableOpacity
                     // disabled={true}
@@ -200,18 +179,15 @@ function Update1({ route, navigation }) {
                       //  alert('asdfasd');
                       navigation.reset({
                         index: 0,
-                        routes: [{ name: 'ConsumerDetail' }],
-                      })
+                        routes: [{name: 'ConsumerDetail'}],
+                      });
                       navigation.navigate('ConsumerDetail', {
                         data: item,
                         index: index,
                         otherParam: item.filterkey,
                       });
-
-
                     }}
                     style={{
-
                       backgroundColor: 'white',
                       alignSelf: 'center',
                       borderRadius: 15,
@@ -224,18 +200,14 @@ function Update1({ route, navigation }) {
                       borderColor: '#ddd',
                       borderBottomWidth: 0,
                       shadowColor: '#000',
-                      shadowOffset: { width: 10, height: 10 },
+                      shadowOffset: {width: 10, height: 10},
                       shadowOpacity: 0.8,
                       shadowRadius: 15,
                       elevation: 10,
                       // borderBottomColor: 'grey',
                       // borderBottomWidth: 0.5,
                     }}>
-
-
-
-                    <View style={{ flex: 1, flexDirection: 'row' }}>
-
+                    <View style={{flex: 1, flexDirection: 'row'}}>
                       <View
                         style={{
                           backgroundColor: 'rgba(248,147,30,255)',
@@ -258,7 +230,9 @@ function Update1({ route, navigation }) {
                             color: '#FFFFFF', //'#FFFFFF',
                             marginBottom: 4,
                           }}>
-                          {item.ConsumerName1 == '' ? item.NConsumerName1 : item.ConsumerName1}
+                          {item.ConsumerName1 == ''
+                            ? item.NConsumerName1
+                            : item.ConsumerName1}
                         </Text>
                       </View>
                       <View
@@ -299,7 +273,6 @@ function Update1({ route, navigation }) {
                             color: '#0873C3',
                           }}
                         />
-
                       </View>
                       <View
                         style={{
@@ -352,9 +325,6 @@ function Update1({ route, navigation }) {
                             width: 180,
                             borderRadius: 15,
                           }}>
-
-
-
                           <View
                             style={{
                               // backgroundColor: '#0873C3',
@@ -395,8 +365,6 @@ function Update1({ route, navigation }) {
                                 index: index,
                                 otherParam: item.filterkey,
                               });
-
-
                             }}>
                             <View
                               style={{
@@ -409,22 +377,21 @@ function Update1({ route, navigation }) {
                                 //  borderWidth: 2,
                                 alignItems: 'center',
                                 justifyContent: 'center',
-
                               }}>
-
-                              <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>
+                              <Text
+                                style={{
+                                  color: 'white',
+                                  fontSize: 12,
+                                  fontWeight: 'bold',
+                                }}>
                                 <Image
-                                  style={{ height: 20, width: 20 }}
+                                  style={{height: 20, width: 20}}
                                   source={require('../assets/edit.png')}
                                 />
                                 Edit Record
-
                               </Text>
                             </View>
                           </TouchableOpacity>
-
-
-
                         </View>
                       </View>
                       <View
@@ -455,22 +422,18 @@ function Update1({ route, navigation }) {
                 </Swipeable>
               );
             }}
-
           />
         )}
-
-
-
       </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, width: '100%', backgroundColor: '#fff' },
-  head: { height: 40, backgroundColor: '#f1f8ff' },
-  text: { margin: 6 },
-  row: { flexDirection: 'row', backgroundColor: '#FFF1C1' },
+  container: {flex: 1, width: '100%', backgroundColor: '#fff'},
+  head: {height: 40, backgroundColor: '#f1f8ff'},
+  text: {margin: 6},
+  row: {flexDirection: 'row', backgroundColor: '#FFF1C1'},
   //   container: {
   //     flex: 1,
   //     backgroundColor: 'white',
@@ -484,7 +447,7 @@ const styles = StyleSheet.create({
     color: '#465881',
     marginBottom: 40,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -493,7 +456,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -529,7 +492,7 @@ const styles = StyleSheet.create({
     color: '#465881',
     fontSize: 11,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.8,
     shadowRadius: 20,
@@ -545,14 +508,13 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 10,
     elevation: 4,
-    shadowOffset: { width: 15, height: 15 },
+    shadowOffset: {width: 15, height: 15},
     shadowColor: 'black',
     shadowOpacity: 0.2,
     shadowRadius: 50,
     right: -1,
     bottom: 0,
     borderBottomRightRadius: 15,
-
   },
 });
 

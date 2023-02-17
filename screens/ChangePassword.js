@@ -37,6 +37,7 @@ import {
   Select,
 } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-community/async-storage';
+
 import ImagePicker from 'react-native-image-crop-picker';
 
 import ImageViewer from 'react-native-image-zoom-viewer';
@@ -99,7 +100,7 @@ const ChangePassword = ({navigation}) => {
       .then(res => {
         if (res.data.d.RESULT == 'Failed') {
           console.log('get Password Service: ' + res.data.d.RESULT);
-          alert('Password not changed');
+          alert(res.data.d.RESULT);
         } else if (res.data.d.RESULT == 'Saved') {
           alert('Password Successfully Changed');
           console.log('get Password Service: ' + res.data.d.RESULT);

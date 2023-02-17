@@ -15,6 +15,7 @@ import {
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+
 import base64 from 'react-native-base64';
 
 const DownloadMasterData = ({navigation}) => {
@@ -251,7 +252,7 @@ const DownloadMasterData = ({navigation}) => {
             MRNoteData.length,
         );*/
         AsyncStorage.setItem('MRNote', JSON.stringify(MRNoteData));
-        setMRNote('final:MRNote:length: ' + MRNoteData.length);
+        setMRNote(MRNoteData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);
@@ -287,7 +288,7 @@ const DownloadMasterData = ({navigation}) => {
             PremiseTypeData.length,
         );*/
         AsyncStorage.setItem('PremiseType', JSON.stringify(PremiseTypeData));
-        setPremiseType('final:PremiseType: length: ' + PremiseTypeData.length);
+        setPremiseType(PremiseTypeData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);
@@ -319,7 +320,7 @@ const DownloadMasterData = ({navigation}) => {
       })
       .then(res => {
         AsyncStorage.setItem('Appliances', JSON.stringify(AppliancesData));
-        setAppliances('final:AppliancesData:length: ' + AppliancesData.length);
+        setAppliances(AppliancesData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);
@@ -355,7 +356,7 @@ const DownloadMasterData = ({navigation}) => {
             TariffData.length,
         );*/
         AsyncStorage.setItem('Tariff', JSON.stringify(TariffData));
-        setTariff('final:Tariff:length: ' + TariffData.length);
+        setTariff(TariffData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);
@@ -414,13 +415,17 @@ const DownloadMasterData = ({navigation}) => {
         <>
           <Text style={{color: 'white', fontSize: 15}}>IBC: {Ibc}</Text>
           <Text style={{color: 'white', fontSize: 15}}>MIO: {Mio}</Text>
-          <Text style={{color: 'white', fontSize: 15}}>MRNote: {MRNote}</Text>
           <Text style={{color: 'white', fontSize: 15}}>
-            PremiseType: {PremiseType}
+            Discrepancy Count: {MRNote}
           </Text>
-          <Text style={{color: 'white', fontSize: 15}}>Tariff: {Tariff}</Text>
           <Text style={{color: 'white', fontSize: 15}}>
-            Appliances: {Appliances}
+            Premise Type Count: {PremiseType}
+          </Text>
+          <Text style={{color: 'white', fontSize: 15}}>
+            Tariff Count: {Tariff}
+          </Text>
+          <Text style={{color: 'white', fontSize: 15}}>
+            Appliances Count: {Appliances}
           </Text>
         </>
       )}
@@ -431,7 +436,9 @@ const DownloadMasterData = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue',
+    backgroundColor: '#1565C0',
+    paddingLeft: 10,
+    paddingTop: 10,
   },
 });
 
