@@ -285,6 +285,9 @@ const ApiScreen = ({route, navigation}) => {
   const [visible1, setIsVisible1] = useState(false);
 
   const [SIR, setSIR] = useState('');
+  const [SIRIMAGE, setSIRIMAGE] = useState('');
+  const [SIRIMAGECONSUMER, setSIRIMAGECONSUMER] = useState('');
+
   const [consumerno, setConsumerNo] = useState('');
   const [contract, setContract] = useState('');
 
@@ -429,7 +432,7 @@ const ApiScreen = ({route, navigation}) => {
 
   // Saad added on 16-Dec-2022
   const [loadDetails, setLoadDetails] = useState('');
-  const [quantity, setQuantity] = useState('');
+  const [quantity, setQuantity] = useState('1');
   const [rating, setRating] = useState('');
   const [totalWatts, setTotalWatts] = useState('');
 
@@ -442,6 +445,7 @@ const ApiScreen = ({route, navigation}) => {
   const [CONSUMER_NO, setCONSUMER_NO] = useState('');
   const [Vkont, setVkont] = useState('');
   const [TARIFF, setTARIFF] = useState('');
+  const [CLUSTER, setCLUSTER] = useState('');
 
   /* Customer Acknowlegment ------------ End */
 
@@ -573,119 +577,29 @@ const ApiScreen = ({route, navigation}) => {
     return true;
   };
 
-  const StoreInDevice = (
-    status,
-    isPost,
-    Result_Discrepancies,
-    Result_Appliances,
-    Result_Meter,
-    Result_Register,
-    Result_Onsite,
-    Result_MeterSeal,
-  ) => {
-    AsyncStorage.getItem('SIRDigitization').then(async items => {
-      let data = JSON.parse(items);
-      data.filter((item, index) => {
-        if (item.Sirnr == SIR) {
-          console.log('item.Sirnr ', item.Sirnr);
-          console.log('index', index);
-          console.log('SIR', SIR);
-          //data[index].CaseType = 'Planned';
-          data[index].SIRType = 'ORD';
-          data[index].SirFormat = 'ORD';
-          data[index].Status = status;
-          data[index].SIRTime = sirtime;
-          data[index].SIRDate = sirdate;
-          data[index].SanctionLoad = sanctionLoad;
-          data[index].MeterTesting = meterTesting;
-          data[index].Agediff = agediff;
-          data[index].MeterPer = meterPer;
-          data[index].MeterSlow = meterSlow;
-          data[index].ConnectedLoad = connectedLoad;
-          data[index].RunningLoad = runningLoad;
+  const StoreInDeviceImagesConsumer = isPost => {
+    let dataConsumerImages = [];
 
-          data[index].OnsiteMeterNo = onsitemeterNo;
-          data[index].OnsiteMake = onsitemake;
-          data[index].OnsitePhase = valueOnsitePhase;
-          data[index].OnsiteVolts = onsitevolts;
-          data[index].OnsiteMeterConstant = onsitemeterConstant;
-          data[index].OnsiteSecuritySlipNo = onsitesecuritySlipNo;
-          data[index].OnsiteMultiplyingFactor = onsitemultiplyingFactor;
-          data[index].OnsiteMeterDetail = onsitemeter;
-          data[index].PowerMeterRemarks = powerMeterRemarks;
-          data[index].SystemMake = systemmake;
-          data[index].SystemAmperes = systemamperes;
-          data[index].SystemVolts = systemvolts;
-          data[index].SystemPhase = systemphase; // Saad add on 16-Dec-2022
-          data[index].SystemMeterConstant = systemmeterConstant;
-          data[index].SystemSecuritySlipNo = systemsecuritySlipNo;
-          data[index].SystemMultiplyingFactor = systemmultiplyingFactor;
-          data[index].SystemMeterNo = systemmeterNo;
-          data[index].SystemCurrentReading = systemmcurrentReading;
-          data[index].SystemPeakReading = systemmpeakReading;
-          data[index].ConsumerName = consumerName;
-          data[index].MobileNo = mobileNo;
-          data[index].ConsumerNameCNIC = consumerNameCNIC;
-          data[index].ConsumerRemarks = consumerRemarks;
-          data[index].ConsumerRefuseYN = consumerRefuseYN;
-          data[index].IsConsumerRefuseYN = isConsumerRefuseYN;
-          data[index].ConsumerSign = consumerSign;
-          data[index].IsConsumerSign = isConsumerSign;
-          data[index].ServiceType = valueServiceType;
-          data[index].Tariff = valueTarif;
-          data[index].PremiseType = valuePremiseType;
-          data[index].PremiseCategory = premiseCategory;
-          //data[index].Remarks = remarks;
-          data[index].isDiscrepancyitems = isSelecteditems;
-          data[index].Discrepancyitems = selectedItems;
-          data[index].DiscrepancyfindingsRemarks = discrepancyfindingsRemarks;
-          data[index].longitude = longitude;
-          data[index].latitude = latitude;
-
-          data[index].IsSignature = isSignature;
-          data[index].ConsumerSignature = consumerSignature;
-          data[index].SIRImageFlag = isImage;
-          data[index].SIRImages = images;
-          data[index].ConsumerImageFlag = IsImage1;
-          data[index].ConsumerImages = consumerImages;
-          data[index].Images1 = images1;
-
-          data[index].UniqueId = Date.now();
-          data[index].Sirnr = SIR;
-          //data[index].CONSUMER_NO = consumerno;
-          data[index].Vertrag = contract;
-          data[index].ClusterIBC = clusterIBC;
-          data[index].ConsumerNameBilling = consumernameBilling;
-          data[index].AccountNo = accountno;
-          //data[index].Address = address;
-          data[index].AssignDate = assigndate;
-          data[index].AssignTo = assignto;
-          data[index].DiscrepancyRecord = apiRes;
-
-          data[index].DescripancyDetail = descripancylist;
-          data[index].ApplianceDetail = tableList;
-          data[index].Appliancelist = appliancelist;
-
-          data[index].NAME = NAME;
-          data[index].ADDRESS = ADDRESS;
-          data[index].CONSUMER_NO = CONSUMER_NO;
-          data[index].Vkont = Vkont;
-          data[index].TARIFF = TARIFF;
-          data[index].CELL_NUMBER = CELL_NUMBER;
-
-          if (Result_Discrepancies != undefined) {
-            data[index].Result_Discrepancies = Result_Discrepancies;
-            data[index].Result_Appliances = Result_Appliances;
-            data[index].Result_Meter = Result_Meter;
-            data[index].Result_Register = Result_Register;
-            data[index].Result_Onsite = Result_Onsite;
-            data[index].Result_MeterSeal = Result_MeterSeal;
-          }
-
-          AsyncStorage.setItem('SIRDigitization', JSON.stringify(data));
-        }
-      });
+    dataConsumerImages.push({
+      Sirnr: SIR,
+      IsSignature: isSignature,
+      ConsumerSignature: consumerSignature,
+      ConsumerImageFlag: IsImage1,
+      ConsumerImages: consumerImages,
+      //Images1: images1,
     });
+    AsyncStorage.setItem(SIRIMAGECONSUMER, JSON.stringify(dataConsumerImages));
+
+    StoreInDeviceImages(isPost);
+  };
+  const StoreInDeviceImages = isPost => {
+    let dataSIRImages = [];
+    dataSIRImages.push({
+      Sirnr: SIR,
+      SIRImageFlag: isImage,
+      SIRImages: images,
+    });
+    AsyncStorage.setItem(SIRIMAGE, JSON.stringify(dataSIRImages));
 
     if (isPost) {
       PostGeoLocation();
@@ -699,12 +613,143 @@ const ApiScreen = ({route, navigation}) => {
     setSuccessModalVisible(!isSuccessModalVisible);
   };
 
+  const StoreInDevice = (
+    status,
+    isPost,
+    Result_Discrepancies,
+    Result_Appliances,
+    Result_Meter,
+    Result_Register,
+    Result_Onsite,
+    Result_MeterSeal,
+  ) => {
+    let SIRData = [];
+    AsyncStorage.getItem('SIRDigitization').then(async items => {
+      let data1 = JSON.parse(items);
+      data1.filter((item, index) => {
+        if (item.Sirnr == SIR) {
+          console.log('item.Sirnr: ', item.Sirnr);
+          console.log('index: ', index);
+          console.log('SIR: ', SIR);
+          console.log('status: ', status);
+
+          data1[index].SIRType = 'ORD';
+          data1[index].SirFormat = 'ORD';
+          data1[index].Status = status;
+          data1[index].CONSUMER_NO = data.CONSUMER_NO;
+          data1[index].NAME = data.NAME;
+          data1[index].ADDRESS = data.ADDRESS;
+          data1[index].Erdat = data.Erdat;
+          data1[index].TARIFF = data.TARIFF;
+          data1[index].AssignMio = data.AssignMio;
+          data1[index].MIO_NAME = data.MIO_NAME;
+          data1[index].CELL_NUMBER = data.CELL_NUMBER;
+          data1[index].CLUSTER = data.CLUSTER;
+          data1[index].IBCNAME = data.IBCNAME;
+          data1[index].Vkont = data.Vkont;
+          data1[index].Vertrag = data.Vertrag;
+          //data1[index].AccountNo = accountno;
+          data1[index].Ibc = data.Ibc;
+
+          AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
+        }
+      });
+    });
+
+    SIRData.push({
+      SIRType: 'ORD',
+      SirFormat: 'ORD',
+      Status: status,
+
+      Vertrag: contract,
+      Vkont: Vkont,
+      Erdat: data.Erdat,
+      AssignMio: data.AssignMio,
+      ADDRESS: data.ADDRESS,
+      NAME: data.NAME,
+      CONSUMER_NO: data.CONSUMER_NO,
+      Ibc: data.Ibc,
+      MIO_NAME: data.MIO_NAME,
+      CLUSTER: data.CLUSTER,
+      CELL_NUMBER: data.CELL_NUMBER,
+      TARIFF: data.TARIFF,
+
+      SIRTime: sirtime,
+      SIRDate: sirdate,
+      SANCTION_LOAD: sanctionLoad,
+      MeterTesting: meterTesting,
+      Agediff: agediff,
+      MeterPer: meterPer,
+      MeterSlow: meterSlow,
+      ConnectedLoad: connectedLoad,
+      RunningLoad: runningLoad,
+      OnsiteMeterNo: onsitemeterNo,
+      OnsiteMake: onsitemake,
+      OnsitePhase: valueOnsitePhase,
+      OnsiteVolts: onsitevolts,
+      OnsiteMeterConstant: onsitemeterConstant,
+      OnsiteSecuritySlipNo: onsitesecuritySlipNo,
+      OnsiteMultiplyingFactor: onsitemultiplyingFactor,
+      OnsiteMeterDetail: onsitemeter,
+      PowerMeterRemarks: powerMeterRemarks,
+      SystemMake: systemmake,
+      SystemAmperes: systemamperes,
+      SystemVolts: systemvolts,
+      SystemPhase: systemphase,
+      SystemMeterConstant: systemmeterConstant,
+      SystemSecuritySlipNo: systemsecuritySlipNo,
+      SystemMultiplyingFactor: systemmultiplyingFactor,
+      SystemMeterNo: systemmeterNo,
+      SystemCurrentReading: systemmcurrentReading,
+      SystemPeakReading: systemmpeakReading,
+      ConsumerName: consumerName,
+      MobileNo: mobileNo,
+      ConsumerNameCNIC: consumerNameCNIC,
+      ConsumerRemarks: consumerRemarks,
+      ConsumerRefuseYN: consumerRefuseYN,
+      IsConsumerRefuseYN: isConsumerRefuseYN,
+      ConsumerSign: consumerSign,
+      IsConsumerSign: isConsumerSign,
+      ServiceType: valueServiceType,
+      Tariff: valueTarif,
+      PremiseType: valuePremiseType,
+      PremiseCategory: premiseCategory,
+      isDiscrepancyitems: isSelecteditems,
+      Discrepancyitems: selectedItems,
+      DiscrepancyfindingsRemarks: discrepancyfindingsRemarks,
+      longitude: longitude,
+      latitude: latitude,
+      UniqueId: Date.now(),
+      Sirnr: SIR,
+
+      ClusterIBC: clusterIBC,
+      ConsumerNameBilling: consumernameBilling,
+      AccountNo: accountno,
+      AssignDate: assigndate,
+      AssignTo: assignto,
+      DiscrepancyRecord: apiRes,
+      DescripancyDetail: descripancylist,
+      ApplianceDetail: tableList,
+      Appliancelist: appliancelist,
+
+      Result_Discrepancies: Result_Discrepancies,
+      Result_Appliances: Result_Appliances,
+      Result_Meter: Result_Meter,
+      Result_Register: Result_Register,
+      Result_Onsite: Result_Onsite,
+      Result_MeterSeal: Result_MeterSeal,
+    });
+
+    AsyncStorage.setItem(SIR, JSON.stringify(SIRData));
+    StoreInDeviceImagesConsumer(isPost);
+  };
+
   const PostSIRSimultaneous = () => {
     if (latitude.toString() == '') {
-      alert('Please on your GPS location settings');
+      alert('Please On GPS Location');
       return false;
     }
-    console.log('PostSIRSimultaneous called *** ');
+    console.log('Post SIR Simultaneous called *** ');
     var filterData = descripancylist.filter(item => {
       console.log(item);
     });
@@ -733,7 +778,7 @@ const ApiScreen = ({route, navigation}) => {
     console.log('consumerSign: ' + consumerSign);
     let NOTICE_SIGN = consumerRefuseYNData + '/' + consumerSignData;
 
-    console.log('**** PostSIRSimultaneous ***Started***');
+    console.log('**** Post SIR Simultaneous ***Started***');
 
     console.log('NOTICE_SIGN: ' + NOTICE_SIGN);
 
@@ -768,12 +813,14 @@ const ApiScreen = ({route, navigation}) => {
         METER_REMARKS: powerMeterRemarks,
         NAVAPPLIANCES: appliancelistData,
         NAVSIRITEMS: descripancylistData,
+        PHASE: valueOnsitePhase,
         NAVMETER: [
           {
             SIRNR: data.Sirnr,
             GERAET_M1: onsitemeterNo,
             HERST_M1: onsitemake,
             ABRFAKT_M1: onsitemultiplyingFactor,
+            BAUFORM_M1: onsitesecuritySlipNo,
           },
         ],
         NAVREGISTER: onsitemeterData,
@@ -786,9 +833,8 @@ const ApiScreen = ({route, navigation}) => {
             Perslow: meterSlow,
             Connected: connectedLoad,
             Runload: runningLoad,
-
             Voltage1: onsitevolts,
-            //Current1: valueOnsitePhase,
+            Osdevice: onsitemeterConstant,
           },
         ],
         SIR_Meter_SealSet: [{}],
@@ -796,7 +842,7 @@ const ApiScreen = ({route, navigation}) => {
     })
       .then(res => {
         console.log(
-          '******************PostSIRSimultaneous UPDATED*********************************',
+          '******************Post SIR Simultaneous UPDATED*********************************',
         );
         console.log(
           '***********  res.data.d.Result------' +
@@ -819,7 +865,7 @@ const ApiScreen = ({route, navigation}) => {
         //GetImageAPIToken();
       })
       .catch(error => {
-        console.error('PostSIRSimultaneous:error: ' + error);
+        console.error('Post SIR Simultaneous:error: ' + error);
       });
   };
 
@@ -845,7 +891,7 @@ const ApiScreen = ({route, navigation}) => {
           '******************GetImageAPIToken Called*********************************',
         );
         console.log('TOKEN: ' + res.data.access_token);
-        //PostSIRImageData(res.data.access_token);
+        //Post SIR Imag eData(res.data.access_token);
       })
       .catch(function (error) {
         if (error.response) {
@@ -907,14 +953,20 @@ const ApiScreen = ({route, navigation}) => {
     let data1 = [];
     let count = 1;
     console.log('Post SIR Image Data called');
+    console.log(data.Sirnr);
+    console.log(count.toString());
+    console.log(data.Ibc);
+    console.log(data.Sirnr);
+    console.log(data.Vertrag);
+    console.log(data.AssignMio);
 
     images.filter(item => {
       //console.log('item:= ' + item);
       data1.push({
-        imageName: data.Sirnr,
+        imageName: data.Ibc,
         imageBase64: item.base64,
         imageID: count.toString(),
-        IBC: data.Begru,
+        IBC: data.Ibc,
         SIRNo: data.Sirnr,
         ContractNo: data.Vertrag,
         MIONo: data.AssignMio,
@@ -940,7 +992,7 @@ const ApiScreen = ({route, navigation}) => {
         PostConsumerImage(count);
       })
       .catch(error => {
-        console.log('ERROR STARTS NOW');
+        console.log('Post SIR Image ERROR STARTS NOW');
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
@@ -964,7 +1016,7 @@ const ApiScreen = ({route, navigation}) => {
         imageName: data.Sirnr,
         imageBase64: item.base64,
         imageID: count.toString(),
-        IBC: data.Begru,
+        IBC: data.Ibc,
         SIRNo: data.Sirnr,
         ContractNo: data.Vertrag,
         MIONo: data.AssignMio,
@@ -977,7 +1029,7 @@ const ApiScreen = ({route, navigation}) => {
         imageName: data.Sirnr,
         imageBase64: signaturePreview,
         imageID: count.toString(),
-        IBC: data.Begru,
+        IBC: data.Ibc,
         SIRNo: data.Sirnr,
         ContractNo: data.Vertrag,
         MIONo: data.AssignMio,
@@ -1145,12 +1197,10 @@ const ApiScreen = ({route, navigation}) => {
     let latitude, longitude;
     console.log('getUserCurrentLocation:Func:call');
 
-    //let isPermissionPermitted = await requestLocationPermission();
-
-    //console.log(isPermissionPermitted);
+    // let isPermissionPermitted = await requestLocationPermission();
+    //console.log('isPermissionPermitted: ' + isPermissionPermitted);
 
     //if (isPermissionPermitted) {
-    //console.log('isPermissionPermitted', isPermissionPermitted);
     Geolocation.getCurrentPosition(
       info => {
         const {coords} = info;
@@ -1168,6 +1218,7 @@ const ApiScreen = ({route, navigation}) => {
       error => {
         console.log('getUserCurrentLocation:Error:');
         console.log(error);
+        alert(error.message);
       },
       {
         enableHighAccuracy: false,
@@ -1341,38 +1392,89 @@ const ApiScreen = ({route, navigation}) => {
 
   useEffect(() => {
     // getApiData();
+
     console.log('*****');
     console.log('data.Ibc: ' + data.Ibc);
+    console.log('data.IBCNAME: ' + data.IBCNAME);
     console.log('data.Sirnr: ' + data.Sirnr);
     console.log('data.Vertrag: ' + data.Vertrag);
     console.log('data.CONSUMER_NO: ' + data.CONSUMER_NO);
+    console.log('data.Status: ' + data.Status);
+
+    if (data.Status != 'Post') {
+      setIsEditable(true);
+    }
+
+    setReviewRemarks(data.REMARKS);
+
     console.log('*****');
-    setAssigndate(Moment(data.Erdat, 'YYYYMMDD').format('DD.MM.YYYY'));
 
-    setSanctionLoad(data.SANCTION_LOAD);
     setSIR(data.Sirnr);
-    setContract(data.Vertrag);
-    setConsumerNo(data.CONSUMER_NO);
-    setIbcName(data.ibc);
-
-    setNAME(data.NAME);
-    setADDRESS(data.ADDRESS);
-    setCONSUMER_NO(data.CONSUMER_NO);
-    setVkont(data.Vkont);
-    setTARIFF(data.TARIFF);
+    setSIRIMAGE(data.Sirnr + 'IMAGE');
+    setSIRIMAGECONSUMER(data.Sirnr + 'IMAGECONSUMER');
 
     setSirDate(moment().format('DD.MM.YYYY'));
     setSirTime(moment().format('hh:mm:ss'));
 
-    AsyncStorage.getItem('SIRDigitization').then(items => {
+    setAssigndate(Moment(data.Erdat, 'YYYYMMDD').format('DD.MM.YYYY'));
+
+    AsyncStorage.getItem(data.Sirnr + 'IMAGE').then(items => {
+      var localImageData = items ? JSON.parse(items) : [];
+      var filterImageData = localImageData.filter(item => {
+        if (item.Sirnr == data.Sirnr) {
+          if (item.SIRImages != undefined) {
+            setIsImage(item.SIRImageFlag);
+            setImages(item.SIRImages);
+          }
+        }
+      });
+    });
+
+    AsyncStorage.getItem(data.Sirnr + 'IMAGECONSUMER').then(items => {
+      var localImageConsumerData = items ? JSON.parse(items) : [];
+      var filterImageData = localImageConsumerData.filter(item => {
+        if (item.Sirnr == data.Sirnr) {
+          if (item.ConsumerSignature != undefined) {
+            var filterConsumerSignature = item.ConsumerSignature.filter(
+              items => {
+                setSign(items.consSign);
+              },
+            );
+            setConsumerSignature(item.ConsumerSignature);
+            setIsSignature(item.IsSignature);
+          }
+
+          if (item.ConsumerImages != undefined) {
+            setConsumerImages(item.ConsumerImages);
+            var filterConsumerImages = item.ConsumerImages.filter(items => {
+              setImages1(items);
+            });
+          }
+        }
+      });
+    });
+
+    AsyncStorage.getItem(data.Sirnr).then(items => {
       var localData = items ? JSON.parse(items) : [];
       var filterData = localData.filter(item => {
         if (item.Sirnr == data.Sirnr) {
           console.log('item.SirStatus: ' + item.SirStatus);
           console.log('item.latitude: ' + item.latitude);
-          if (item.Status != 'Post') {
-            setIsEditable(true);
-          }
+
+          setContract(item.Vertrag);
+          setConsumerNo(item.CONSUMER_NO);
+          setIbcName(item.ibc);
+
+          setNAME(item.NAME);
+          setADDRESS(item.ADDRESS);
+          setCONSUMER_NO(item.CONSUMER_NO);
+          setVkont(item.Vkont);
+
+          setTARIFF(item.TARIFF);
+
+          setCLUSTER(item.CLUSTER);
+
+          setSanctionLoad(item.SANCTION_LOAD);
 
           setMeterTesting(item.MeterTesting);
           setAgediff(item.Agediff);
@@ -1384,9 +1486,9 @@ const ApiScreen = ({route, navigation}) => {
           setValueServiceType(item.ServiceType);
 
           if (item.IBCNAME != undefined) setIbcName(item.IBCNAME);
-          if (item.CELL_NUMBER != undefined) setCELL_NUMBER(item.CELL_NUMBER);
+          //if (item.CELL_NUMBER != undefined) setCELL_NUMBER(item.CELL_NUMBER);
           //if (item.Remarks != undefined) setRemarks(item.Remarks);
-          if (item.REMARKS != undefined) setReviewRemarks(item.REMARKS);
+          //if (item.REMARKS != undefined) setReviewRemarks(item.REMARKS);
 
           setValueTarif(item.Tariff);
           setValuePremiseType(item.PremiseType);
@@ -1417,25 +1519,6 @@ const ApiScreen = ({route, navigation}) => {
             setIsConsumerSign(item.IsConsumerSign);
           if (item.ConsumerSign != undefined)
             setConsumerSign(item.ConsumerSign);
-
-          if (item.ConsumerSignature != undefined) {
-            var filterConsumerSignature = item.ConsumerSignature.filter(
-              items => {
-                setSign(items.consSign);
-              },
-            );
-            setConsumerSignature(item.ConsumerSignature);
-            setIsSignature(item.IsSignature);
-          }
-
-          if (item.ConsumerImages != undefined) {
-            setConsumerImages(item.ConsumerImages);
-            setImages1(item.Images1);
-          }
-          if (item.SIRImages != undefined) {
-            setIsImage(item.SIRImageFlag);
-            setImages(item.SIRImages);
-          }
 
           if (item.latitude == undefined || item.latitude == '') {
             getUserCurrentLocation();
@@ -1591,9 +1674,11 @@ const ApiScreen = ({route, navigation}) => {
 
   const onAddmore = () => {
     let totWatts = 0;
+    /*
     if (quantity == '') {
-      setQuantity(0);
+      setQuantity(1);
     }
+*/
     itemsAppliance.filter(singleItem => {
       if (singleItem.value == valueAppliance) {
         console.log('singleItem.RATING: ' + singleItem.RATING);
@@ -1622,7 +1707,7 @@ const ApiScreen = ({route, navigation}) => {
           },
         ]);
 
-        setQuantity();
+        setQuantity('1');
         setValueAppliance();
       }
     });
@@ -1801,7 +1886,7 @@ const ApiScreen = ({route, navigation}) => {
                     fontSize: 13,
                     color: 'black',
                   }}>
-                  {'Tariff: ' + TARIFF}
+                  {'Tariff: ' + data.TARIFF}
                 </Text>
                 <Text
                   style={{
@@ -1817,7 +1902,7 @@ const ApiScreen = ({route, navigation}) => {
                     fontSize: 13,
                     color: 'black',
                   }}>
-                  {'Cell No: ' + CELL_NUMBER}
+                  {'Cell No: ' + data.CELL_NUMBER}
                 </Text>
                 <Text
                   style={{
@@ -1856,7 +1941,7 @@ const ApiScreen = ({route, navigation}) => {
                     color: 'black', //'#FFFFFF',
                     //     marginBottom: 4,
                   }}>
-                  {'Cluster / IBC: ' + data.CLUSTER + '/' + ibcName}
+                  {'Cluster / IBC: ' + data.CLUSTER + '/' + data.IBCNAME}
                 </Text>
 
                 <Text
@@ -2954,6 +3039,7 @@ const ApiScreen = ({route, navigation}) => {
                           </View>
                           <View style={{flex: 5}}>
                             <TouchableOpacity
+                              disabled={!isEditable}
                               style={{
                                 flexDirection: 'row',
                                 //alignItems: 'center',
@@ -3010,6 +3096,7 @@ const ApiScreen = ({route, navigation}) => {
                       flex: 0.4,
                     }}>
                     <TextInput
+                      editable={isEditable}
                       style={{backgroundColor: 'white'}}
                       onChangeText={text => {
                         setQuantity(text);
@@ -3024,7 +3111,7 @@ const ApiScreen = ({route, navigation}) => {
                       placeholderTextColor="black"
                       fontSize={14}
                       value={quantity}
-                      //defaultValue="1"
+                      defaultValue="1"
                     />
                     {quantityError !== '' && (
                       <Text style={styles.error}>{quantityError}</Text>
@@ -3693,7 +3780,7 @@ const ApiScreen = ({route, navigation}) => {
                               style={styles.MeterSystem}
                               onChangeText={value => {
                                 setOnsiteSecuritySlipNo(value);
-                                if (validate(value, 10)) {
+                                if (validate(value, 30)) {
                                   setOnsiteSecuritySlipNoError(
                                     'Input must be at least 10 characters long.',
                                   );
@@ -3797,7 +3884,7 @@ const ApiScreen = ({route, navigation}) => {
                             placeholderTextColor="black"
                             style={{
                               height: 150,
-                              width: '100%',
+                              width: '120%',
                               borderWidth: 0.75,
                               textAlign: 'left',
                               textAlignVertical: 'top',
@@ -3889,6 +3976,7 @@ const ApiScreen = ({route, navigation}) => {
                               </View>
                               <View style={{flex: 1, backgroundColor: 'white'}}>
                                 <TouchableOpacity
+                                  disabled={!isEditable}
                                   style={{
                                     flexDirection: 'row',
                                     //alignItems: 'center',
@@ -3957,6 +4045,7 @@ const ApiScreen = ({route, navigation}) => {
                           borderWidth: 1,
                         }}>
                         <TextInput
+                          editable={isEditable}
                           style={{flex: 0.2, backgroundColor: 'white'}}
                           onChangeText={value => {
                             setOnsiteMeterReading(value);
@@ -4383,6 +4472,7 @@ const ApiScreen = ({route, navigation}) => {
                             alignItems: 'flex-start',
                           }}>
                           <TouchableOpacity
+                            disabled={!isEditable}
                             onPress={() => captureImage('photo', '1')}>
                             <Image
                               source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
@@ -4430,6 +4520,7 @@ const ApiScreen = ({route, navigation}) => {
                           alignSelf: 'center',
                         }}>
                         <TouchableOpacity
+                          disabled={!isEditable}
                           onPress={() => {
                             setSignModalVisible(true);
                           }}>
@@ -4489,6 +4580,7 @@ const ApiScreen = ({route, navigation}) => {
                             />
                             {isSignature == 'Y' ? (
                               <TouchableOpacity
+                                disabled={!isEditable}
                                 onPress={() => {
                                   setTimeout(() => {
                                     setSign();
@@ -4570,6 +4662,7 @@ const ApiScreen = ({route, navigation}) => {
                       }}>
                       <View style={{flex: 2, alignItems: 'center'}}>
                         <TouchableOpacity
+                          disabled={!isEditable}
                           activeOpacity={0.5}
                           onPress={() => chooseFile('photo')}>
                           <Image
@@ -4591,6 +4684,7 @@ const ApiScreen = ({route, navigation}) => {
                       </View>
                       <View style={{flex: 2, alignItems: 'center'}}>
                         <TouchableOpacity
+                          disabled={!isEditable}
                           style={{marginTop: 15}}
                           onPress={() => captureImage('photo')}>
                           <Image
@@ -4644,6 +4738,7 @@ const ApiScreen = ({route, navigation}) => {
                                   style={{height: 200, width: 200}}></Image>
                               </TouchableOpacity>
                               <TouchableOpacity
+                                disabled={!isEditable}
                                 onPress={() => {
                                   setTimeout(() => {
                                     // setRefresh(true);

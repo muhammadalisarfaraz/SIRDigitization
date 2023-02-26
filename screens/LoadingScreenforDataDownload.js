@@ -30,6 +30,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   const [DISCREPANCY, setDISCREPANCY] = useState('');
   const [systemmeter, setSystemMeter] = useState([]);
   var SystemMeterData = [];
+  var DISCREPANCYData = [];
   const [oldMIOData, setOldMIOData] = useState([]);
   const [oldMIOData2, setOldMIOData2] = useState([
     {
@@ -217,17 +218,27 @@ const LoadingScreenforDataDownload = ({navigation}) => {
 
   useEffect(() => {
     console.log('Screen:LoadingScreenforDataDownload:');
+
     AsyncStorage.getItem('SIRDigitization')
       .then(items => {
         const SIRdata = items ? JSON.parse(items) : [];
         setOldSIRDigitizationData(SIRdata);
-        console.log('Screen:SIRdata.length: ' + SIRdata.length);
+        //       console.log('Screen:SIRdata.length: ' + SIRdata.length);
       })
       .then(item => {
-        getLoginCredentials();
+        getSystemMeterStoreInDevice();
       });
   }, []);
 
+  const getSystemMeterStoreInDevice = () => {
+    AsyncStorage.getItem('SystemMeter')
+      .then(items => {
+        SystemMeterData = items ? JSON.parse(items) : [];
+      })
+      .then(res => {
+        getLoginCredentials();
+      });
+  };
   const getLoginCredentials = () => {
     var data1 = [];
     AsyncStorage.getItem('LoginCredentials')
@@ -239,16 +250,17 @@ const LoadingScreenforDataDownload = ({navigation}) => {
         getDISCREPANCY(data1[0].pernr, data1[0].begru);
       })
       .then(res => {
-        console.log('Mio:: ', Mio);
-        console.log('Ibc:: ', Ibc);
+        //        console.log('Mio:: ', Mio);
+        //        console.log('Ibc:: ', Ibc);
       });
   };
+
   const getMIOData = (mio, ibc) => {
     setLoader(true);
 
     var MIOData = oldMIOData;
-    console.log('mio::' + mio);
-    console.log('ibc::' + ibc);
+    //   console.log('mio::' + mio);
+    //   console.log('ibc::' + ibc);
     axios({
       method: 'get',
       url:
@@ -264,7 +276,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
     })
       .then(res => {
         if (res.data.d.results != []) {
-          _storeData(res.data.d.results);
+          _storeData(res.data.d.results, ibc);
         }
       })
       .catch(error => {
@@ -272,10 +284,13 @@ const LoadingScreenforDataDownload = ({navigation}) => {
       });
   };
 
-  const _storeData = async sapData => {
+  const _storeData = async (sapData, ibc) => {
     var data = [];
+    var SIRData = [];
     let count = 0;
     var flag = false;
+    var SirnrNo;
+
     console.log(
       '_storeData:sapData: ' + typeof sapData + ' length: ' + sapData.length,
     );
@@ -284,42 +299,45 @@ const LoadingScreenforDataDownload = ({navigation}) => {
       await AsyncStorage.getItem('SIRDigitization')
         .then(items => {
           data = items ? JSON.parse(items) : [];
-          console.log('SIR DATA***');
-          console.log(data.length);
+          //          console.log('SIR DATA***');
+          //          console.log(data.length);
           if (data.length == 0) {
-            console.log('Call Appliances');
             getAppliances();
             getMRNote();
             getPremiseType();
             getTariff();
           }
+          /*
           console.log(
             'after filter :data : ' + typeof data + ' length: ' + data.length,
           );
-
+*/
           sapData.forEach(parent => {
             console.log('parent loop' + parent.Sirnr);
+            SirnrNo = parent.Sirnr;
             data.forEach((child, index) => {
               console.log('child loop' + child.Sirnr);
               if (child.Sirnr == parent.Sirnr) {
-                console.log('parent.Sirnr' + parent.Sirnr);
-                console.log('parent.SirStatus' + parent.SirStatus);
-                console.log('data[index].Status' + data[index].Status);
+                //                console.log('parent.Sirnr' + parent.Sirnr);
+                //                console.log('parent.SirStatus' + parent.SirStatus);
+                //               console.log('data[index].Status' + data[index].Status);
                 if (parent.SirStatus == 'REVW') {
                   count++;
                   data[index].Status = 'Save';
                   data[index].SirStatus = parent.SirStatus;
                   data[index].REMARKS = parent.REMARKS;
-                  console.log('data[index].Status' + data[index].Status);
-                  console.log('data.Status' + data.Status);
+                  //                  console.log('data[index].Status' + data[index].Status);
+                  //                  console.log('data.Status' + data.Status);
                 }
                 flag = true;
               }
             });
+            console.log('parent flag' + flag);
             if (flag == false) {
               console.log('parent flag' + flag);
               count++;
-              data.push({
+
+              SIRData.push({
                 SANCTION_LOAD: parent.SANCTION_LOAD,
                 CONNECTED_LOAD: parent.CONNECTED_LOAD,
                 Ibc: parent.Ibc,
@@ -354,16 +372,40 @@ const LoadingScreenforDataDownload = ({navigation}) => {
                 LightMeter: [],
                 Status: '',
               });
+
+              data.push({
+                Sirnr: parent.Sirnr,
+                Vkont: parent.Vkont,
+                Vertrag: parent.Vertrag,
+                Erdat: parent.Erdat,
+                SirStatus: parent.SirStatus,
+                SirFormat: parent.SirFormat,
+                REMARKS: parent.REMARKS,
+                Status: '',
+                Random: parent.Random,
+                MIO_NAME: parent.MIO_NAME,
+                AssignMio: parent.AssignMio,
+                Erdat: parent.Erdat,
+                CLUSTER: parent.CLUSTER,
+                IBCNAME: parent.IBCNAME,
+                NAME: parent.NAME,
+                ADDRESS: parent.ADDRESS,
+                TARIFF: parent.TARIFF,
+                CONSUMER_NO: parent.CONSUMER_NO,
+                CELL_NUMBER: parent.CELL_NUMBER,
+                Ibc: ibc,
+              });
+
               getSystemMeter(parent.Vertrag);
-              console.log('parent.Sirnr: ' + parent.Sirnr);
-              console.log('New Addded' + parent);
+              AsyncStorage.setItem(SirnrNo, JSON.stringify(SIRData));
             }
             flag = false;
           });
         })
         .then(res => {
-          console.log('final:data: ' + typeof data + ' length: ' + data.length);
+          //          console.log('final:data: ' + typeof data + ' length: ' + data.length);
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data));
+
           setSIRDigitizationData(count);
         });
     } catch (error) {
@@ -372,7 +414,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   };
 
   const getSystemMeter = contract => {
-    console.log('contract: ', contract);
+    //    console.log('contract: ', contract);
     axios({
       method: 'get',
       url:
@@ -387,29 +429,35 @@ const LoadingScreenforDataDownload = ({navigation}) => {
       .then(res => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
-            SystemMeterData.push({
-              CONTRACT: contract,
-              Anlage: singleResult.Anlage,
-              Geraet: singleResult.Geraet,
-              Kennziff: singleResult.Kennziff,
-              Herst: singleResult.Herst,
-              Rating: singleResult.Rating,
-              PVoltage: singleResult.PVoltage,
-              SVoltage: singleResult.SVoltage,
-              Tarifart: singleResult.Tarifart,
-              Preiskla: singleResult.Preiskla,
-              Ablbelnr: singleResult.Ablbelnr,
-              Ablesgr: singleResult.Ablesgr,
-              Adat: singleResult.Adat,
-              VZwstand: singleResult.VZwstand,
-              Istablart: singleResult.Istablart,
-              Ablstat: singleResult.Ablstat,
-              Voltage: singleResult.Voltage,
-              Phase: singleResult.Phase,
-            });
-            console.log(
+            if (
+              SystemMeterData.filter(x => x.CONTRACT == contract).length == 0
+            ) {
+              SystemMeterData.push({
+                CONTRACT: contract,
+                Anlage: singleResult.Anlage,
+                Geraet: singleResult.Geraet,
+                Kennziff: singleResult.Kennziff,
+                Herst: singleResult.Herst,
+                Rating: singleResult.Rating,
+                PVoltage: singleResult.PVoltage,
+                SVoltage: singleResult.SVoltage,
+                Tarifart: singleResult.Tarifart,
+                Preiskla: singleResult.Preiskla,
+                Ablbelnr: singleResult.Ablbelnr,
+                Ablesgr: singleResult.Ablesgr,
+                Adat: singleResult.Adat,
+                VZwstand: singleResult.VZwstand,
+                Istablart: singleResult.Istablart,
+                Ablstat: singleResult.Ablstat,
+                Voltage: singleResult.Voltage,
+                Phase: singleResult.Phase,
+              });
+              console.log('SystemMeterData ADDED' + contract);
+            }
+            /*            console.log(
               'contract: ' + contract + ' Anlage: ' + singleResult.Anlage,
             );
+*/
           });
         }
       })
@@ -598,7 +646,6 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   };
 
   const getDISCREPANCY = (mio, ibc) => {
-    var DISCREPANCYData = [];
     axios({
       method: 'get',
       url:
@@ -622,6 +669,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
               Des: singleResult.Des,
               SIR: singleResult.SIR,
             });
+            console.log('DISCREPANCY ADDED' + singleResult.SIR);
           });
         }
       })

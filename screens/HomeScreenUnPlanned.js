@@ -45,6 +45,7 @@ const HomeScreen = ({navigation}) => {
   const [contractNo, setContractNo] = useState('');
   const [meterNo, setMeterNo] = useState('');
 
+  const [ibcName, setIbcName] = useState();
   const [ibc, setIbc] = useState();
   const [Begru, setBegru] = useState();
   const [user, setUser] = useState();
@@ -66,6 +67,7 @@ const HomeScreen = ({navigation}) => {
       setBegru(data1[0].begru);
 
       setUser(data1[0].User);
+      setIbcName(data1[0].IBC_Name);
     });
   };
 
@@ -142,8 +144,11 @@ const HomeScreen = ({navigation}) => {
                 Ibc: ibc,
                 MIO_NAME: MIO_NAME,
                 CLUSTER: singleResult.Cluster,
-                Begru: Begru,
+                AssignMio: Begru,
+                MIO_NAME: user,
                 CELL_NUMBER: singleResult.CELL_NUMBER,
+                IBCNAME: ibcName,
+                TARIFF: singleResult.TARIFTYP,
               });
               isSystemMeterServiceCall = true;
             } else {
@@ -155,6 +160,7 @@ const HomeScreen = ({navigation}) => {
         }
       })
       .then(res => {
+        console.log(CustomData);
         if (isSystemMeterServiceCall)
           getSystemMeter(ContractNo, CustomData, SIRFormat);
       })
@@ -495,7 +501,9 @@ const HomeScreen = ({navigation}) => {
                         }}>
                         {pendingOrders ? (
                           pendingOrders.length > 0 ? (
-                            <TouchableOpacity onPress={() => loadData('more')}>
+                            <TouchableOpacity
+                              disabled={true}
+                              onPress={() => loadData('more')}>
                               <Text
                                 style={{
                                   color: 'black',

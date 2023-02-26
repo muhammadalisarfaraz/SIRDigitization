@@ -98,7 +98,7 @@ const ChangePassword = ({navigation}) => {
       }),
     })
       .then(res => {
-        if (res.data.d.RESULT == 'Failed') {
+        if (res.data.d.RESULT != 'Saved') {
           console.log('get Password Service: ' + res.data.d.RESULT);
           alert(res.data.d.RESULT);
         } else if (res.data.d.RESULT == 'Saved') {

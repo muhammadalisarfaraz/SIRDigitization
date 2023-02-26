@@ -159,6 +159,50 @@ const DeleteSIRs = ({navigation}) => {
       console.log(data1.length);
       AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
       SetStoreInDeviceText('Removed from Mobile Successfully');
+      deleteSIRImages();
+      //StoreInImage();
+    });
+  };
+
+  const deleteSIRImages = () => {
+    tobeDeletedSIRList.filter(item => {
+      console.log('item');
+      console.log(item);
+      removeItemFromAsyncStorage(item.Sirnr);
+      removeItemFromAsyncStorage(item.Sirnr + 'IMAGE');
+      removeItemFromAsyncStorage(item.Sirnr + 'IMAGECONSUMER');
+    });
+  };
+
+  async function removeItemFromAsyncStorage(key) {
+    console.log('key: ' + typeof key + ' : ' + key);
+
+    try {
+      await AsyncStorage.removeItem(key);
+      console.log(
+        `Item with key '${key}' successfully removed from AsyncStorage.`,
+      );
+    } catch (error) {
+      console.log(
+        `Error removing item with key '${key}' from AsyncStorage: `,
+        error,
+      );
+    }
+  }
+
+  const StoreInImage = () => {
+    AsyncStorage.getItem('SIRImageData').then(async items => {
+      let data = JSON.parse(items);
+
+      let data1 = data.filter((item, index) => {
+        return !tobeDeletedSIRList.some(subItem => {
+          return subItem.Sirnr === item.Sirnr;
+        });
+      });
+      console.log('after deleting ');
+      console.log(data1.length);
+      AsyncStorage.setItem('SIRImageData', JSON.stringify(data1));
+      SetStoreInDeviceText('Removed from Mobile Successfully');
     });
   };
 
@@ -193,7 +237,7 @@ const DeleteSIRs = ({navigation}) => {
                       },
                     ]}>
                     {' '}
-                    Sync. SIR Screen
+                    Sync. SIR Cases
                   </Text>
                 </LinearGradient>
               </View>
@@ -221,7 +265,7 @@ const DeleteSIRs = ({navigation}) => {
                 }}>
                 <Text
                   style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Total Cases SIR Count: {postedSIRCount}
+                  Total Cases SIR Count on Device: {postedSIRCount}
                 </Text>
               </View>
               <View
@@ -258,7 +302,7 @@ const DeleteSIRs = ({navigation}) => {
                           color: '#fff',
                         },
                       ]}>
-                      Approved SIR to Removed
+                      Fetch SIR Cases
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -314,7 +358,7 @@ const DeleteSIRs = ({navigation}) => {
                           color: '#fff',
                         },
                       ]}>
-                      Delete from Mobile Data
+                      Remove SIR Cases
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>

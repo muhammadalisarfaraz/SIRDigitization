@@ -206,7 +206,9 @@ const HomeScreenUnPlannedCompleted = ({navigation}) => {
                   }}>
                   {pendingOrders ? (
                     pendingOrders.length > 0 ? (
-                      <TouchableOpacity onPress={() => loadData('more')}>
+                      <TouchableOpacity
+                        disabled={true}
+                        onPress={() => loadData('more')}>
                         <Text
                           style={{
                             color: 'black',

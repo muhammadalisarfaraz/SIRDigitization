@@ -253,7 +253,7 @@ const ApiScreenA40 = ({route, navigation}) => {
   const [valueAppliance, setValueAppliance] = useState(null);
   const [itemsAppliance, setItemsAppliance] = useState([]);
   const [loadDetails, setLoadDetails] = useState('');
-  const [quantity, setQuantity] = useState('');
+  const [quantity, setQuantity] = useState('1');
   const [rating, setRating] = useState('');
   const [totalWatts, setTotalWatts] = useState('');
 
@@ -312,9 +312,11 @@ const ApiScreenA40 = ({route, navigation}) => {
 
   const onAddmore = () => {
     let totWatts = 0;
+    /*  
     if (quantity == '') {
-      setQuantity(0);
+      setQuantity(1);
     }
+    */
     itemsAppliance.filter(singleItem => {
       if (singleItem.value == valueAppliance) {
         console.log('singleItem.RATING: ' + singleItem.RATING);
@@ -343,7 +345,7 @@ const ApiScreenA40 = ({route, navigation}) => {
           },
         ]);
 
-        setQuantity();
+        setQuantity('1');
         setValueAppliance();
       }
     });
@@ -563,7 +565,7 @@ const ApiScreenA40 = ({route, navigation}) => {
 
   const [cosnumerno, setCosnumerno] = useState('');
 
-  const [clusterIBC, setClusterIBC] = useState('');
+  const [cluster, setCluster] = useState('');
   const [consumernameBilling, setConsumernameBilling] = useState('');
 
   const [accountno, setAccountno] = useState('');
@@ -672,6 +674,8 @@ const ApiScreenA40 = ({route, navigation}) => {
 
   const [date1, setDate] = useState();
   const [SIR, setSIR] = useState('');
+  const [SIRIMAGE, setSIRIMAGE] = useState('');
+  const [SIRIMAGECONSUMER, setSIRIMAGECONSUMER] = useState('');
 
   const {data, index, otherParam} = route.params;
   // saad Comment MRNote Dropdowm
@@ -940,7 +944,11 @@ const ApiScreenA40 = ({route, navigation}) => {
 
         // getUserCurrentAddress(latitude, longitude)
       },
-      error => console.log(error),
+      error => {
+        console.log('getUserCurrentLocation:Error:');
+        console.log(error);
+        alert(error.message);
+      },
       {
         enableHighAccuracy: false,
         timeout: 2000,
@@ -1035,10 +1043,11 @@ const ApiScreenA40 = ({route, navigation}) => {
     // && isStoragePermitted
     if (isCameraPermitted) {
       ImagePicker.openCamera({
-        width: 300,
-        height: 400,
+        width: 700,
+        height: 700,
         cropping: true,
         includeBase64: true,
+        compressImageQuality: 1,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -1160,6 +1169,42 @@ const ApiScreenA40 = ({route, navigation}) => {
     return true;
   };
 
+  const StoreInDeviceImagesConsumer = isPost => {
+    let dataConsumerImages = [];
+
+    dataConsumerImages.push({
+      Sirnr: SIR,
+      IsSignature: isSignature,
+      ConsumerSignature: consumerSignature,
+      ConsumerImageFlag: IsImage1,
+      ConsumerImages: consumerImages,
+      //Images1: images1,
+    });
+    AsyncStorage.setItem(SIRIMAGECONSUMER, JSON.stringify(dataConsumerImages));
+
+    StoreInDeviceImages(isPost);
+  };
+  const StoreInDeviceImages = isPost => {
+    let dataSIRImages = [];
+    dataSIRImages.push({
+      Sirnr: SIR,
+      SIRImageFlag: isImage,
+      SIRImages: images,
+    });
+    AsyncStorage.setItem(SIRIMAGE, JSON.stringify(dataSIRImages));
+
+    if (isPost) {
+      PostGeoLocation();
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'HomeScreen'}],
+      });
+    }
+    setAuthModalVisible(!isAuthModalVisible);
+    setSuccessModalVisible(!isSuccessModalVisible);
+  };
+
   const StoreInDevice = (
     status,
     isPost,
@@ -1174,129 +1219,144 @@ const ApiScreenA40 = ({route, navigation}) => {
     console.log('Store In Device');
     console.log('**************************************************');
 
+    let SIRData = [];
     AsyncStorage.getItem('SIRDigitization').then(async items => {
-      let data = JSON.parse(items);
-      data.filter((item, index) => {
+      let data1 = JSON.parse(items);
+      data1.filter((item, index) => {
         if (item.Sirnr == SIR) {
-          console.log('****item.Sirnr: ' + item.Sirnr);
-          console.log('****data[index].Sirnr: ' + data[index].Sirnr);
-          //data[index].CaseType = 'Planned';
-          data[index].SIRType = 'A40';
-          data[index].SirFormat = 'A40';
-          data[index].Status = status;
-          data[index].SIRTime = sirtime;
-          data[index].SIRDate = sirdate;
+          console.log('item.Sirnr ', item.Sirnr);
+          console.log('index', index);
+          console.log('SIR', SIR);
+          data1[index].SIRType = 'A40';
+          data1[index].SirFormat = 'A40';
+          data1[index].Status = status;
+          data1[index].Sirnr = SIR;
 
-          data[index].ConsumerStatus = consumerStatus;
-          data[index].IsConsumerStatus = isConsumerStatus;
-          data[index].PremiseType = valuePremiseType;
-          data[index].Tariff = valueTarif;
-          data[index].ServiceType = serviceType;
-          data[index].IsServiceType = isServiceType;
-          data[index].FedFromPMTSS = fedFromPMTSS;
-          data[index].PMTSSCode = pmtSSCode;
-          data[index].RunningLoadKW = runningLoadKW;
-          data[index].SizeofService = sizeofService;
-          data[index].ContractLoad = contractLoad;
-          data[index].ConnectedLoad = connectedLoad;
-          data[index].ConnectedLoadKW = connectedLoadKW;
+          data1[index].CONSUMER_NO = data.CONSUMER_NO;
+          data1[index].NAME = data.NAME;
+          data1[index].ADDRESS = data.ADDRESS;
+          data1[index].Erdat = data.Erdat;
+          data1[index].TARIFF = data.TARIFF;
+          data1[index].AssignMio = data.AssignMio;
+          data1[index].MIO_NAME = data.MIO_NAME;
+          data1[index].CELL_NUMBER = data.CELL_NUMBER;
+          data1[index].CLUSTER = data.CLUSTER;
+          data1[index].IBCNAME = data.IBCNAME;
+          data1[index].Vkont = data.Vkont;
+          data1[index].Vertrag = data.Vertrag;
+          data1[index].AccountNo = accountno;
+          data1[index].Ibc = data.Ibc;
 
-          data[index].PowerKENo = powerKENo;
-          data[index].PowerMeterMake = powerMeterMake;
-          data[index].PowerMC = powerMC;
-          data[index].PowerMCSec = powerMCSec;
-          data[index].PowerReading = powerReading;
-          data[index].PowerMeter = powermeter;
-          data[index].PowerMeterRemarks = powerMeterRemarks;
-          data[index].PowerPT = powerPT;
-          data[index].PowerPTSec = powerPTSec;
-
-          data[index].LightKENo = lightKENo;
-          data[index].LightMeterMake = lightMeterMake;
-          data[index].LightMC = lightMC;
-          data[index].LightMCSec = lightMCSec;
-          data[index].Lightmeter = lightmeter;
-          data[index].LightPT = lightPT;
-          data[index].LightPTSec = lightPTSec;
-
-          data[index].Meter = meter;
-          data[index].MainCover = mainCover;
-          data[index].TerminalCover = terminalCover;
-          data[index].Chamber = chamber;
-          data[index].PTfuse = pTfuse;
-          data[index].PanelDoor = panelDoor;
-          data[index].MainCoverPlate = mainCoverPlate;
-
-          data[index].MeterInstalled = meterInstalled;
-          data[index].MeterInstalled1 = meterInstalled1;
-          data[index].CurrentAmp = currentAmp;
-          data[index].VoltageKV = voltageKV;
-          data[index].PowerFactor = powerFactor;
-          data[index].Kto = kto;
-          data[index].PerError = perError;
-          data[index].PowerCalculated = powerCalculated;
-          data[index].PowerObserved = powerObserved;
-
-          data[index].DiscrepancyfindingsRemarks = discrepancyfindingsRemarks;
-          data[index].DescripancyDetail = descripancylist;
-          data[index].isDiscrepancyitems = isSelecteditems;
-          data[index].Discrepancyitems = selectedItems;
-          data[index].ApplianceDetail = tableList;
-          data[index].Appliancelist = appliancelist;
-
-          data[index].CheckBoxList = checkBoxList;
-          data[index].ConsumerName = consumerName;
-          data[index].MobileNo = mobileNo;
-          data[index].ConsumerNameCNIC = consumerNameCNIC;
-          data[index].ConsumerRemarks = consumerRemarks;
-          data[index].ConsumerRefuseYN = consumerRefuseYN;
-          data[index].IsConsumerRefuseYN = isConsumerRefuseYN;
-          data[index].ConsumerSign = consumerSign;
-          data[index].IsConsumerSign = isConsumerSign;
-
-          data[index].longitude = longitude;
-          data[index].latitude = latitude;
-
-          data[index].IsSignature = isSignature;
-          data[index].ConsumerSignature = consumerSignature;
-          data[index].SIRImageFlag = isImage;
-          data[index].SIRImages = images;
-          data[index].ConsumerImageFlag = IsImage1;
-          data[index].ConsumerImages = consumerImages;
-          data[index].Images1 = images1;
-
-          data[index].NAME = NAME;
-          data[index].ADDRESS = ADDRESS;
-          data[index].CONSUMER_NO = CONSUMER_NO;
-          data[index].Vkont = Vkont;
-          data[index].TARIFF = TARIFF;
-          data[index].Vertrag = contract;
-
-          if (Result_Discrepancies != undefined) {
-            data[index].Result_Discrepancies = Result_Discrepancies;
-            data[index].Result_Appliances = Result_Appliances;
-            data[index].Result_Meter = Result_Meter;
-            data[index].Result_Register = Result_Register;
-            data[index].Result_Onsite = Result_Onsite;
-            data[index].Result_MeterSeal = Result_MeterSeal;
-          }
-
-          AsyncStorage.setItem('SIRDigitization', JSON.stringify(data));
+          AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
         }
       });
     });
 
-    if (isPost) {
-      PostGeoLocation();
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'HomeScreen'}],
-      });
-    }
+    SIRData.push({
+      SIRType: 'A40',
+      SirFormat: 'A40',
+      Status: status,
+      SIRTime: sirtime,
+      SIRDate: sirdate,
+      Sirnr: SIR,
 
-    setAuthModalVisible(!isAuthModalVisible);
-    setSuccessModalVisible(!isSuccessModalVisible);
+      Vertrag: contract,
+      Vkont: data.Vkont,
+      Erdat: data.Erdat,
+      AssignMio: data.AssignMio,
+      ADDRESS: data.ADDRESS,
+      NAME: data.NAME,
+      CONSUMER_NO: data.CONSUMER_NO,
+      Ibc: data.Ibc,
+      MIO_NAME: data.MIO_NAME,
+      CLUSTER: data.CLUSTER,
+      Ibc: data.Ibc,
+      CELL_NUMBER: data.CELL_NUMBER,
+      TARIFF: data.TARIFF,
+
+      ConsumerStatus: consumerStatus,
+      IsConsumerStatus: isConsumerStatus,
+      PremiseType: valuePremiseType,
+      Tariff: valueTarif,
+      ServiceType: serviceType,
+      IsServiceType: isServiceType,
+      FedFromPMTSS: fedFromPMTSS,
+      PMTSSCode: pmtSSCode,
+      RunningLoadKW: runningLoadKW,
+      SizeofService: sizeofService,
+      ContractLoad: contractLoad,
+      ConnectedLoad: connectedLoad,
+      ConnectedLoadKW: connectedLoadKW,
+
+      PowerKENo: powerKENo,
+      PowerMeterMake: powerMeterMake,
+      PowerMC: powerMC,
+      PowerMCSec: powerMCSec,
+      PowerReading: powerReading,
+      PowerMeter: powermeter,
+      PowerMeterRemarks: powerMeterRemarks,
+      PowerPT: powerPT,
+      PowerPTSec: powerPTSec,
+
+      LightKENo: lightKENo,
+      LightMeterMake: lightMeterMake,
+      LightMC: lightMC,
+      LightMCSec: lightMCSec,
+      Lightmeter: lightmeter,
+      LightPT: lightPT,
+      LightPTSec: lightPTSec,
+
+      Meter: meter,
+      MainCover: mainCover,
+      TerminalCover: terminalCover,
+      Chamber: chamber,
+      PTfuse: pTfuse,
+      PanelDoor: panelDoor,
+      MainCoverPlate: mainCoverPlate,
+
+      MeterInstalled: meterInstalled,
+      MeterInstalled1: meterInstalled1,
+      CurrentAmp: currentAmp,
+      VoltageKV: voltageKV,
+      PowerFactor: powerFactor,
+      Kto: kto,
+      PerError: perError,
+      PowerCalculated: powerCalculated,
+      PowerObserved: powerObserved,
+
+      DiscrepancyfindingsRemarks: discrepancyfindingsRemarks,
+      DescripancyDetail: descripancylist,
+      isDiscrepancyitems: isSelecteditems,
+      Discrepancyitems: selectedItems,
+      ApplianceDetail: tableList,
+      Appliancelist: appliancelist,
+
+      CheckBoxList: checkBoxList,
+      ConsumerName: consumerName,
+      MobileNo: mobileNo,
+      ConsumerNameCNIC: consumerNameCNIC,
+      ConsumerRemarks: consumerRemarks,
+      ConsumerRefuseYN: consumerRefuseYN,
+      IsConsumerRefuseYN: isConsumerRefuseYN,
+      ConsumerSign: consumerSign,
+      IsConsumerSign: isConsumerSign,
+
+      longitude: longitude,
+      latitude: latitude,
+
+      TARIFF: TARIFF,
+
+      Result_Discrepancies: Result_Discrepancies,
+      Result_Appliances: Result_Appliances,
+      Result_Meter: Result_Meter,
+      Result_Register: Result_Register,
+      Result_Onsite: Result_Onsite,
+      Result_MeterSeal: Result_MeterSeal,
+    });
+
+    AsyncStorage.setItem(SIR, JSON.stringify(SIRData));
+
+    StoreInDeviceImagesConsumer(isPost);
   };
 
   const PostSIRImage = () => {
@@ -1310,7 +1370,7 @@ const ApiScreenA40 = ({route, navigation}) => {
         imageName: data.Sirnr,
         imageBase64: item.base64,
         imageID: count.toString(),
-        IBC: data.Begru,
+        IBC: data.Ibc,
         SIRNo: data.Sirnr,
         ContractNo: data.Vertrag,
         MIONo: data.AssignMio,
@@ -1360,7 +1420,7 @@ const ApiScreenA40 = ({route, navigation}) => {
         imageName: data.Sirnr,
         imageBase64: item.base64,
         imageID: count.toString(),
-        IBC: data.Begru,
+        IBC: data.Ibc,
         SIRNo: data.Sirnr,
         ContractNo: data.Vertrag,
         MIONo: data.AssignMio,
@@ -1373,7 +1433,7 @@ const ApiScreenA40 = ({route, navigation}) => {
         imageName: data.Sirnr,
         imageBase64: signaturePreview,
         imageID: count.toString(),
-        IBC: data.Begru,
+        IBC: data.Ibc,
         SIRNo: data.Sirnr,
         ContractNo: data.Vertrag,
         MIONo: data.AssignMio,
@@ -1413,7 +1473,7 @@ const ApiScreenA40 = ({route, navigation}) => {
     });
 */
     if (latitude.toString() == '') {
-      alert('Please on your GPS location settings');
+      alert('Please on GPS Location');
       return false;
     }
 
@@ -1605,30 +1665,79 @@ const ApiScreenA40 = ({route, navigation}) => {
     console.log('data.Sirnr: ' + data.Sirnr);
     console.log('data.Vertrag: ' + data.Vertrag);
     console.log('data.CONNECTED_LOAD: ' + data.CONNECTED_LOAD);
+    console.log('data.Ibc: ' + data.Ibc);
     setSIR(data.Sirnr);
-    setAssigndate(Moment(data.Erdat, 'YYYYMMDD').format('DD.MM.YYYY'));
+    setSIRIMAGE(data.Sirnr + 'IMAGE');
+    setSIRIMAGECONSUMER(data.Sirnr + 'IMAGECONSUMER');
+
+    if (data.Status != 'Post') {
+      setIsEditable(true);
+    }
+
+    setReviewRemarks(data.REMARKS);
+    setCELL_NUMBER(data.CELL_NUMBER);
+
     setSirDate(Moment().format('DD.MM.YYYY'));
     setSirTime(Moment().format('hh:mm:ss'));
-    setConnectedLoad(data.CONNECTED_LOAD);
+    setAssigndate(Moment(data.Erdat, 'YYYYMMDD').format('DD.MM.YYYY'));
 
-    setNAME(data.NAME);
-    setADDRESS(data.ADDRESS);
-    setCONSUMER_NO(data.CONSUMER_NO);
-    setVkont(data.Vkont);
-    setTARIFF(data.TARIFF);
-    setContract(data.Vertrag);
+    AsyncStorage.getItem(data.Sirnr + 'IMAGE').then(items => {
+      var localImageData = items ? JSON.parse(items) : [];
+      var filterImageData = localImageData.filter(item => {
+        if (item.Sirnr == data.Sirnr) {
+          if (item.SIRImages != undefined) {
+            setIsImage(item.SIRImageFlag);
+            setImages(item.SIRImages);
+          }
+        }
+      });
+    });
 
-    AsyncStorage.getItem('SIRDigitization').then(items => {
+    AsyncStorage.getItem(data.Sirnr + 'IMAGECONSUMER').then(items => {
+      var localImageConsumerData = items ? JSON.parse(items) : [];
+      var filterImageData = localImageConsumerData.filter(item => {
+        if (item.Sirnr == data.Sirnr) {
+          if (item.ConsumerSignature != undefined) {
+            var filterConsumerSignature = item.ConsumerSignature.filter(
+              items => {
+                setSign(items.consSign);
+              },
+            );
+            setConsumerSignature(item.ConsumerSignature);
+            setIsSignature(item.IsSignature);
+          }
+
+          if (item.ConsumerImages != undefined) {
+            setConsumerImages(item.ConsumerImages);
+            var filterConsumerImages = item.ConsumerImages.filter(items => {
+              setImages1(items);
+            });
+          }
+        }
+      });
+    });
+
+    AsyncStorage.getItem(data.Sirnr).then(items => {
       var localData = items ? JSON.parse(items) : [];
       var filterData = localData.filter(item => {
         if (item.Sirnr == data.Sirnr) {
-          if (item.Status != 'Post') {
-            setIsEditable(true);
-          }
+          console.log('*******item.Discrepancyitems');
+          console.log(item.Discrepancyitems);
 
-          if (item.REMARKS != undefined) setReviewRemarks(item.REMARKS);
+          if (item.CONNECTED_LOAD != undefined)
+            setConnectedLoad(item.CONNECTED_LOAD);
+
+          if (item.NAME != undefined) setNAME(item.NAME);
+          if (item.ADDRESS != undefined) setADDRESS(item.ADDRESS);
+          if (item.CONSUMER_NO != undefined) setCONSUMER_NO(item.CONSUMER_NO);
+          if (item.Vkont != undefined) setVkont(item.Vkont);
+          if (item.TARIFF != undefined) setTARIFF(item.TARIFF);
+          if (item.Vertrag != undefined) setContract(item.Vertrag);
+          if (item.CLUSTER != undefined) setCluster(item.CLUSTER);
+
+          //if (item.REMARKS != undefined) setReviewRemarks(item.REMARKS);
           if (item.IBCNAME != undefined) setIbcName(item.IBCNAME);
-          if (item.CELL_NUMBER != undefined) setCELL_NUMBER(item.CELL_NUMBER);
+          //if (item.CELL_NUMBER != undefined) setCELL_NUMBER(item.CELL_NUMBER);
           //setTARIFF(item.TARIFF);
 
           if (item.ConsumerStatus != undefined)
@@ -1642,38 +1751,53 @@ const ApiScreenA40 = ({route, navigation}) => {
 
           //setIndustryType(item.IndustryType);
           //setTariff(item.Tariff);
-          setValueTarif(item.Tariff);
-          setValuePremiseType(item.PremiseType);
 
-          setFedFromPMTSS(item.FedFromPMTSS);
-          setPMTSSCode(item.PMTSSCode);
-          setRunningLoadKW(item.RunningLoadKW);
-          setSizeofService(item.SizeofService);
-          setContractLoad(item.ContractLoad);
-          //setConnectedLoad(item.ConnectedLoad);
+          if (item.Tariff != undefined) setValueTarif(item.Tariff);
+          if (item.PremiseType != undefined)
+            setValuePremiseType(item.PremiseType);
 
-          setMeterInstalled(item.MeterInstalled);
-          setMeterInstalled1(item.MeterInstalled1);
-          setCurrentAmp(item.CurrentAmp);
-          setVoltageKV(item.VoltageKV);
-          setPowerFactor(item.PowerFactor);
-          setKto(item.Kto);
-          setPerError(item.PerError);
-          setPowerCalculated(item.PowerCalculated);
-          setPowerObserved(item.PowerObserved);
+          if (item.FedFromPMTSS != undefined)
+            setFedFromPMTSS(item.FedFromPMTSS);
+          if (item.PMTSSCode != undefined) setPMTSSCode(item.PMTSSCode);
+          if (item.RunningLoadKW != undefined)
+            setRunningLoadKW(item.RunningLoadKW);
+          if (item.SizeofService != undefined)
+            setSizeofService(item.SizeofService);
+          if (item.ContractLoad != undefined)
+            setContractLoad(item.ContractLoad);
 
-          setConnectedLoadKW(item.ConnectedLoadKW);
+          if (item.MeterInstalled != undefined)
+            setMeterInstalled(item.MeterInstalled);
+          if (item.MeterInstalled1 != undefined)
+            setMeterInstalled1(item.MeterInstalled1);
+          if (item.CurrentAmp != undefined) setCurrentAmp(item.CurrentAmp);
+          if (item.VoltageKV != undefined) setVoltageKV(item.VoltageKV);
+          if (item.PowerFactor != undefined) setPowerFactor(item.PowerFactor);
+          if (item.Kto != undefined) setKto(item.Kto);
+          if (item.PerError != undefined) setPerError(item.PerError);
+          if (item.PowerCalculated != undefined)
+            setPowerCalculated(item.PowerCalculated);
+          if (item.PowerObserved != undefined)
+            setPowerObserved(item.PowerObserved);
+
+          if (item.ConnectedLoadKW != undefined)
+            setConnectedLoadKW(item.ConnectedLoadKW);
 
           if (item.CheckBoxList != undefined)
             setCheckBoxList(item.CheckBoxList);
 
-          setSelectedItems(item.Discrepancyitems);
-          setDiscrepancyfindingsRemarks(item.DiscrepancyfindingsRemarks);
+          if (item.Discrepancyitems != undefined)
+            setSelectedItems(item.Discrepancyitems);
+          if (item.DiscrepancyfindingsRemarks != undefined)
+            setDiscrepancyfindingsRemarks(item.DiscrepancyfindingsRemarks);
 
-          setConsumerName(item.ConsumerName);
-          setMobileNo(item.MobileNo);
-          setConsumerNameCNIC(item.ConsumerNameCNIC);
-          setConsumerRemarks(item.ConsumerRemarks);
+          if (item.ConsumerName != undefined)
+            setConsumerName(item.ConsumerName);
+          if (item.MobileNo != undefined) setMobileNo(item.MobileNo);
+          if (item.ConsumerNameCNIC != undefined)
+            setConsumerNameCNIC(item.ConsumerNameCNIC);
+          if (item.ConsumerRemarks != undefined)
+            setConsumerRemarks(item.ConsumerRemarks);
 
           if (item.IsConsumerRefuseYN != undefined)
             setIsConsumerRefuseYN(item.IsConsumerRefuseYN);
@@ -1685,26 +1809,6 @@ const ApiScreenA40 = ({route, navigation}) => {
           if (item.ConsumerSign != undefined)
             setConsumerSign(item.ConsumerSign);
 
-          if (item.ConsumerSignature != undefined) {
-            var filterConsumerSignature = item.ConsumerSignature.filter(
-              items => {
-                setSign(items.consSign);
-              },
-            );
-            setConsumerSignature(item.ConsumerSignature);
-            setIsSignature(item.IsSignature);
-          }
-
-          if (item.ConsumerImages != undefined) {
-            setConsumerImages(item.ConsumerImages);
-            setImages1(item.Images1);
-          }
-
-          if (item.SIRImages != undefined) {
-            setIsImage(item.SIRImageFlag);
-            setImages(item.SIRImages);
-          }
-
           if (item.latitude == undefined || item.latitude == '') {
             getUserCurrentLocation();
           } else {
@@ -1712,43 +1816,44 @@ const ApiScreenA40 = ({route, navigation}) => {
             setlongitude(item.longitude);
           }
 
-          setPowerKENo(item.PowerKENo);
-          setPowerMeterMake(item.PowerMeterMake);
-          setPowerMC(item.PowerMC);
-          setPowerMCSec(item.PowerMCSec);
-          setPowerMeter(item.PowerMeter);
-          setPowerMeterRemarks(item.PowerMeterRemarks);
-          setPowerPT(item.PowerPT);
-          setPowerPTSec(item.PowerPTSec);
+          if (item.PowerKENo != undefined) setPowerKENo(item.PowerKENo);
+          if (item.PowerMeterMake != undefined)
+            setPowerMeterMake(item.PowerMeterMake);
+          if (item.PowerMC != undefined) setPowerMC(item.PowerMC);
+          if (item.PowerMCSec != undefined) setPowerMCSec(item.PowerMCSec);
+          if (item.PowerMeter != undefined) setPowerMeter(item.PowerMeter);
+          if (item.PowerMeterRemarks != undefined)
+            setPowerMeterRemarks(item.PowerMeterRemarks);
+          if (item.PowerPT != undefined) setPowerPT(item.PowerPT);
+          if (item.PowerPTSec != undefined) setPowerPTSec(item.PowerPTSec);
 
-          setLightKENo(item.LightKENo);
-          setLightMeterMake(item.LightMeterMake);
-          setLightMC(item.LightMC);
-          setLightMCSec(item.LightMCSec);
-          setLightMeter(item.LightMeter);
-          setLightMeterRemarks(item.LightMeterRemarks);
-          setLightPT(item.LightPT);
-          setLightPTSec(item.LightPTSec);
+          if (item.LightKENo != undefined) setLightKENo(item.LightKENo);
+          if (item.LightMeterMake != undefined)
+            setLightMeterMake(item.LightMeterMake);
+          if (item.LightMC != undefined) setLightMC(item.LightMC);
+          if (item.LightMCSec != undefined) setLightMCSec(item.LightMCSec);
+          if (item.LightMeter != undefined) setLightMeter(item.LightMeter);
+          if (item.LightMeterRemarks != undefined)
+            setLightMeterRemarks(item.LightMeterRemarks);
+          if (item.LightPT != undefined) setLightPT(item.LightPT);
+          if (item.LightPTSec != undefined) setLightPTSec(item.LightPTSec);
 
-          setLightPTSec(item.LightPTSec);
-          setLightPTSec(item.LightPTSec);
-          setLightPTSec(item.LightPTSec);
-          setLightPTSec(item.LightPTSec);
-          setLightPTSec(item.LightPTSec);
-          setLightPTSec(item.LightPTSec);
-          setLightPTSec(item.LightPTSec);
+          if (item.Meter != undefined) setMeter(item.Meter);
+          if (item.MainCover != undefined) setMainCover(item.MainCover);
+          if (item.TerminalCover != undefined)
+            setTerminalCover(item.TerminalCover);
+          if (item.Chamber != undefined) setChamber(item.Chamber);
+          if (item.PTfuse != undefined) setPTfuse(item.PTfuse);
+          if (item.PanelDoor != undefined) setPanelDoor(item.PanelDoor);
+          if (item.MainCoverPlate != undefined)
+            setMainCoverPlate(item.MainCoverPlate);
 
-          setMeter(item.Meter);
-          setMainCover(item.MainCover);
-          setTerminalCover(item.TerminalCover);
-          setChamber(item.Chamber);
-          setPTfuse(item.PTfuse);
-          setPanelDoor(item.PanelDoor);
-          setMainCoverPlate(item.MainCoverPlate);
-
-          setTableList(item.ApplianceDetail);
-          setApplianceList(item.Appliancelist);
-          setDescripancyList(item.DescripancyDetail);
+          if (item.ApplianceDetail != undefined)
+            setTableList(item.ApplianceDetail);
+          if (item.Appliancelist != undefined)
+            setApplianceList(item.Appliancelist);
+          if (item.DescripancyDetail != undefined)
+            setDescripancyList(item.DescripancyDetail);
         }
       });
     });
@@ -2277,7 +2382,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                     fontSize: 13,
                     color: 'black',
                   }}>
-                  {'Tariff: ' + TARIFF}
+                  {'Tariff: ' + data.TARIFF}
                 </Text>
                 <Text
                   style={{
@@ -2332,7 +2437,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                     color: 'black', //'#FFFFFF',
                     //     marginBottom: 4,
                   }}>
-                  {'Cluster / IBC: ' + data.CLUSTER + '/' + ibcName}
+                  {'Cluster / IBC: ' + data.CLUSTER + '/' + data.IBCNAME}
                 </Text>
 
                 <Text
@@ -3356,6 +3461,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                           </View>
                           <View style={{flex: 5}}>
                             <TouchableOpacity
+                              disabled={!isEditable}
                               style={{
                                 flexDirection: 'row',
                                 //alignItems: 'center',
@@ -3412,6 +3518,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                       flex: 0.4,
                     }}>
                     <TextInput
+                      editable={isEditable}
                       style={{backgroundColor: 'white'}}
                       onChangeText={value => {
                         setQuantity(value);
@@ -5288,6 +5395,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                                   <View
                                     style={{flex: 1, backgroundColor: 'white'}}>
                                     <TouchableOpacity
+                                      disabled={!isEditable}
                                       style={{
                                         flexDirection: 'row',
                                         //alignItems: 'center',
@@ -5355,6 +5463,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                               borderWidth: 1,
                             }}>
                             <TextInput
+                              editable={isEditable}
                               style={{flex: 0.2, backgroundColor: 'white'}}
                               onChangeText={value => {
                                 setPowerMeterReading(value);
@@ -5820,6 +5929,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                                   <View
                                     style={{flex: 1, backgroundColor: 'white'}}>
                                     <TouchableOpacity
+                                      disabled={!isEditable}
                                       style={{
                                         flexDirection: 'row',
                                         //alignItems: 'center',
@@ -6303,6 +6413,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                             alignItems: 'flex-start',
                           }}>
                           <TouchableOpacity
+                            disabled={!isEditable}
                             onPress={() => captureImage('photo', '1')}>
                             <Image
                               source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
@@ -6350,6 +6461,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                           alignSelf: 'center',
                         }}>
                         <TouchableOpacity
+                          disabled={!isEditable}
                           onPress={() => {
                             setSignModalVisible(true);
                           }}>
@@ -6409,6 +6521,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                             />
                             {isSignature == 'Y' ? (
                               <TouchableOpacity
+                                disabled={!isEditable}
                                 onPress={() => {
                                   setTimeout(() => {
                                     setSign();
@@ -6490,6 +6603,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                       }}>
                       <View style={{flex: 2, alignItems: 'center'}}>
                         <TouchableOpacity
+                          disabled={!isEditable}
                           activeOpacity={0.5}
                           onPress={() => chooseFile('photo')}>
                           <Image
@@ -6511,6 +6625,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                       </View>
                       <View style={{flex: 2, alignItems: 'center'}}>
                         <TouchableOpacity
+                          disabled={!isEditable}
                           style={{marginTop: 15}}
                           onPress={() => captureImage('photo')}>
                           <Image
@@ -7029,7 +7144,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                       }
                     });
                   } else if (buttonType == 'Save') {
-                    StoreInDevice('Save', false);
+                    StoreInDevice('Save', false, '', '', '', '', '', '');
                   }
 
                   /*

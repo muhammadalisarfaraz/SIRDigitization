@@ -142,10 +142,11 @@ const SafetyHazardCase = ({navigation}) => {
     // && isStoragePermitted
     if (isCameraPermitted) {
       ImagePicker.openCamera({
-        width: 300,
-        height: 400,
+        width: 700,
+        height: 700,
         cropping: true,
         includeBase64: true,
+        compressImageQuality: 1,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -295,7 +296,7 @@ const SafetyHazardCase = ({navigation}) => {
     });
   };
 
-  const PostSIRImage = () => {
+  const PostSIRImage = HAZARD_ID => {
     let data1 = [];
     let count = 1;
     console.log('Post Safety Image called');
@@ -308,7 +309,7 @@ const SafetyHazardCase = ({navigation}) => {
         imageID: '1',
         IBC: ibc,
         SHID: user,
-        MIONo: user,
+        MIONo: HAZARD_ID,
       });
       count++;
     });
@@ -432,7 +433,7 @@ const SafetyHazardCase = ({navigation}) => {
     })
       .then(resp => {
         console.log('res.data: ', resp.data.d.Message);
-        PostSIRImage();
+        PostSIRImage(resp.data.d.HAZARD_ID);
       })
       .catch(error => {
         console.error(error);

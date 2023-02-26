@@ -206,7 +206,9 @@ const HomeScreenPlannedSaved = ({navigation}) => {
                   }}>
                   {pendingOrders ? (
                     pendingOrders.length > 0 ? (
-                      <TouchableOpacity onPress={() => loadData('more')}>
+                      <TouchableOpacity
+                        onPress={() => loadData('more')}
+                        disabled={true}>
                         <Text
                           style={{
                             color: 'black',
