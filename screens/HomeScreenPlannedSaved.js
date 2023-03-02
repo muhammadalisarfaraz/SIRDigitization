@@ -244,44 +244,7 @@ const HomeScreenPlannedSaved = ({navigation}) => {
               // var date = +item.PreqDate.replace(/\/Date\((.*?)\)\//g, '$1');
 
               return (
-                <Swipeable
-                  rightButtons={[
-                    <TouchableOpacity
-                      style={{
-                        width: 80,
-                        marginVertical: 17,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'column',
-                      }}
-                      onPress={() => {
-                        setLoader(true);
-                        let data = tableData;
-                        data.splice(index, 1);
-                        // alert(index);
-                        settableData(data);
-                        AsyncStorage.setItem(
-                          'MRNote',
-                          JSON.stringify(data),
-                        ).then(() => {
-                          route.params.update();
-
-                          setLoader(false);
-                        });
-
-                        // setTimeout(() => {
-                        //   setLoader(false);
-                        // }, 500);
-                      }}>
-                      {
-                        <Image
-                          style={{height: 30, width: 30}}
-                          source={require('../assets/dustbin.png')}
-                        />
-                      }
-                      <Text>Delete</Text>
-                    </TouchableOpacity>,
-                  ]}>
+                <Swipeable>
                   <TouchableOpacity
                     // disabled={true}
                     onPress={() => {

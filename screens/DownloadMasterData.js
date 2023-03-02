@@ -310,8 +310,8 @@ const DownloadMasterData = ({navigation}) => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
             AppliancesData.push({
-              label: singleResult.Zzsiraname,
-              value: singleResult.Zzsiraname,
+              label: singleResult.Zzsiraname + ' ' + singleResult.RATING,
+              value: singleResult.Zzsiraname + ' ' + singleResult.RATING,
               RATING: singleResult.RATING,
             });
             count++;
@@ -321,6 +321,7 @@ const DownloadMasterData = ({navigation}) => {
       .then(res => {
         AsyncStorage.setItem('Appliances', JSON.stringify(AppliancesData));
         setAppliances(AppliancesData.length);
+        console.log('AppliancesData.length' + AppliancesData.length);
       })
       .catch(error => {
         console.error('axios:error: ' + error);

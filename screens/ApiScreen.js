@@ -382,16 +382,17 @@ const ApiScreen = ({route, navigation}) => {
   const [itemsOnsiteRegister, setItemsOnsiteRegister] = useState([
     {label: '', value: ''},
     {label: 'K1', value: 'K1'},
-    {label: 'R1', value: 'R1'},
     {label: 'P1', value: 'P1'},
-    {label: 'X1', value: 'X1'},
-    {label: 'MDI-Off', value: 'MDI-Off'},
-    {label: 'MDI-On', value: 'MDI-On'},
     {label: 'K0', value: 'K0'},
+    {label: 'R1', value: 'R1'},
+    {label: 'X1', value: 'X1'},
     {label: 'R0', value: 'R0'},
+    {label: 'MDI-OFF', value: 'MDI-OFF'},
+    {label: 'MDI-ON', value: 'MDI-ON'},
     {label: 'K1i', value: 'K1i'},
-    {label: 'K0i', value: 'K0i'},
     {label: 'P1i', value: 'P1i'},
+    {label: 'MDI-OFFi', value: 'MDI-OFFi'},
+    {label: 'MDI-ONi', value: 'MDI-ONi'},
   ]);
 
   const [onsitemeterreading, setOnsiteMeterReading] = useState('');
@@ -834,7 +835,8 @@ const ApiScreen = ({route, navigation}) => {
             Connected: connectedLoad,
             Runload: runningLoad,
             Voltage1: onsitevolts,
-            Osdevice: onsitemeterConstant,
+            //Osdevice: onsitemeterConstant,
+            Osdevice: onsitemeterNo,
           },
         ],
         SIR_Meter_SealSet: [{}],
@@ -1413,9 +1415,6 @@ const ApiScreen = ({route, navigation}) => {
     setSIRIMAGE(data.Sirnr + 'IMAGE');
     setSIRIMAGECONSUMER(data.Sirnr + 'IMAGECONSUMER');
 
-    setSirDate(moment().format('DD.MM.YYYY'));
-    setSirTime(moment().format('hh:mm:ss'));
-
     setAssigndate(Moment(data.Erdat, 'YYYYMMDD').format('DD.MM.YYYY'));
 
     AsyncStorage.getItem(data.Sirnr + 'IMAGE').then(items => {
@@ -1510,6 +1509,10 @@ const ApiScreen = ({route, navigation}) => {
           setConsumerNameCNIC(item.ConsumerNameCNIC);
           setConsumerRemarks(item.ConsumerRemarks);
 
+          if (item.SIRDate != undefined) {
+            setSirDate(moment().format('DD.MM.YYYY'));
+            setSirTime(moment().format('hh:mm:ss'));
+          }
           if (item.IsConsumerRefuseYN != undefined)
             setIsConsumerRefuseYN(item.IsConsumerRefuseYN);
           if (item.ConsumerRefuseYN != undefined)
@@ -2133,6 +2136,7 @@ const ApiScreen = ({route, navigation}) => {
                           <DataTable.Row style={styles.databeBox} key={i}>
                             <View style={{flex: 2}}>
                               <TextInput
+                                editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateDiscrepancy(t, i)}
                                 placeholder="Please Enter"
@@ -2144,6 +2148,7 @@ const ApiScreen = ({route, navigation}) => {
                             </View>
                             <View style={{flex: 4}}>
                               <TextInput
+                                editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateTicket(t, i)}
                                 placeholder="Please Enter"
@@ -2154,6 +2159,7 @@ const ApiScreen = ({route, navigation}) => {
                             </View>
                             <View style={{flex: 4}}>
                               <TextInput
+                                editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateDescription(t, i)}
                                 placeholder="Please Enter"
@@ -2164,6 +2170,7 @@ const ApiScreen = ({route, navigation}) => {
                             </View>
                             <View style={{flex: 2}}>
                               <TextInput
+                                editable={false}
                                 style={styles.input}
                                 onChangeText={t => updatePriority(t, i)}
                                 placeholder="Please Enter"
@@ -5133,6 +5140,9 @@ const ApiScreen = ({route, navigation}) => {
                     //PostTestSIRImage();
 
                     NetInfo.fetch().then(state => {
+                      console.log('Connection type', state.type);
+                      return;
+
                       if (state.isConnected) {
                         console.log(' **** You are online! ******** ');
                         PostSIRSimultaneous();

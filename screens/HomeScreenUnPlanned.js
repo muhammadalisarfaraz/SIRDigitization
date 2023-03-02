@@ -77,7 +77,7 @@ const HomeScreen = ({navigation}) => {
     getApiData();
   }, []);
 
-  const getMeterNo = (Sirnr, MIO_NAME, Meterno) => {
+  const getMeterNo = (Sirnr, MIO_NAME, Meterno, AssignMio) => {
     console.log('getMeterNo:Service:Called');
     axios({
       method: 'get',
@@ -94,7 +94,7 @@ const HomeScreen = ({navigation}) => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
             if (singleResult.Vertrag != '') {
-              getContract(Sirnr, MIO_NAME, singleResult.Vertrag);
+              getContract(Sirnr, MIO_NAME, singleResult.Vertrag, AssignMio);
             } else {
               alert('No contract available against the Meter No');
               return false;
@@ -109,7 +109,7 @@ const HomeScreen = ({navigation}) => {
 
     return;
   };
-  const getContract = (Sirnr, MIO_NAME, ContractNo) => {
+  const getContract = (Sirnr, MIO_NAME, ContractNo, AssignMio) => {
     console.log('getContract:Service:Called');
     let CustomData = [];
     let isSystemMeterServiceCall = false;
@@ -142,10 +142,9 @@ const HomeScreen = ({navigation}) => {
                 CONSUMER_NO: singleResult.CONSUMER_NO,
                 Sirnr: Sirnr,
                 Ibc: ibc,
-                MIO_NAME: MIO_NAME,
                 CLUSTER: singleResult.Cluster,
-                AssignMio: Begru,
-                MIO_NAME: user,
+                AssignMio: AssignMio,
+                MIO_NAME: MIO_NAME,
                 CELL_NUMBER: singleResult.CELL_NUMBER,
                 IBCNAME: ibcName,
                 TARIFF: singleResult.TARIFTYP,
@@ -278,6 +277,33 @@ const HomeScreen = ({navigation}) => {
             console.error('axios:error:get System Meter: ' + error);
           });
       });
+  };
+
+  const searchFilterFunction = text => {
+    //setRefresh(true);
+
+    if (text == '' || text == null) {
+      //setRefresh(true);
+      setPendingOrders(temptableData);
+      setTimeout(() => {
+        //setRefresh(false);
+      }, 1000);
+    } else {
+      var arrayholder = temptableData;
+
+      const newData = arrayholder.filter(item => {
+        const itemData = `${item.Erdat.toUpperCase()}`;
+
+        const textData = text.toUpperCase();
+
+        return itemData.indexOf(textData) > -1;
+      });
+      setPendingOrders(newData);
+      setTimeout(() => {
+        //setRefresh(false);
+      }, 1000);
+    }
+    // this.setState({data: newData});
   };
 
   return (
@@ -539,44 +565,7 @@ const HomeScreen = ({navigation}) => {
                     // var date = +item.PreqDate.replace(/\/Date\((.*?)\)\//g, '$1');
 
                     return (
-                      <Swipeable
-                        rightButtons={[
-                          <TouchableOpacity
-                            style={{
-                              width: 80,
-                              marginVertical: 17,
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexDirection: 'column',
-                            }}
-                            onPress={() => {
-                              setLoader(true);
-                              let data = tableData;
-                              data.splice(index, 1);
-                              // alert(index);
-                              settableData(data);
-                              AsyncStorage.setItem(
-                                'RoshniBajiA',
-                                JSON.stringify(data),
-                              ).then(() => {
-                                route.params.update();
-
-                                setLoader(false);
-                              });
-
-                              // setTimeout(() => {
-                              //   setLoader(false);
-                              // }, 500);
-                            }}>
-                            {
-                              <Image
-                                style={{height: 30, width: 30}}
-                                source={require('../assets/dustbin.png')}
-                              />
-                            }
-                            <Text>Delete</Text>
-                          </TouchableOpacity>,
-                        ]}>
+                      <Swipeable>
                         <TouchableOpacity
                           // disabled={true}
                           onPress={() => {
@@ -588,9 +577,15 @@ const HomeScreen = ({navigation}) => {
                                   item.Sirnr,
                                   item.MIO_NAME,
                                   contractNo,
+                                  item.AssignMio,
                                 );
                               } else if (meterNo != '') {
-                                getMeterNo(item.Sirnr, item.MIO_NAME, meterNo);
+                                getMeterNo(
+                                  item.Sirnr,
+                                  item.MIO_NAME,
+                                  meterNo,
+                                  item.AssignMio,
+                                );
                               }
                             }
                           }}
@@ -679,6 +674,33 @@ const HomeScreen = ({navigation}) => {
                                 }}
                               />
                             </View>
+
+                            <View
+                              style={{
+                                //backgroundColor: 'red',
+                                flexDirection: 'row',
+                                // paddingHorizontal: 6,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                //paddingHorizontal: 15,
+                                height: 65,
+                                position: 'absolute',
+                                borderBottomRightRadius: 15,
+                                right: 5,
+                                bottom: 40,
+                              }}>
+                              <Text
+                                style={{
+                                  // marginLeft: 5,
+                                  fontSize: 13,
+                                  //fontWeight: 'bold',
+                                  color: 'black',
+                                }}>
+                                {'Create Date: ' +
+                                  Moment(item.Erdat).format('DD.MM.YYYY')}
+                              </Text>
+                            </View>
+
                             <View
                               style={{
                                 flex: 0.55,
@@ -807,19 +829,19 @@ const styles = StyleSheet.create({
 
   dashboad: {
     //height: 880,
-    // marginLeft: 10,
-    // width: '30%',
+    //marginLeft: 10,
+    //width: '30%',
     flex: 1,
     backgroundColor: 'white',
-    // alignItems: 'center',
-    //  justifyContent: 'center',
+    //alignItems: 'center',
+    //justifyContent: 'center',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     paddingHorizontal: 2,
     paddingVertical: 2,
-    //elevation: 10
+    //elevation: 10,
   },
 
   footer: {

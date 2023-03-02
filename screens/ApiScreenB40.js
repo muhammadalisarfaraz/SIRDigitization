@@ -70,7 +70,7 @@ let current = 100;
 const ApiScreenB40 = ({route, navigation}) => {
   const scrollRef = useRef(null);
   const [pos, setPos] = React.useState(0);
-  const [tab, setTab] = useState('Consumer Detail');
+  const [tab, setTab] = useState('Discrepancy Recorded');
   const [loader, setLoader] = useState(false);
   const sign = createRef();
   const [signaturePreview, setSign] = useState(null);
@@ -289,12 +289,12 @@ const ApiScreenB40 = ({route, navigation}) => {
     {
       id: 1,
       name: 'Discrepancy Recorded',
-      active: false,
+      active: true,
     },
     {
       id: 2,
       name: 'Consumer Detail',
-      active: true,
+      active: false,
     },
     {
       id: 3,
@@ -583,20 +583,23 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [itemsPowerRegister, setItemsPowerRegister] = useState([
     {label: '', value: ''},
     {label: 'K1', value: 'K1'},
-    {label: 'R1', value: 'R1'},
     {label: 'P1', value: 'P1'},
-    {label: 'X1', value: 'X1'},
-    {label: 'MDI-Off', value: 'MDI-Off'},
-    {label: 'MDI-On', value: 'MDI-On'},
     {label: 'K0', value: 'K0'},
+    {label: 'R1', value: 'R1'},
+    {label: 'X1', value: 'X1'},
     {label: 'R0', value: 'R0'},
+    {label: 'MDI-OFF', value: 'MDI-OFF'},
+    {label: 'MDI-ON', value: 'MDI-ON'},
     {label: 'K1i', value: 'K1i'},
-    {label: 'K0i', value: 'K0i'},
     {label: 'P1i', value: 'P1i'},
+    {label: 'MDI-OFFi', value: 'MDI-OFFi'},
+    {label: 'MDI-ONi', value: 'MDI-ONi'},
+    /*
     {label: 'R', value: 'R'},
     {label: 'Y', value: 'Y'},
     {label: 'B', value: 'B'},
     {label: 'N', value: 'N'},
+*/
   ]);
 
   // saad Comment Light Register Dropdowm
@@ -1431,6 +1434,7 @@ const ApiScreenB40 = ({route, navigation}) => {
             Othmeter2: meterInstalled2,
             Othmeter3: meterTestingTo,
             Srcsupply: Srcsupply,
+            Osdevice: powerKENo,
           },
         ],
         SIR_Meter_SealSet: [{}],
@@ -1483,9 +1487,8 @@ const ApiScreenB40 = ({route, navigation}) => {
     setSIRIMAGECONSUMER(data.Sirnr + 'IMAGECONSUMER');
 
     setAssigndate(Moment(data.Erdat, 'YYYYMMDD').format('DD.MM.YYYY'));
-    setSirDate(Moment().format('DD.MM.YYYY'));
-    setSirTime(Moment().format('hh:mm:ss'));
-    setConnectedLoad(data.CONNECTED_LOAD);
+
+    setConnectedLoad(data.ConnectedLoad);
 
     setNAME(data.NAME);
     setADDRESS(data.ADDRESS);
@@ -1569,6 +1572,11 @@ const ApiScreenB40 = ({route, navigation}) => {
           //setVoltageKV(item.VoltageKV);
           //setPerError(item.PerError);
           //setPowerFactor(item.PowerFactor);
+
+          if (item.SIRDate != undefined) {
+            setSirDate(moment().format('DD.MM.YYYY'));
+            setSirTime(moment().format('hh:mm:ss'));
+          }
 
           if (item.MeterTestingResultTC != undefined)
             setMeterTestingResultTC(item.MeterTestingResultTC);
@@ -2870,6 +2878,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                           <DataTable.Row style={styles.databeBox} key={i}>
                             <View style={{flex: 2}}>
                               <TextInput
+                                editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateDiscrepancy(t, i)}
                                 placeholder="Please Enter"
@@ -2881,6 +2890,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                             </View>
                             <View style={{flex: 4}}>
                               <TextInput
+                                editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateTicket(t, i)}
                                 placeholder="Please Enter"
@@ -2891,6 +2901,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                             </View>
                             <View style={{flex: 4}}>
                               <TextInput
+                                editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateDescription(t, i)}
                                 placeholder="Please Enter"
@@ -2901,6 +2912,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                             </View>
                             <View style={{flex: 2}}>
                               <TextInput
+                                editable={false}
                                 style={styles.input}
                                 onChangeText={t => updatePriority(t, i)}
                                 placeholder="Please Enter"
@@ -3448,7 +3460,9 @@ const ApiScreenB40 = ({route, navigation}) => {
                             }}>
                             <Text style={{color: 'black'}}>{date1}</Text>
                           </View>
-                          <TouchableOpacity onPress={showDatePicker}>
+                          <TouchableOpacity
+                            disabled={!isEditable}
+                            onPress={showDatePicker}>
                             <Icon name="calendar" size={30} color="blue" />
                           </TouchableOpacity>
                           <DateTimePickerModal
@@ -3926,7 +3940,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholderTextColor="black"
                               style={{
                                 height: 150,
-                                width: '100%',
+                                width: '120%',
                                 borderWidth: 0.75,
                                 textAlign: 'left',
                                 textAlignVertical: 'top',

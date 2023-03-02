@@ -69,7 +69,7 @@ let current = 100;
 const ApiScreenA40 = ({route, navigation}) => {
   const scrollRef = useRef(null);
   const [pos, setPos] = React.useState(0);
-  const [tab, setTab] = useState('Consumer Detail');
+  const [tab, setTab] = useState('Discrepancy Recorded');
   const [loader, setLoader] = useState(false);
   const sign = createRef();
   const [signaturePreview, setSign] = useState(null);
@@ -264,20 +264,23 @@ const ApiScreenA40 = ({route, navigation}) => {
   const [itemsPowerRegister, setItemsPowerRegister] = useState([
     {label: '', value: ''},
     {label: 'K1', value: 'K1'},
-    {label: 'R1', value: 'R1'},
     {label: 'P1', value: 'P1'},
-    {label: 'X1', value: 'X1'},
-    {label: 'MDI-Off', value: 'MDI-Off'},
-    {label: 'MDI-On', value: 'MDI-On'},
     {label: 'K0', value: 'K0'},
+    {label: 'R1', value: 'R1'},
+    {label: 'X1', value: 'X1'},
     {label: 'R0', value: 'R0'},
+    {label: 'MDI-OFF', value: 'MDI-OFF'},
+    {label: 'MDI-ON', value: 'MDI-ON'},
     {label: 'K1i', value: 'K1i'},
-    {label: 'K0i', value: 'K0i'},
     {label: 'P1i', value: 'P1i'},
+    {label: 'MDI-OFFi', value: 'MDI-OFFi'},
+    {label: 'MDI-ONi', value: 'MDI-ONi'},
+    /*
     {label: 'R', value: 'R'},
     {label: 'Y', value: 'Y'},
     {label: 'B', value: 'B'},
     {label: 'N', value: 'N'},
+*/
   ]);
 
   // saad Comment Light Register Dropdowm
@@ -377,12 +380,12 @@ const ApiScreenA40 = ({route, navigation}) => {
     {
       id: 1,
       name: 'Discrepancy Recorded',
-      active: false,
+      active: true,
     },
     {
-      id: 10,
+      id: 2,
       name: 'Consumer Detail',
-      active: true,
+      active: false,
     },
 
     {
@@ -1563,7 +1566,7 @@ const ApiScreenA40 = ({route, navigation}) => {
             Cablesize: sizeofService,
             Sanctioned: contractLoad,
             Connected: connectedLoadKW,
-            //Current1: currentAmp,
+            Current1: currentAmp,
             Voltage1: voltageKV,
             Pctgerr: perError,
             Pwdfactor: powerFactor,
@@ -1579,6 +1582,7 @@ const ApiScreenA40 = ({route, navigation}) => {
             Standbygen: checkBoxList[2].checkVal,
             Eikperm: checkBoxList[3].checkVal,
             Energymtr: checkBoxList[4].checkVal,
+            Osdevice: powerKENo,
           },
         ],
         SIR_Meter_SealSet: [
@@ -1664,7 +1668,7 @@ const ApiScreenA40 = ({route, navigation}) => {
     getUserCurrentLocation();
     console.log('data.Sirnr: ' + data.Sirnr);
     console.log('data.Vertrag: ' + data.Vertrag);
-    console.log('data.CONNECTED_LOAD: ' + data.CONNECTED_LOAD);
+    console.log('data.ConnectedLoad: ' + data.ConnectedLoad);
     console.log('data.Ibc: ' + data.Ibc);
     setSIR(data.Sirnr);
     setSIRIMAGE(data.Sirnr + 'IMAGE');
@@ -1677,8 +1681,6 @@ const ApiScreenA40 = ({route, navigation}) => {
     setReviewRemarks(data.REMARKS);
     setCELL_NUMBER(data.CELL_NUMBER);
 
-    setSirDate(Moment().format('DD.MM.YYYY'));
-    setSirTime(Moment().format('hh:mm:ss'));
     setAssigndate(Moment(data.Erdat, 'YYYYMMDD').format('DD.MM.YYYY'));
 
     AsyncStorage.getItem(data.Sirnr + 'IMAGE').then(items => {
@@ -1724,8 +1726,8 @@ const ApiScreenA40 = ({route, navigation}) => {
           console.log('*******item.Discrepancyitems');
           console.log(item.Discrepancyitems);
 
-          if (item.CONNECTED_LOAD != undefined)
-            setConnectedLoad(item.CONNECTED_LOAD);
+          if (item.ConnectedLoad != undefined)
+            setConnectedLoad(item.ConnectedLoad);
 
           if (item.NAME != undefined) setNAME(item.NAME);
           if (item.ADDRESS != undefined) setADDRESS(item.ADDRESS);
@@ -1751,6 +1753,11 @@ const ApiScreenA40 = ({route, navigation}) => {
 
           //setIndustryType(item.IndustryType);
           //setTariff(item.Tariff);
+
+          if (item.SIRDate != undefined) {
+            setSirDate(moment().format('DD.MM.YYYY'));
+            setSirTime(moment().format('hh:mm:ss'));
+          }
 
           if (item.Tariff != undefined) setValueTarif(item.Tariff);
           if (item.PremiseType != undefined)
@@ -2619,6 +2626,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                         <DataTable.Row style={styles.databeBox} key={i}>
                           <View style={{flex: 2}}>
                             <TextInput
+                              editable={false}
                               style={styles.input}
                               onChangeText={t => updateDiscrepancy(t, i)}
                               placeholder="Please Enter"
@@ -2630,6 +2638,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                           </View>
                           <View style={{flex: 4}}>
                             <TextInput
+                              editable={false}
                               style={styles.input}
                               onChangeText={t => updateTicket(t, i)}
                               placeholder="Please Enter"
@@ -2640,6 +2649,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                           </View>
                           <View style={{flex: 4}}>
                             <TextInput
+                              editable={false}
                               style={styles.input}
                               onChangeText={t => updateDescription(t, i)}
                               placeholder="Please Enter"
@@ -2650,6 +2660,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                           </View>
                           <View style={{flex: 2}}>
                             <TextInput
+                              editable={false}
                               style={styles.input}
                               onChangeText={t => updatePriority(t, i)}
                               placeholder="Please Enter"
@@ -5311,7 +5322,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                               placeholderTextColor="black"
                               style={{
                                 height: 150,
-                                width: '100%',
+                                width: '120%',
                                 borderWidth: 0.75,
                                 textAlign: 'left',
                                 textAlignVertical: 'top',
@@ -6787,6 +6798,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                         justifyContent: 'space-between',
                       }}>
                       <TouchableOpacity
+                        disabled={!isEditable}
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
@@ -6813,6 +6825,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                         </LinearGradient>
                       </TouchableOpacity>
                       <TouchableOpacity
+                        disabled={!isEditable}
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
