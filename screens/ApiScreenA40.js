@@ -861,14 +861,13 @@ const ApiScreenA40 = ({route, navigation}) => {
     height: 50,
   };
   const chooseFile = type => {
-    let options = {
-      mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
-    };
-
-    launchImageLibrary(options, response => {
+    ImagePicker.openPicker({
+      width: 700,
+      height: 700,
+      cropping: true,
+      includeBase64: true,
+      compressImageQuality: 1,
+    }).then(response => {
       console.log('Response = ', response);
 
       if (response.didCancel) {
@@ -1465,9 +1464,9 @@ const ApiScreenA40 = ({route, navigation}) => {
       });
   };
 
-  const PostSIRSimultaneous = () => {
+  const PostSIRSimultaneous = connectionType => {
     console.log('**************************************************');
-    console.log('PostSIRSimultaneous');
+    console.log('Post SIR Simultaneous');
     console.log('**************************************************');
 
     /*
@@ -1508,7 +1507,7 @@ const ApiScreenA40 = ({route, navigation}) => {
     console.log(descripancylist);
 
     let NOTICE_SIGN = consumerRefuseYNData + '/' + consumerSignData;
-    console.log('**** PostSIRSimultaneous ***Started***');
+    console.log('**** Post SIR Simultaneous ***Started***');
 
     console.log('consumerStatus: ' + consumerStatus);
     console.log('serviceType: ' + serviceType);
@@ -1545,9 +1544,9 @@ const ApiScreenA40 = ({route, navigation}) => {
         DISC_REMARKS: consumerRemarks,
         SIR_REMARKS: discrepancyfindingsRemarks,
         METER_REMARKS: powerMeterRemarks,
-
         NAVAPPLIANCES: appliancelistData,
         NAVSIRITEMS: descripancylistData,
+        CON_SRC: connectionType,
         NAVMETER: [
           {
             SIRNR: data.Sirnr,
@@ -1601,7 +1600,7 @@ const ApiScreenA40 = ({route, navigation}) => {
     })
       .then(res => {
         console.log(
-          '******************PostSIRSimultaneous UPDATED*********************************',
+          '******************Post SIR Simultaneous UPDATED*********************************',
         );
         console.log('res.data.d.Result------' + res.data.d.Result_Appliances);
         PostSIRImage();
@@ -1619,7 +1618,7 @@ const ApiScreenA40 = ({route, navigation}) => {
         setSuccessModalVisible(!isSuccessModalVisible);
       })
       .catch(error => {
-        console.error('PostSIRSimultaneous:error: ' + error);
+        console.error('Post SIR Simultaneous:error: ' + error);
       });
   };
 
@@ -7150,7 +7149,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                     NetInfo.fetch().then(state => {
                       if (state.isConnected) {
                         console.log(' **** You are online! ******** ');
-                        PostSIRSimultaneous();
+                        PostSIRSimultaneous(state.type);
                       } else {
                         Alert.alert('You are offline!');
                         return;

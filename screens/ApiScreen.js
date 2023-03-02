@@ -745,7 +745,7 @@ const ApiScreen = ({route, navigation}) => {
     StoreInDeviceImagesConsumer(isPost);
   };
 
-  const PostSIRSimultaneous = () => {
+  const PostSIRSimultaneous = connectionType => {
     if (latitude.toString() == '') {
       alert('Please On GPS Location');
       return false;
@@ -815,6 +815,7 @@ const ApiScreen = ({route, navigation}) => {
         NAVAPPLIANCES: appliancelistData,
         NAVSIRITEMS: descripancylistData,
         PHASE: valueOnsitePhase,
+        CON_SRC: connectionType,
         NAVMETER: [
           {
             SIRNR: data.Sirnr,
@@ -1132,10 +1133,11 @@ const ApiScreen = ({route, navigation}) => {
 
   const chooseFile = type => {
     ImagePicker.openPicker({
-      width: 300,
-      height: 550,
+      width: 700,
+      height: 700,
       cropping: true,
       includeBase64: true,
+      compressImageQuality: 1,
     }).then(response => {
       console.log('Response = ', response);
 
@@ -5140,12 +5142,11 @@ const ApiScreen = ({route, navigation}) => {
                     //PostTestSIRImage();
 
                     NetInfo.fetch().then(state => {
-                      console.log('Connection type', state.type);
-                      return;
+                      //console.log('Connection type', state.type);
 
                       if (state.isConnected) {
                         console.log(' **** You are online! ******** ');
-                        PostSIRSimultaneous();
+                        PostSIRSimultaneous(state.type);
                       } else {
                         Alert.alert('You are offline!');
                         return;

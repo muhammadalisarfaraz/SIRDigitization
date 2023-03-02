@@ -641,14 +641,13 @@ const ApiScreenB40 = ({route, navigation}) => {
   };
 
   const chooseFile = type => {
-    let options = {
-      mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
-    };
-
-    launchImageLibrary(options, response => {
+    ImagePicker.openPicker({
+      width: 700,
+      height: 700,
+      cropping: true,
+      includeBase64: true,
+      compressImageQuality: 1,
+    }).then(response => {
       console.log('Response = ', response);
 
       if (response.didCancel) {
@@ -1329,7 +1328,7 @@ const ApiScreenB40 = ({route, navigation}) => {
         alert('Post Consumer Image Data: ' + error);
       });
   };
-  const PostSIRSimultaneous = () => {
+  const PostSIRSimultaneous = connectionType => {
     /*
     var filterData = onsitemeter.filter(item => {
       console.log(item);
@@ -1410,6 +1409,7 @@ const ApiScreenB40 = ({route, navigation}) => {
         METER_REMARKS: powerMeterRemarks,
         NAVAPPLIANCES: appliancelistData,
         NAVSIRITEMS: descripancylistData,
+        CON_SRC: connectionType,
         NAVMETER: [
           {
             SIRNR: data.Sirnr,
@@ -6408,7 +6408,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                     NetInfo.fetch().then(state => {
                       if (state.isConnected) {
                         console.log(' **** You are online! ******** ');
-                        PostSIRSimultaneous();
+                        PostSIRSimultaneous(state.type);
                       } else {
                         Alert.alert('You are offline!');
                         return;
