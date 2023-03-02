@@ -38,6 +38,11 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
   const [refresh, setRefresh] = useState(false);
   const [pendingOrders, setPendingOrders] = useState([]);
   const [user, setUser] = useState('');
+
+  const [ORDCount, setORDCount] = useState(0);
+  const [B40Count, setB40Count] = useState(0);
+  const [A40Count, setA40Count] = useState(0);
+
   useEffect(() => {
     console.log('test');
     //  getPendingOrders();
@@ -82,6 +87,10 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
           return item.Random == '' && item.Status == 'Post';
         });
 
+        setORDCount(data.filter(x => x.SirFormat == 'ORD').length);
+        setB40Count(data.filter(x => x.SirFormat == 'B40').length);
+        setA40Count(data.filter(x => x.SirFormat == 'A40').length);
+
         data = data.sort((a, b) => a.MRU - b.MRU);
 
         setPendingOrders(data);
@@ -114,31 +123,28 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
           }}>
           <View style={styles.dashboad}>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
-              500
+              {ORDCount}
             </Text>
-            <Text
-              style={{fontSize: 14, fontWeight: 'normal', color: '#1565C0'}}>
-              Residential
+            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+              Ordinary
             </Text>
           </View>
 
           <View style={styles.dashboad}>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
-              200
+              {B40Count}
             </Text>
-            <Text
-              style={{fontSize: 14, fontWeight: 'normal', color: '#1565C0'}}>
-              Commercial
+            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+              Below 40
             </Text>
           </View>
 
           <View style={styles.dashboad}>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
-              300
+              {A40Count}
             </Text>
-            <Text
-              style={{fontSize: 14, fontWeight: 'normal', color: '#1565C0'}}>
-              Industrial
+            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+              Above 40
             </Text>
           </View>
         </View>
