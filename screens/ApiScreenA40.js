@@ -1248,6 +1248,7 @@ const ApiScreenA40 = ({route, navigation}) => {
           data1[index].Vertrag = data.Vertrag;
           data1[index].AccountNo = accountno;
           data1[index].Ibc = data.Ibc;
+          data1[index].MRU = data.MRU;
 
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
         }
@@ -1275,6 +1276,7 @@ const ApiScreenA40 = ({route, navigation}) => {
       Ibc: data.Ibc,
       CELL_NUMBER: data.CELL_NUMBER,
       TARIFF: data.TARIFF,
+      MRU: data.MRU,
 
       ConsumerStatus: consumerStatus,
       IsConsumerStatus: isConsumerStatus,

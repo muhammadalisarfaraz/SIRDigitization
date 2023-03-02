@@ -83,7 +83,7 @@ const HomeScreen = ({navigation}) => {
           return item.Random == '' && item.Status == '';
         });
 
-        data = data.sort((a, b) => a.Erdat - b.Erdat);
+        data = data.sort((a, b) => a.MRU - b.MRU);
 
         setPendingOrders(data);
         settemptableData(data);

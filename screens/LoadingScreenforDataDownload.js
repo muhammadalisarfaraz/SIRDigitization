@@ -371,6 +371,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
                 PowerMeter: [],
                 LightMeter: [],
                 Status: '',
+                MRU: parent.MRU,
               });
 
               data.push({
@@ -394,6 +395,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
                 CONSUMER_NO: parent.CONSUMER_NO,
                 CELL_NUMBER: parent.CELL_NUMBER,
                 Ibc: ibc,
+                MRU: parent.MRU,
               });
 
               getSystemMeter(parent.Vertrag);

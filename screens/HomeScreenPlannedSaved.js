@@ -82,7 +82,7 @@ const HomeScreenPlannedSaved = ({navigation}) => {
           return item.Random == '' && item.Status == 'Save';
         });
 
-        data = data.sort((a, b) => a.Erdat - b.Erdat);
+        data = data.sort((a, b) => a.MRU - b.MRU);
 
         setPendingOrders(data);
         settemptableData(data);

@@ -1112,6 +1112,7 @@ const ApiScreenB40 = ({route, navigation}) => {
           data1[index].Vertrag = data.Vertrag;
           data1[index].AccountNo = accountno;
           data1[index].Ibc = data.Ibc;
+          data1[index].MRU = data.MRU;
 
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
         }
@@ -1126,6 +1127,7 @@ const ApiScreenB40 = ({route, navigation}) => {
       SIRDate: sirdate,
       Sirnr: SIR,
 
+      MRU: data.MRU,
       Vertrag: data.Vertrag,
       Vkont: data.Vkont,
       Erdat: data.Erdat,

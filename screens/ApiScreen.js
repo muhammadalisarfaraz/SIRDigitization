@@ -651,6 +651,7 @@ const ApiScreen = ({route, navigation}) => {
           data1[index].Vertrag = data.Vertrag;
           //data1[index].AccountNo = accountno;
           data1[index].Ibc = data.Ibc;
+          data1[index].MRU = data.MRU;
 
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
         }
@@ -674,6 +675,7 @@ const ApiScreen = ({route, navigation}) => {
       CLUSTER: data.CLUSTER,
       CELL_NUMBER: data.CELL_NUMBER,
       TARIFF: data.TARIFF,
+      MRU: data.MRU,
 
       SIRTime: sirtime,
       SIRDate: sirdate,
@@ -1404,6 +1406,7 @@ const ApiScreen = ({route, navigation}) => {
     console.log('data.Vertrag: ' + data.Vertrag);
     console.log('data.CONSUMER_NO: ' + data.CONSUMER_NO);
     console.log('data.Status: ' + data.Status);
+    console.log('data.MRU ' + data.MRU);
 
     if (data.Status != 'Post') {
       setIsEditable(true);

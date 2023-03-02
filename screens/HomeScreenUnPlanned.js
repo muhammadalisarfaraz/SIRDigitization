@@ -243,6 +243,8 @@ const HomeScreen = ({navigation}) => {
                 console.log(
                   'contract: ' + contract + ' Anlage: ' + singleResult.Anlage,
                 );
+                console.log('singleResult.ABLEINH: ' + singleResult.ABLEINH);
+                CustomData[0].MRU = singleResult.ABLEINH;
               });
             }
           })
