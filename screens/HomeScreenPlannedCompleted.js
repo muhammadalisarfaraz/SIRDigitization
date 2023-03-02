@@ -82,6 +82,8 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
           return item.Random == '' && item.Status == 'Post';
         });
 
+        data = data.sort((a, b) => a.Erdat - b.Erdat);
+
         setPendingOrders(data);
         settemptableData(data);
         setLoader(false);

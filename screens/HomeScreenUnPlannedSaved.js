@@ -82,6 +82,8 @@ const HomeScreenUnPlannedSaved = ({navigation}) => {
           return item.Random != '' && item.Status == 'Save';
         });
 
+        data = data.sort((a, b) => a.Erdat - b.Erdat);
+
         setPendingOrders(data);
         settemptableData(data);
         setLoader(false);

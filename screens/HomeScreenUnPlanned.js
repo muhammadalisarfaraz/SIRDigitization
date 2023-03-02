@@ -180,6 +180,9 @@ const HomeScreen = ({navigation}) => {
         data = data.filter(item => {
           return item.Random != '' && item.Status == '';
         });
+
+        data = data.sort((a, b) => a.Erdat - b.Erdat);
+
         setPendingOrders(data);
         settemptableData(data);
         setLoader(false);

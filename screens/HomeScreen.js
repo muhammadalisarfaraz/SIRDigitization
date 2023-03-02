@@ -74,6 +74,7 @@ const HomeScreen = ({navigation}) => {
   const getApiData1 = async () => {
     console.log('get api data function');
     setLoader(true);
+
     try {
       // Saad Comment Loading PremiseType Data
       AsyncStorage.getItem('SIRDigitization').then(items => {
@@ -81,6 +82,9 @@ const HomeScreen = ({navigation}) => {
         data = data.filter(item => {
           return item.Random == '' && item.Status == '';
         });
+
+        data = data.sort((a, b) => a.Erdat - b.Erdat);
+
         setPendingOrders(data);
         settemptableData(data);
         setLoader(false);
