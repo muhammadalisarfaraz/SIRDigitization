@@ -264,24 +264,40 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [isSelecteditems, setIsSelecteditems] = useState('N');
 
   let onSelectedItemsChange = selectedItems => {
-    let localdata = [];
-    console.log('selectedItems:' + selectedItems);
+    let localdata = [],
+      localcompletedata = [];
+
     if (selectedItems.length > 5) {
       return;
     } else {
       setSelectedItems(selectedItems);
       setIsSelecteditems('Y');
 
-      //console.log('selectedItems: ' + selectedItems);
-
       selectedItems.filter(item => {
-        console.log('item:= ' + item);
         localdata.push({
           Sirnr: data.Sirnr,
           Discrepancy: item,
         });
       });
+
+      descripancyRecordedList.filter(item => {
+        localcompletedata.push({
+          Sirnr: data.Sirnr,
+          Discrepancy: item,
+        });
+      });
+
+      selectedItems.filter(item => {
+        localcompletedata.push({
+          Sirnr: data.Sirnr,
+          Discrepancy: item,
+        });
+      });
+
       setDescripancyList(localdata);
+      setCompleteDescripancyList(localcompletedata);
+
+      console.log(localcompletedata);
     }
   };
 
@@ -338,6 +354,8 @@ const ApiScreenB40 = ({route, navigation}) => {
   ]);
 
   const [apiRes, setApiRes] = useState([]);
+  const [descripancyRecordedList, setdescripancyRecordedList] = useState([]);
+
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
@@ -541,6 +559,7 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [itemsPremiseType, setItemsPremiseType] = useState([]);
 
   const [descripancylist, setDescripancyList] = useState([]);
+  const [completeDescripancyList, setCompleteDescripancyList] = useState([]);
   const [tableList, setTableList] = useState([]);
   const [appliancelist, setApplianceList] = useState([]);
 
@@ -1215,6 +1234,7 @@ const ApiScreenB40 = ({route, navigation}) => {
 
       isDiscrepancyitems: isSelecteditems,
       Discrepancyitems: selectedItems,
+      CompleteDescripancyDetail: completeDescripancyList,
 
       Result_Discrepancies: Result_Discrepancies,
       Result_Appliances: Result_Appliances,
@@ -1354,7 +1374,7 @@ const ApiScreenB40 = ({route, navigation}) => {
     const powermeterData = powermeter.length > 0 ? powermeter : [{}];
     const appliancelistData = appliancelist.length > 0 ? appliancelist : [{}];
     const descripancylistData =
-      descripancylist.length > 0 ? descripancylist : [{}];
+      completeDescripancyList.length > 0 ? completeDescripancyList : [{}];
 
     const valuePremiseTypeData =
       valuePremiseType != undefined ? valuePremiseType : '';
@@ -1576,8 +1596,8 @@ const ApiScreenB40 = ({route, navigation}) => {
           //setPowerFactor(item.PowerFactor);
 
           if (item.SIRDate != undefined) {
-            setSirDate(moment().format('DD.MM.YYYY'));
-            setSirTime(moment().format('hh:mm:ss'));
+            setSirDate(Moment().format('DD.MM.YYYY'));
+            setSirTime(Moment().format('hh:mm:ss'));
           }
 
           if (item.MeterTestingResultTC != undefined)
@@ -1665,6 +1685,8 @@ const ApiScreenB40 = ({route, navigation}) => {
             setApplianceList(item.Appliancelist);
           if (item.DescripancyDetail != undefined)
             setDescripancyList(item.DescripancyDetail);
+          if (item.CompleteDescripancyDetail != undefined)
+            setCompleteDescripancyList(item.CompleteDescripancyDetail);
         }
       });
     });
@@ -1683,10 +1705,17 @@ const ApiScreenB40 = ({route, navigation}) => {
     // Saad Comment Loading DISCREPANCY Data
     AsyncStorage.getItem('DISCREPANCY').then(items => {
       var localData = items ? JSON.parse(items) : [];
+      var descripancyRecordedArray = [];
       var count1 = 0;
       var filterData = localData.filter(item => {
         return item.SIR == data.Sirnr;
       });
+
+      filterData.filter(item => {
+        descripancyRecordedArray.push(item.Code);
+      });
+
+      setdescripancyRecordedList(descripancyRecordedArray);
       console.log('filterData:DISCREPANCY:length: ' + filterData.length);
       setApiRes(filterData);
     });

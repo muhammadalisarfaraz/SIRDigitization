@@ -195,24 +195,40 @@ const ApiScreen = ({route, navigation}) => {
   const [isSelecteditems, setIsSelecteditems] = useState('N');
 
   let onSelectedItemsChange = selectedItems => {
-    let localdata = [];
-    //console.log(selectedItems);
+    let localdata = [],
+      localcompletedata = [];
+
     if (selectedItems.length > 5) {
       return;
     } else {
       setSelectedItems(selectedItems);
       setIsSelecteditems('Y');
 
-      //console.log('selectedItems: ' + selectedItems);
-
       selectedItems.filter(item => {
-        //console.log('item:= ' + item);
         localdata.push({
           Sirnr: data.Sirnr,
           Discrepancy: item,
         });
       });
+
+      descripancyRecordedList.filter(item => {
+        localcompletedata.push({
+          Sirnr: data.Sirnr,
+          Discrepancy: item,
+        });
+      });
+
+      selectedItems.filter(item => {
+        localcompletedata.push({
+          Sirnr: data.Sirnr,
+          Discrepancy: item,
+        });
+      });
+
       setDescripancyList(localdata);
+      setCompleteDescripancyList(localcompletedata);
+
+      console.log(localcompletedata);
     }
   };
 
@@ -266,6 +282,8 @@ const ApiScreen = ({route, navigation}) => {
   ]);
 
   const [apiRes, setApiRes] = useState([]);
+  const [descripancyRecordedList, setdescripancyRecordedList] = useState([]);
+
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
@@ -732,6 +750,8 @@ const ApiScreen = ({route, navigation}) => {
       AssignTo: assignto,
       DiscrepancyRecord: apiRes,
       DescripancyDetail: descripancylist,
+      CompleteDescripancyDetail: completeDescripancyList,
+
       ApplianceDetail: tableList,
       Appliancelist: appliancelist,
 
@@ -753,11 +773,12 @@ const ApiScreen = ({route, navigation}) => {
       return false;
     }
     console.log('Post SIR Simultaneous called *** ');
+
     var filterData = descripancylist.filter(item => {
       console.log(item);
     });
 
-    if (descripancylist.length < 1) {
+    if (completeDescripancyList.length < 1) {
       alert('atleast one discrepancy is mandatory');
       return false;
     }
@@ -766,10 +787,13 @@ const ApiScreen = ({route, navigation}) => {
       alert('atleast one SIR image is mandatory');
       return false;
     }
+
     const onsitemeterData = onsitemeter.length > 0 ? onsitemeter : [{}];
     const appliancelistData = appliancelist.length > 0 ? appliancelist : [{}];
+
     const descripancylistData =
-      descripancylist.length > 0 ? descripancylist : [{}];
+      completeDescripancyList.length > 0 ? completeDescripancyList : [{}];
+
     const valuePremiseTypeData =
       valuePremiseType != undefined ? valuePremiseType : '';
     const valueTarifData = valueTarif != undefined ? valueTarif : '';
@@ -825,6 +849,7 @@ const ApiScreen = ({route, navigation}) => {
             HERST_M1: onsitemake,
             ABRFAKT_M1: onsitemultiplyingFactor,
             BAUFORM_M1: onsitesecuritySlipNo,
+            MATNR_M1: onsitemeterConstant,
           },
         ],
         NAVREGISTER: onsitemeterData,
@@ -1537,6 +1562,8 @@ const ApiScreen = ({route, navigation}) => {
 
           setSelectedItems(item.Discrepancyitems);
           setDescripancyList(item.DescripancyDetail);
+          setCompleteDescripancyList(item.CompleteDescripancyDetail);
+
           setTableList(item.ApplianceDetail);
           setApplianceList(item.Appliancelist);
           setOnsiteMeter(item.OnsiteMeterDetail);
@@ -1600,10 +1627,17 @@ const ApiScreen = ({route, navigation}) => {
     // Saad Comment Loading DISCREPANCY Data
     AsyncStorage.getItem('DISCREPANCY').then(items => {
       var localData = items ? JSON.parse(items) : [];
+      var descripancyRecordedArray = [];
       var count1 = 0;
       var filterData = localData.filter(item => {
         return item.SIR == data.Sirnr;
       });
+
+      filterData.filter(item => {
+        descripancyRecordedArray.push(item.Code);
+      });
+
+      setdescripancyRecordedList(descripancyRecordedArray);
       console.log('filterData:DISCREPANCY:length: ' + filterData.length);
       setApiRes(filterData);
     });
@@ -1655,6 +1689,7 @@ const ApiScreen = ({route, navigation}) => {
   const [tableList, setTableList] = useState([]);
   const [appliancelist, setApplianceList] = useState([]);
   const [descripancylist, setDescripancyList] = useState([]);
+  const [completeDescripancyList, setCompleteDescripancyList] = useState([]);
 
   const [powerMeterRemarks, setPowerMeterRemarks] = useState('');
 

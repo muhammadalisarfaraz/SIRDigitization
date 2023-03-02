@@ -577,8 +577,8 @@ const LoadingScreenforDataDownload = ({navigation}) => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
             AppliancesData.push({
-              label: singleResult.Zzsiraname,
-              value: singleResult.Zzsiraname,
+              label: singleResult.Zzsiraname + ' ' + singleResult.RATING,
+              value: singleResult.Zzsiraname + ' ' + singleResult.RATING,
               RATING: singleResult.RATING,
             });
             count++;

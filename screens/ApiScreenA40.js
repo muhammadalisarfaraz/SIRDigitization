@@ -307,6 +307,7 @@ const ApiScreenA40 = ({route, navigation}) => {
   const [tableList, setTableList] = useState([]);
   const [appliancelist, setApplianceList] = useState([]);
   const [descripancylist, setDescripancyList] = useState([]);
+  const [completeDescripancyList, setCompleteDescripancyList] = useState([]);
 
   const deleteAppliance = (index, e) => {
     setTableList(tableList.filter((v, i) => i !== index));
@@ -355,24 +356,40 @@ const ApiScreenA40 = ({route, navigation}) => {
   };
 
   let onSelectedItemsChange = selectedItems => {
-    let localdata = [];
-    console.log('selectedItems:' + selectedItems);
+    let localdata = [],
+      localcompletedata = [];
+
     if (selectedItems.length > 5) {
       return;
     } else {
       setSelectedItems(selectedItems);
       setIsSelecteditems('Y');
 
-      //console.log('selectedItems: ' + selectedItems);
-
       selectedItems.filter(item => {
-        console.log('item:= ' + item);
         localdata.push({
           Sirnr: data.Sirnr,
           Discrepancy: item,
         });
       });
+
+      descripancyRecordedList.filter(item => {
+        localcompletedata.push({
+          Sirnr: data.Sirnr,
+          Discrepancy: item,
+        });
+      });
+
+      selectedItems.filter(item => {
+        localcompletedata.push({
+          Sirnr: data.Sirnr,
+          Discrepancy: item,
+        });
+      });
+
       setDescripancyList(localdata);
+      setCompleteDescripancyList(localcompletedata);
+
+      console.log(localcompletedata);
     }
   };
 
@@ -443,6 +460,8 @@ const ApiScreenA40 = ({route, navigation}) => {
   ]);
 
   const [apiRes, setApiRes] = useState([]);
+  const [descripancyRecordedList, setdescripancyRecordedList] = useState([]);
+
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
@@ -513,6 +532,10 @@ const ApiScreenA40 = ({route, navigation}) => {
 
   /* Testing By Time Power Method ------------ Start */
   const [currentAmp, setCurrentAmp] = useState('');
+  const [current1, setCurrent1] = useState('');
+  const [current2, setCurrent2] = useState('');
+  const [current3, setCurrent3] = useState('');
+
   const [voltageKV, setVoltageKV] = useState('');
   const [powerFactor, setPowerFactor] = useState('');
   const [kto, setKto] = useState('');
@@ -604,6 +627,10 @@ const ApiScreenA40 = ({route, navigation}) => {
   const [meterInstalledError, setMeterInstalledError] = useState('');
   const [meterInstalled1Error, setMeterInstalled1Error] = useState('');
   const [currentAmpError, setCurrentAmpError] = useState('');
+  const [current1Error, setCurrent1Error] = useState('');
+  const [current2Error, setCurrent2Error] = useState('');
+  const [current3Error, setCurrent3Error] = useState('');
+
   const [voltageKVError, setVoltageKVError] = useState('');
   const [powerFactorError, setPowerFactorError] = useState('');
   const [ktoError, setKtoError] = useState('');
@@ -1321,6 +1348,10 @@ const ApiScreenA40 = ({route, navigation}) => {
       MeterInstalled: meterInstalled,
       MeterInstalled1: meterInstalled1,
       CurrentAmp: currentAmp,
+      Current1: current1,
+      Current2: current2,
+      Current3: current3,
+
       VoltageKV: voltageKV,
       PowerFactor: powerFactor,
       Kto: kto,
@@ -1334,6 +1365,7 @@ const ApiScreenA40 = ({route, navigation}) => {
       Discrepancyitems: selectedItems,
       ApplianceDetail: tableList,
       Appliancelist: appliancelist,
+      CompleteDescripancyDetail: completeDescripancyList,
 
       CheckBoxList: checkBoxList,
       ConsumerName: consumerName,
@@ -1494,7 +1526,7 @@ const ApiScreenA40 = ({route, navigation}) => {
     const powermeterData = powermeter.length > 0 ? powermeter : [{}];
     const appliancelistData = appliancelist.length > 0 ? appliancelist : [{}];
     const descripancylistData =
-      descripancylist.length > 0 ? descripancylist : [{}];
+      completeDescripancyList.length > 0 ? completeDescripancyList : [{}];
 
     const valuePremiseTypeData =
       valuePremiseType != undefined ? valuePremiseType : '';
@@ -1507,6 +1539,9 @@ const ApiScreenA40 = ({route, navigation}) => {
     console.log(powermeter);
     console.log(appliancelist);
     console.log(descripancylist);
+    console.log(current1);
+    console.log(current2);
+    console.log(current3);
 
     let NOTICE_SIGN = consumerRefuseYNData + '/' + consumerSignData;
     console.log('**** Post SIR Simultaneous ***Started***');
@@ -1567,7 +1602,9 @@ const ApiScreenA40 = ({route, navigation}) => {
             Cablesize: sizeofService,
             Sanctioned: contractLoad,
             Connected: connectedLoadKW,
-            Current1: currentAmp,
+            Current1: current1,
+            Current2: current2,
+            Current3: current3,
             Voltage1: voltageKV,
             Pctgerr: perError,
             Pwdfactor: powerFactor,
@@ -1756,8 +1793,8 @@ const ApiScreenA40 = ({route, navigation}) => {
           //setTariff(item.Tariff);
 
           if (item.SIRDate != undefined) {
-            setSirDate(moment().format('DD.MM.YYYY'));
-            setSirTime(moment().format('hh:mm:ss'));
+            setSirDate(Moment().format('DD.MM.YYYY'));
+            setSirTime(Moment().format('hh:mm:ss'));
           }
 
           if (item.Tariff != undefined) setValueTarif(item.Tariff);
@@ -1778,7 +1815,12 @@ const ApiScreenA40 = ({route, navigation}) => {
             setMeterInstalled(item.MeterInstalled);
           if (item.MeterInstalled1 != undefined)
             setMeterInstalled1(item.MeterInstalled1);
+
           if (item.CurrentAmp != undefined) setCurrentAmp(item.CurrentAmp);
+          if (item.Current1 != undefined) setCurrent1(item.Current1);
+          if (item.Current2 != undefined) setCurrent2(item.Current2);
+          if (item.Current3 != undefined) setCurrent3(item.Current3);
+
           if (item.VoltageKV != undefined) setVoltageKV(item.VoltageKV);
           if (item.PowerFactor != undefined) setPowerFactor(item.PowerFactor);
           if (item.Kto != undefined) setKto(item.Kto);
@@ -1862,21 +1904,30 @@ const ApiScreenA40 = ({route, navigation}) => {
             setApplianceList(item.Appliancelist);
           if (item.DescripancyDetail != undefined)
             setDescripancyList(item.DescripancyDetail);
+
+          if (item.CompleteDescripancyDetail != undefined)
+            setCompleteDescripancyList(item.CompleteDescripancyDetail);
         }
       });
     });
-    /*
+
     // Saad Comment Loading DISCREPANCY Data
     AsyncStorage.getItem('DISCREPANCY').then(items => {
       var localData = items ? JSON.parse(items) : [];
+      var descripancyRecordedArray = [];
       var count1 = 0;
       var filterData = localData.filter(item => {
         return item.SIR == data.Sirnr;
       });
+
+      filterData.filter(item => {
+        descripancyRecordedArray.push(item.Code);
+      });
+
+      setdescripancyRecordedList(descripancyRecordedArray);
       console.log('filterData:DISCREPANCY:length: ' + filterData.length);
       setApiRes(filterData);
     });
-*/
 
     // Saad Comment Loading Tarif Data
     AsyncStorage.getItem('Tariff').then(items => {
@@ -4473,10 +4524,9 @@ const ApiScreenA40 = ({route, navigation}) => {
                           <View style={{flex: 0.9, alignItems: 'flex-start'}}>
                             <Text
                               style={{fontWeight: 'normal', color: 'black'}}>
-                              Current (AMP){' '}
+                              Current (R){' '}
                             </Text>
                           </View>
-
                           <View
                             style={{
                               flexDirection: 'row',
@@ -4491,16 +4541,16 @@ const ApiScreenA40 = ({route, navigation}) => {
                                 marginTop: -10,
                               }}>
                               <TextInput
-                                placeholder={'Current (AMP)'}
-                                keyboardType={'email-address'}
+                                placeholder={'Current (R)'}
+                                //keyboardType={'email-address'}
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
-                                  setCurrentAmp(text);
-                                  if (validate(text, 5)) {
-                                    setCurrentAmpError(
-                                      'Input must be at least 5 characters long.',
+                                  setCurrent1(text);
+                                  if (validate(text, 2)) {
+                                    setCurrent1Error(
+                                      'Input must be at least 2 characters long.',
                                     );
-                                  } else setCurrentAmpError('');
+                                  } else setCurrent1Error('');
                                 }}
                                 style={{
                                   //height: 24,
@@ -4510,17 +4560,134 @@ const ApiScreenA40 = ({route, navigation}) => {
                                   textAlignVertical: 'top',
                                   color: 'black',
                                 }}
-                                value={currentAmp}
+                                value={current1}
                                 editable={isEditable}
                               />
-                              {currentAmpError !== '' && (
+                              {current1Error !== '' && (
                                 <Text style={styles.error}>
-                                  {currentAmpError}
+                                  {current1Error}
                                 </Text>
                               )}
                             </View>
                           </View>
                         </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
+                              Current (Y){' '}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'Current (Y)'}
+                                //keyboardType={'email-address'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setCurrent2(text);
+                                  if (validate(text, 2)) {
+                                    setCurrent2Error(
+                                      'Input must be at least 2 characters long.',
+                                    );
+                                  } else setCurrent2Error('');
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}
+                                value={current2}
+                                editable={isEditable}
+                              />
+                              {current2Error !== '' && (
+                                <Text style={styles.error}>
+                                  {current2Error}
+                                </Text>
+                              )}
+                            </View>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flex: 2,
+                            width: '96%',
+                            marginTop: 20,
+                          }}>
+                          <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                            <Text
+                              style={{fontWeight: 'normal', color: 'black'}}>
+                              Current (B){' '}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flex: 1,
+                              width: '88%',
+                              alignSelf: 'center',
+                            }}>
+                            <View
+                              style={{
+                                flex: 2,
+                                alignItems: 'flex-start',
+                                marginTop: -10,
+                              }}>
+                              <TextInput
+                                placeholder={'Current (B)'}
+                                //keyboardType={'email-address'}
+                                placeholderTextColor="grey"
+                                onChangeText={text => {
+                                  setCurrent3(text);
+                                  if (validate(text, 2)) {
+                                    setCurrent3Error(
+                                      'Input must be at least 2 characters long.',
+                                    );
+                                  } else setCurrent3Error('');
+                                }}
+                                style={{
+                                  //height: 24,
+                                  width: '100%',
+                                  borderBottomWidth: 0.5,
+                                  textAlign: 'left',
+                                  textAlignVertical: 'top',
+                                  color: 'black',
+                                }}
+                                value={current3}
+                                editable={isEditable}
+                              />
+                              {current3Error !== '' && (
+                                <Text style={styles.error}>
+                                  {current3Error}
+                                </Text>
+                              )}
+                            </View>
+                          </View>
+                        </View>
+
                         <View
                           style={{
                             flexDirection: 'row',
