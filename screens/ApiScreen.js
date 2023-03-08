@@ -198,7 +198,7 @@ const ApiScreen = ({route, navigation}) => {
     let localdata = [],
       localcompletedata = [];
 
-    if (selectedItems.length > 5) {
+    if (selectedItems.length > 10) {
       return;
     } else {
       setSelectedItems(selectedItems);
@@ -579,7 +579,7 @@ const ApiScreen = ({route, navigation}) => {
           AsyncStorage.setItem('SIRDigitizationLocation', JSON.stringify([]));
           navigation.reset({
             index: 0,
-            routes: [{name: 'HomeScreen'}],
+            routes: [{name: 'SupportScreen'}],
           });
         })
         .catch(error => {
@@ -625,7 +625,7 @@ const ApiScreen = ({route, navigation}) => {
     } else {
       navigation.reset({
         index: 0,
-        routes: [{name: 'HomeScreen'}],
+        routes: [{name: 'SupportScreen'}],
       });
     }
     setAuthModalVisible(!isAuthModalVisible);
@@ -774,7 +774,7 @@ const ApiScreen = ({route, navigation}) => {
     }
     console.log('Post SIR Simultaneous called *** ');
 
-    var filterData = descripancylist.filter(item => {
+    var filterData = onsitemeter.filter(item => {
       console.log(item);
     });
 
@@ -895,6 +895,8 @@ const ApiScreen = ({route, navigation}) => {
         //GetImageAPIToken();
       })
       .catch(error => {
+        alert(error);
+        isEditable(true);
         console.error('Post SIR Simultaneous:error: ' + error);
       });
   };
@@ -1562,7 +1564,8 @@ const ApiScreen = ({route, navigation}) => {
 
           setSelectedItems(item.Discrepancyitems);
           setDescripancyList(item.DescripancyDetail);
-          setCompleteDescripancyList(item.CompleteDescripancyDetail);
+          if (item.CompleteDescripancyDetail != undefined)
+            setCompleteDescripancyList(item.CompleteDescripancyDetail);
 
           setTableList(item.ApplianceDetail);
           setApplianceList(item.Appliancelist);
@@ -1577,6 +1580,7 @@ const ApiScreen = ({route, navigation}) => {
 
     // Saad Comment Loading Meter Detail - System
     AsyncStorage.getItem('SystemMeter').then(items => {
+      var systemLocalData = [];
       var localData = items ? JSON.parse(items) : [];
       var filterData = localData.filter(item => {
         if (item.CONTRACT == data.Vertrag) {
@@ -1584,8 +1588,13 @@ const ApiScreen = ({route, navigation}) => {
           setSystemMake(item.Herst);
           setSystemVolts(item.Voltage);
           setSystemPhase(item.Phase);
+          systemLocalData.push({
+            Kennziff: item.Kennziff,
+            VZwstand: item.VZwstand,
+          });
         }
       });
+      setSystemMeter(systemLocalData);
     });
 
     // Saad Comment Loading Meter Detail - Onsite
@@ -1759,6 +1768,13 @@ const ApiScreen = ({route, navigation}) => {
   const onAddmoreOnsite = () => {
     console.log('valuePowerRegister:' + valueOnsiteRegister);
     console.log('onsitemeterreading:' + onsitemeterreading);
+    console.log('onsitemeterNo ' + onsitemeterNo);
+
+    if (onsitemeterNo == '' || onsitemeterNo == undefined) {
+      alert('Please provide Meter No first');
+      return false;
+    }
+
     setOnsiteMeter([
       ...onsitemeter,
       {
@@ -2039,133 +2055,26 @@ const ApiScreen = ({route, navigation}) => {
               keyboardShouldPersistTaps="handled"
               showsHorizontalScrollIndicator={false}>
               <View style={styles.container1}>
-                {/* <Animatable.View animation="fadeInRightBig"> */}
-                {/* <View style={styles.footer}>
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                  <View
-                    style={{
-                      // flex: 0.45,
-                      paddingLeft: 10,
-                      //   flexDirection: 'row',
-                      //  justifyContent: 'space-between',
-                      paddingVertical: 10,
-                    }}>
-                    <Text
-                      style={{
-                        // marginLeft: 5,
-                        fontSize: 13,
-                        // fontWeight: 'bold',
-                        color: 'black', //'#FFFFFF',
-                        //     marginBottom: 4,
-                      }}>
-                      {'SIR No: 900000000335'}
-                    </Text>
-
-                    <Text
-                      style={{
-                        marginTop: 4,
-                        color: 'black',
-                        fontSize: 13,
-                      }}>
-                      {'Consumer No: LA414951'}
-                    </Text>
-
-                    <Text
-                      style={{
-                        marginTop: 4,
-                        fontSize: 13,
-                        color: 'black',
-                      }}>
-                      {'Name: Syed M. Shoaib'}
-                    </Text>
-
-                    <Text
-                      style={{
-                        marginTop: 4,
-                        fontSize: 13,
-                        color: 'black',
-                      }}>
-                      {
-                        'Address: Flat No. D-8, Anarkali Flat, Block-16, F.B.Area'
-                      }
-                    </Text>
-
-                    <Text
-                      style={{
-                        marginTop: 4,
-                        fontSize: 13,
-                        color: 'black',
-                      }}>
-                      {'Assign Date: 20.02.2022'}
-                    </Text>
-                    <Text
-                      style={{
-                        marginTop: 4,
-                        fontSize: 13,
-                        color: 'black',
-                      }}>
-                      {'Assign To: 80012790 - Syed M. Shoaib'}
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={{paddingTop: 20}}></View>
-                <View style={{padding: 5, marginBottom: 10}}></View>
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                  <View
-                    style={{
-                      // flex: 0.45,
-                      paddingTop: 5,
-                      //   flexDirection: 'row',
-                      //  justifyContent: 'space-between',
-                      paddingVertical: 10,
-                    }}>
-                    <Text
-                      style={{
-                        marginLeft: 200,
-                        marginTop: -89,
-                        fontSize: 13,
-                        // fontWeight: 'bold',
-                        color: 'black', //'#FFFFFF',
-                        //     marginBottom: 4,
-                      }}>
-                      {'Cluster / IBC: C1 / F.B.Area'}
-                    </Text>
-
-                    <Text
-                      style={{
-                        marginLeft: 200,
-                        marginTop: 4,
-                        color: 'black',
-                        fontSize: 13,
-                      }}>
-                      {'Account No: 400001061656'}
-                    </Text>
-                  </View>
-                </View>
-              </View> */}
-                {/* </Animatable.View> */}
-
                 <View style={styles.mainbox}>
                   <Card>
                     <DataTable>
                       <DataTable.Header style={styles.databeHeader}>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
+                        <DataTable.Title>
                           <Text style={{flex: 2, color: 'white', fontSize: 15}}>
                             Discrepancy
                           </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 4, color: 'black'}}>
+                        <DataTable.Title>
                           <Text style={{flex: 2, color: 'white', fontSize: 15}}>
                             Ticket
                           </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 4, color: 'black'}}>
+                        <DataTable.Title>
                           <Text style={{flex: 2, color: 'white', fontSize: 15}}>
                             Description
                           </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
+                        <DataTable.Title>
                           <Text style={{flex: 2, color: 'white', fontSize: 15}}>
                             Priority
                           </Text>
@@ -3018,23 +2927,27 @@ const ApiScreen = ({route, navigation}) => {
               <View style={styles.container1}>
                 <View style={styles.mainbox}>
                   <Card>
-                    <DataTable>
-                      <DataTable.Header
-                        style={[
-                          styles.databeHeader,
-                          {backgroundColor: 'white'},
-                        ]}>
-                        <DataTable.Title style={{flex: 20, color: 'black'}}>
-                          Load Detail
+                    <DataTable style={{flex: 1}}>
+                      <DataTable.Header style={[styles.databeHeader]}>
+                        <DataTable.Title>
+                          <Text style={{flex: 1, color: 'white', fontSize: 15}}>
+                            Load Detail
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Quantity
+                        <DataTable.Title>
+                          <Text style={{flex: 1, color: 'white', fontSize: 15}}>
+                            Quantity
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Rating (W)
+                        <DataTable.Title>
+                          <Text style={{flex: 1, color: 'white', fontSize: 15}}>
+                            Rating (W)
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Total Watts
+                        <DataTable.Title>
+                          <Text style={{flex: 1, color: 'white', fontSize: 15}}>
+                            Total Watts
+                          </Text>
                         </DataTable.Title>
                       </DataTable.Header>
                       {tableList.map((l, i) => (
@@ -5173,6 +5086,7 @@ const ApiScreen = ({route, navigation}) => {
               <Button
                 title=" Yes "
                 color="green"
+                disabled={!isEditable}
                 onPress={() => {
                   if (buttonType == 'Post') {
                     //PostRoshniBaji();
@@ -5185,6 +5099,7 @@ const ApiScreen = ({route, navigation}) => {
                       if (state.isConnected) {
                         console.log(' **** You are online! ******** ');
                         PostSIRSimultaneous(state.type);
+                        setIsEditable(false);
                       } else {
                         Alert.alert('You are offline!');
                         return;
@@ -5342,6 +5257,7 @@ const ApiScreen = ({route, navigation}) => {
                 color="red"
                 onPress={() => {
                   setAuthModalVisible(!isAuthModalVisible);
+                  setIsEditable(true);
                   // setError('');
                   // navigation.goBack();
                 }}
@@ -5491,6 +5407,7 @@ const styles = StyleSheet.create({
     color: 'green',
     backgroundColor: '#1565C0',
     color: 'pink',
+    width: '100%',
   },
   input: {
     width: 80,

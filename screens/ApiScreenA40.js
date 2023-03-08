@@ -359,7 +359,7 @@ const ApiScreenA40 = ({route, navigation}) => {
     let localdata = [],
       localcompletedata = [];
 
-    if (selectedItems.length > 5) {
+    if (selectedItems.length > 10) {
       return;
     } else {
       setSelectedItems(selectedItems);
@@ -916,10 +916,10 @@ const ApiScreenA40 = ({route, navigation}) => {
       var Allimages = images;
       setFilePath([
         {
-          uri: response.assets[0].uri,
-          url: response.assets[0].uri,
-          fileName: response.assets[0].fileName,
-          base64: response.assets[0].base64,
+          uri: response.path,
+          url: response.path,
+          fileName: 'gallery.jpg',
+          base64: response.data,
           Status: 'Pending',
           RoshniBajiWebID: '',
         },
@@ -928,10 +928,10 @@ const ApiScreenA40 = ({route, navigation}) => {
 
       setImages([
         {
-          uri: response.assets[0].uri,
-          url: response.assets[0].uri,
-          fileName: response.assets[0].fileName,
-          base64: response.assets[0].base64,
+          uri: response.path,
+          url: response.path,
+          fileName: 'gallery.jpg',
+          base64: response.data,
           Status: 'Pending',
           RoshniBajiWebID: '',
         },
@@ -1181,7 +1181,7 @@ const ApiScreenA40 = ({route, navigation}) => {
           AsyncStorage.setItem('SIRDigitizationLocation', JSON.stringify([]));
           navigation.reset({
             index: 0,
-            routes: [{name: 'HomeScreen'}],
+            routes: [{name: 'SupportScreen'}],
           });
         })
         .catch(error => {
@@ -1227,7 +1227,7 @@ const ApiScreenA40 = ({route, navigation}) => {
     } else {
       navigation.reset({
         index: 0,
-        routes: [{name: 'HomeScreen'}],
+        routes: [{name: 'SupportScreen'}],
       });
     }
     setAuthModalVisible(!isAuthModalVisible);
@@ -1688,6 +1688,12 @@ const ApiScreenA40 = ({route, navigation}) => {
   const onAddmorePower = () => {
     console.log('powerregister:' + powerregister);
     console.log('powermeterreading:' + powermeterreading);
+
+    if (powerKENo == '' || powerKENo == undefined) {
+      alert('Please provide Meter No first');
+      return false;
+    }
+
     setPowerMeter([
       ...powermeter,
       {
@@ -2660,17 +2666,25 @@ const ApiScreenA40 = ({route, navigation}) => {
                 <Card>
                   <DataTable>
                     <DataTable.Header style={styles.databeHeader}>
-                      <DataTable.Title style={{flex: 2, color: 'black'}}>
-                        Discrepancy
+                      <DataTable.Title>
+                        <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                          Discrepancy
+                        </Text>
                       </DataTable.Title>
-                      <DataTable.Title style={{flex: 4, color: 'black'}}>
-                        Ticket
+                      <DataTable.Title>
+                        <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                          Ticket
+                        </Text>
                       </DataTable.Title>
-                      <DataTable.Title style={{flex: 4, color: 'black'}}>
-                        Description
+                      <DataTable.Title>
+                        <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                          Description
+                        </Text>
                       </DataTable.Title>
-                      <DataTable.Title style={{flex: 2, color: 'black'}}>
-                        Priority
+                      <DataTable.Title>
+                        <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                          Priority
+                        </Text>
                       </DataTable.Title>
                     </DataTable.Header>
                     {apiRes.length !== 0 &&
@@ -3456,23 +3470,27 @@ const ApiScreenA40 = ({route, navigation}) => {
               <View style={styles.container1}>
                 <View style={styles.mainbox}>
                   <Card>
-                    <DataTable>
-                      <DataTable.Header
-                        style={[
-                          styles.databeHeader,
-                          {backgroundColor: 'white'},
-                        ]}>
-                        <DataTable.Title style={{flex: 20, color: 'black'}}>
-                          Load Detail
+                    <DataTable style={{flex: 1}}>
+                      <DataTable.Header style={[styles.databeHeader]}>
+                        <DataTable.Title>
+                          <Text style={{flex: 1, color: 'white', fontSize: 15}}>
+                            Load Detail
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Quantity
+                        <DataTable.Title>
+                          <Text style={{flex: 1, color: 'white', fontSize: 15}}>
+                            Quantity
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Rating (W)
+                        <DataTable.Title>
+                          <Text style={{flex: 1, color: 'white', fontSize: 15}}>
+                            Rating (W)
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Total Watts
+                        <DataTable.Title>
+                          <Text style={{flex: 1, color: 'white', fontSize: 15}}>
+                            Total Watts
+                          </Text>
                         </DataTable.Title>
                       </DataTable.Header>
                       {tableList.map((l, i) => (
@@ -4546,9 +4564,9 @@ const ApiScreenA40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setCurrent1(text);
-                                  if (validate(text, 2)) {
+                                  if (validate(text, 4)) {
                                     setCurrent1Error(
-                                      'Input must be at least 2 characters long.',
+                                      'Input must be at least 4 characters long.',
                                     );
                                   } else setCurrent1Error('');
                                 }}
@@ -4604,9 +4622,9 @@ const ApiScreenA40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setCurrent2(text);
-                                  if (validate(text, 2)) {
+                                  if (validate(text, 4)) {
                                     setCurrent2Error(
-                                      'Input must be at least 2 characters long.',
+                                      'Input must be at least 4 characters long.',
                                     );
                                   } else setCurrent2Error('');
                                 }}
@@ -4662,9 +4680,9 @@ const ApiScreenA40 = ({route, navigation}) => {
                                 placeholderTextColor="grey"
                                 onChangeText={text => {
                                   setCurrent3(text);
-                                  if (validate(text, 2)) {
+                                  if (validate(text, 4)) {
                                     setCurrent3Error(
-                                      'Input must be at least 2 characters long.',
+                                      'Input must be at least 4 characters long.',
                                     );
                                   } else setCurrent3Error('');
                                 }}
@@ -6858,6 +6876,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                                   style={{height: 200, width: 200}}></Image>
                               </TouchableOpacity>
                               <TouchableOpacity
+                                disabled={!isEditable}
                                 onPress={() => {
                                   setTimeout(() => {
                                     // setRefresh(true);
@@ -7246,6 +7265,7 @@ const ApiScreenA40 = ({route, navigation}) => {
               <Button
                 title=" Yes "
                 color="green"
+                disabled={!isEditable}
                 onPress={() => {
                   var postalOrderSealfill = [];
                   var meteringEquipmentfill = [];
@@ -7319,6 +7339,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                       if (state.isConnected) {
                         console.log(' **** You are online! ******** ');
                         PostSIRSimultaneous(state.type);
+                        setIsEditable(false);
                       } else {
                         Alert.alert('You are offline!');
                         return;
@@ -7465,6 +7486,7 @@ const ApiScreenA40 = ({route, navigation}) => {
                 color="red"
                 onPress={() => {
                   setAuthModalVisible(!isAuthModalVisible);
+                  setIsEditable(true);
                   // setError('');
                   // navigation.goBack();
                 }}
@@ -7639,7 +7661,7 @@ const styles = StyleSheet.create({
   },
   mainbox: {
     textAlign: 'center',
-    margin: 8,
+    margin: 2,
     //height:500,
     //width:500,
     //flex: 1,
@@ -7648,15 +7670,18 @@ const styles = StyleSheet.create({
   },
   databeBox: {
     margin: 5,
-    // width:60,
+    width: 398,
     textAlign: 'center',
     color: 'black',
   },
 
   databeHeader: {
-    margin: 2,
-    textAlign: 'left',
-    color: 'black',
+    margin: 10,
+    //textAlign: 'left',
+    color: 'green',
+    backgroundColor: '#1565C0',
+    color: 'pink',
+    width: '100%',
   },
   databeHeader1: {
     margin: 2,

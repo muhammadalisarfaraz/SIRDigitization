@@ -122,7 +122,7 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
             justifyContent: 'space-between',
           }}>
           <View style={styles.dashboad}>
-            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#1565C0'}}>
               {ORDCount}
             </Text>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
@@ -131,7 +131,7 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
           </View>
 
           <View style={styles.dashboad}>
-            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#1565C0'}}>
               {B40Count}
             </Text>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
@@ -140,7 +140,7 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
           </View>
 
           <View style={styles.dashboad}>
-            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#1565C0'}}>
               {A40Count}
             </Text>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
@@ -464,6 +464,7 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
                           </View>
                         )}
                       </View>
+
                       <View
                         style={{
                           //backgroundColor: 'red',
@@ -476,7 +477,7 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
                           position: 'absolute',
                           borderBottomRightRadius: 15,
                           right: 5,
-                          bottom: 40,
+                          bottom: 50,
                         }}>
                         <Text
                           style={{
@@ -485,10 +486,36 @@ const HomeScreenPlannedCompleted = ({navigation}) => {
                             //fontWeight: 'bold',
                             color: 'black',
                           }}>
-                          {'Assign Date: \n' +
+                          {'Assign Date: ' +
                             Moment(item.Erdat).format('DD.MM.YYYY')}
                         </Text>
                       </View>
+
+                      <View
+                        style={{
+                          //backgroundColor: 'red',
+                          flexDirection: 'row',
+                          // paddingHorizontal: 6,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          //paddingHorizontal: 15,
+                          height: 34,
+                          position: 'absolute',
+                          borderBottomRightRadius: 15,
+                          right: 5,
+                          bottom: 30,
+                        }}>
+                        <Text
+                          style={{
+                            // marginLeft: 5,
+                            fontSize: 13,
+                            //fontWeight: 'bold',
+                            color: 'black',
+                          }}>
+                          {'MRU: ' + item.MRU}
+                        </Text>
+                      </View>
+
                       <View
                         style={{
                           backgroundColor: '#1565C0',

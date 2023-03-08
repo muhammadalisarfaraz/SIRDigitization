@@ -346,7 +346,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
                 Sirnr: parent.Sirnr,
                 Begru: parent.Begru,
                 Vkont: parent.Vkont,
-                Vertrag: parent.Vertrag,
+                Vertrag: parent.Vertrag.padStart(10, '0'),
                 Erdat: parent.Erdat,
                 Ertim: parent.Ertim,
                 Ernam: parent.Ernam,
@@ -377,7 +377,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
               data.push({
                 Sirnr: parent.Sirnr,
                 Vkont: parent.Vkont,
-                Vertrag: parent.Vertrag,
+                Vertrag: parent.Vertrag.padStart(10, '0'),
                 Erdat: parent.Erdat,
                 SirStatus: parent.SirStatus,
                 SirFormat: parent.SirFormat,
@@ -398,7 +398,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
                 MRU: parent.MRU,
               });
 
-              getSystemMeter(parent.Vertrag);
+              getSystemMeter(parent.Vertrag.padStart(10, '0'));
               AsyncStorage.setItem(SirnrNo, JSON.stringify(SIRData));
             }
             flag = false;
@@ -416,24 +416,24 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   };
 
   const getSystemMeter = contract => {
-    //    console.log('contract: ', contract);
-    axios({
-      method: 'get',
-      url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%270' +
-        contract +
-        '%27&$format=json',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
-      },
-    })
-      .then(res => {
-        if (res.data.d.results != []) {
-          res.data.d.results.forEach(singleResult => {
-            if (
-              SystemMeterData.filter(x => x.CONTRACT == contract).length == 0
-            ) {
+    console.log('contract: ', contract);
+
+    if (SystemMeterData.filter(x => x.CONTRACT == contract).length == 0) {
+      console.log('contract:not In StoreInDevice ', contract);
+      axios({
+        method: 'get',
+        url:
+          'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%27' +
+          contract +
+          '%27&$format=json',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        },
+      })
+        .then(res => {
+          if (res.data.d.results != []) {
+            res.data.d.results.forEach(singleResult => {
               SystemMeterData.push({
                 CONTRACT: contract,
                 Anlage: singleResult.Anlage,
@@ -454,30 +454,17 @@ const LoadingScreenforDataDownload = ({navigation}) => {
                 Voltage: singleResult.Voltage,
                 Phase: singleResult.Phase,
               });
-              console.log('SystemMeterData ADDED' + contract);
-            }
-            /*            console.log(
-              'contract: ' + contract + ' Anlage: ' + singleResult.Anlage,
-            );
-*/
-          });
-        }
-      })
-      .then(res => {
-        //systemMeterObject.contract = SystemMeterData;
-        //systemmeter.push(SystemMeterData);
-        /*
-        console.log(
-          'final:SystemMeterData: ' +
-            typeof SystemMeterData +
-            ' length: ' +
-            SystemMeterData.length,
-        );*/
-        AsyncStorage.setItem('SystemMeter', JSON.stringify(SystemMeterData));
-      })
-      .catch(error => {
-        console.error('axios:error:getSystemMeter: ' + error);
-      });
+              console.log('System Meter Data ADDED' + contract);
+            });
+          }
+        })
+        .then(res => {
+          AsyncStorage.setItem('SystemMeter', JSON.stringify(SystemMeterData));
+        })
+        .catch(error => {
+          console.error('axios:error:get System Meter: ' + error);
+        });
+    }
   };
 
   const getMRNote = () => {

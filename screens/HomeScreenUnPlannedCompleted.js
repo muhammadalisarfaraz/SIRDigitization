@@ -122,7 +122,7 @@ const HomeScreenUnPlannedCompleted = ({navigation}) => {
             justifyContent: 'space-between',
           }}>
           <View style={styles.dashboad}>
-            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#1565C0'}}>
               {ORDCount}
             </Text>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
@@ -131,7 +131,7 @@ const HomeScreenUnPlannedCompleted = ({navigation}) => {
           </View>
 
           <View style={styles.dashboad}>
-            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#1565C0'}}>
               {B40Count}
             </Text>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
@@ -140,7 +140,7 @@ const HomeScreenUnPlannedCompleted = ({navigation}) => {
           </View>
 
           <View style={styles.dashboad}>
-            <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#1565C0'}}>
               {A40Count}
             </Text>
             <Text style={{fontSize: 14, fontWeight: 'bold', color: '#1565C0'}}>

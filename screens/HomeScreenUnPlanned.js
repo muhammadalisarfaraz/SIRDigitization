@@ -94,7 +94,12 @@ const HomeScreen = ({navigation}) => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
             if (singleResult.Vertrag != '') {
-              getContract(Sirnr, MIO_NAME, singleResult.Vertrag, AssignMio);
+              getContract(
+                Sirnr,
+                MIO_NAME,
+                singleResult.Vertrag.padStart(10, '0'),
+                AssignMio,
+              );
             } else {
               alert('No contract available against the Meter No');
               return false;
@@ -110,7 +115,7 @@ const HomeScreen = ({navigation}) => {
     return;
   };
   const getContract = (Sirnr, MIO_NAME, ContractNo, AssignMio) => {
-    console.log('getContract:Service:Called');
+    console.log('getContract:Service:Called: ' + ContractNo);
     let CustomData = [];
     let isSystemMeterServiceCall = false;
     axios({
@@ -133,7 +138,7 @@ const HomeScreen = ({navigation}) => {
           res.data.d.results.forEach(singleResult => {
             if (singleResult.RESULT == 'Success') {
               CustomData.push({
-                Vertrag: singleResult.Vertrag,
+                Vertrag: singleResult.Vertrag.padStart(10, '0'),
                 Vkont: singleResult.Vkont,
                 Erdat: Moment().format('YYYYMMDD'),
                 AssignMio: singleResult.AssignMio,
@@ -205,82 +210,100 @@ const HomeScreen = ({navigation}) => {
         console.log('Screen:SystemMeterData.length: ' + SystemMeterData.length);
       })
       .then(item => {
-        axios({
-          method: 'get',
-          url:
-            'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_UNPLANNED_SRV/ITABSet?$filter=CONTRACT%20eq%20%27' +
-            contract +
-            '%27&$format=json',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
-          },
-        })
-          .then(res => {
-            if (res.data.d.results != []) {
-              res.data.d.results.forEach(singleResult => {
-                SystemMeterData.push({
-                  CONTRACT: contract,
-                  Anlage: singleResult.Anlage,
-                  Geraet: singleResult.Geraet,
-                  Kennziff: singleResult.Kennziff,
-                  Herst: singleResult.Herst,
-                  Rating: singleResult.Rating,
-                  PVoltage: singleResult.PVoltage,
-                  SVoltage: singleResult.SVoltage,
-                  Tarifart: singleResult.Tarifart,
-                  Preiskla: singleResult.Preiskla,
-                  Ablbelnr: singleResult.Ablbelnr,
-                  Ablesgr: singleResult.Ablesgr,
-                  Adat: singleResult.Adat,
-                  VZwstand: singleResult.VZwstand,
-                  Istablart: singleResult.Istablart,
-                  Ablstat: singleResult.Ablstat,
-                  Voltage: singleResult.Voltage,
-                  Phase: singleResult.Phase,
-                  TARIFF: singleResult.TARIFTYP,
+        if (SystemMeterData.filter(x => x.CONTRACT == contract).length == 0) {
+          axios({
+            method: 'get',
+            url:
+              'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_UNPLANNED_SRV/ITABSet?$filter=CONTRACT%20eq%20%27' +
+              contract +
+              '%27&$format=json',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+            },
+          })
+            .then(res => {
+              if (res.data.d.results != []) {
+                res.data.d.results.forEach(singleResult => {
+                  SystemMeterData.push({
+                    CONTRACT: contract,
+                    Anlage: singleResult.Anlage,
+                    Geraet: singleResult.Geraet,
+                    Kennziff: singleResult.Kennziff,
+                    Herst: singleResult.Herst,
+                    Rating: singleResult.Rating,
+                    PVoltage: singleResult.PVoltage,
+                    SVoltage: singleResult.SVoltage,
+                    Tarifart: singleResult.Tarifart,
+                    Preiskla: singleResult.Preiskla,
+                    Ablbelnr: singleResult.Ablbelnr,
+                    Ablesgr: singleResult.Ablesgr,
+                    Adat: singleResult.Adat,
+                    VZwstand: singleResult.VZwstand,
+                    Istablart: singleResult.Istablart,
+                    Ablstat: singleResult.Ablstat,
+                    Voltage: singleResult.Voltage,
+                    Phase: singleResult.Phase,
+                    TARIFF: singleResult.TARIFTYP,
+                  });
+                  console.log(
+                    'contract: ' + contract + ' Anlage: ' + singleResult.Anlage,
+                  );
+                  console.log('singleResult.ABLEINH: ' + singleResult.ABLEINH);
+                  CustomData[0].MRU = singleResult.ABLEINH;
                 });
-                console.log(
-                  'contract: ' + contract + ' Anlage: ' + singleResult.Anlage,
-                );
-                console.log('singleResult.ABLEINH: ' + singleResult.ABLEINH);
-                CustomData[0].MRU = singleResult.ABLEINH;
-              });
-            }
-          })
-          .then(res => {
-            AsyncStorage.setItem(
-              'SystemMeter',
-              JSON.stringify(SystemMeterData),
-            );
-            if (SIRFormat == 'ORD') {
-              /*
-              var filterData = CustomData.filter(item => {
-                console.log(item);
-              });
-    */
-              navigation.navigate('SIR Digitization Ordinary', {
-                data: CustomData[0],
-                index: index,
-                otherParam: 'item.filterkey',
-              });
-            } else if (SIRFormat == 'B40') {
-              navigation.navigate('Site Inspection Report', {
-                data: CustomData[0],
-                index: index,
-                otherParam: 'item.filterkey',
-              });
-            } else if (SIRFormat == 'A40') {
-              navigation.navigate('Site Inspection Above 40', {
-                data: CustomData[0],
-                index: index,
-                otherParam: 'item.filterkey',
-              });
-            }
-          })
-          .catch(error => {
-            console.error('axios:error:get System Meter: ' + error);
-          });
+              }
+            })
+            .then(res => {
+              AsyncStorage.setItem(
+                'SystemMeter',
+                JSON.stringify(SystemMeterData),
+              );
+
+              if (SIRFormat == 'ORD') {
+                navigation.navigate('SIR Digitization Ordinary', {
+                  data: CustomData[0],
+                  index: index,
+                  otherParam: 'item.filterkey',
+                });
+              } else if (SIRFormat == 'B40') {
+                navigation.navigate('Site Inspection Report', {
+                  data: CustomData[0],
+                  index: index,
+                  otherParam: 'item.filterkey',
+                });
+              } else if (SIRFormat == 'A40') {
+                navigation.navigate('Site Inspection Above 40', {
+                  data: CustomData[0],
+                  index: index,
+                  otherParam: 'item.filterkey',
+                });
+              }
+            })
+            .catch(error => {
+              console.error('axios:error:get System Meter: ' + error);
+            });
+        } else {
+          if (SIRFormat == 'ORD') {
+            navigation.navigate('SIR Digitization Ordinary', {
+              data: CustomData[0],
+              index: index,
+              otherParam: 'item.filterkey',
+            });
+          } else if (SIRFormat == 'B40') {
+            navigation.navigate('Site Inspection Report', {
+              data: CustomData[0],
+              index: index,
+              otherParam: 'item.filterkey',
+            });
+          } else if (SIRFormat == 'A40') {
+            navigation.navigate('Site Inspection Above 40', {
+              data: CustomData[0],
+              index: index,
+              otherParam: 'item.filterkey',
+            });
+          }
+        }
       });
   };
 
@@ -581,7 +604,7 @@ const HomeScreen = ({navigation}) => {
                                 getContract(
                                   item.Sirnr,
                                   item.MIO_NAME,
-                                  contractNo,
+                                  contractNo.padStart(10, '0'),
                                   item.AssignMio,
                                 );
                               } else if (meterNo != '') {

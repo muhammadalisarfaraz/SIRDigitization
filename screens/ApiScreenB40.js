@@ -267,7 +267,7 @@ const ApiScreenB40 = ({route, navigation}) => {
     let localdata = [],
       localcompletedata = [];
 
-    if (selectedItems.length > 5) {
+    if (selectedItems.length > 10) {
       return;
     } else {
       setSelectedItems(selectedItems);
@@ -688,10 +688,10 @@ const ApiScreenB40 = ({route, navigation}) => {
       var Allimages = images;
       setFilePath([
         {
-          uri: response.assets[0].uri,
-          url: response.assets[0].uri,
-          fileName: response.assets[0].fileName,
-          base64: response.assets[0].base64,
+          uri: response.path,
+          url: response.path,
+          fileName: 'gallery.jpg',
+          base64: response.data,
           Status: 'Pending',
           RoshniBajiWebID: '',
         },
@@ -700,10 +700,10 @@ const ApiScreenB40 = ({route, navigation}) => {
 
       setImages([
         {
-          uri: response.assets[0].uri,
-          url: response.assets[0].uri,
-          fileName: response.assets[0].fileName,
-          base64: response.assets[0].base64,
+          uri: response.path,
+          url: response.path,
+          fileName: 'gallery.jpg',
+          base64: response.data,
           Status: 'Pending',
           RoshniBajiWebID: '',
         },
@@ -785,6 +785,12 @@ const ApiScreenB40 = ({route, navigation}) => {
   const onAddmorePower = () => {
     console.log('powerregister:' + powerregister);
     console.log('powermeterreading:' + powermeterreading);
+
+    if (powerKENo == '' || powerKENo == undefined) {
+      alert('Please provide Meter No first');
+      return false;
+    }
+
     setPowerMeter([
       ...powermeter,
       {
@@ -1038,7 +1044,7 @@ const ApiScreenB40 = ({route, navigation}) => {
           AsyncStorage.setItem('SIRDigitizationLocation', JSON.stringify([]));
           navigation.reset({
             index: 0,
-            routes: [{name: 'HomeScreen'}],
+            routes: [{name: 'SupportScreen'}],
           });
         })
         .catch(error => {
@@ -1084,7 +1090,7 @@ const ApiScreenB40 = ({route, navigation}) => {
     } else {
       navigation.reset({
         index: 0,
-        routes: [{name: 'HomeScreen'}],
+        routes: [{name: 'SupportScreen'}],
       });
     }
     setAuthModalVisible(!isAuthModalVisible);
@@ -2605,22 +2611,26 @@ const ApiScreenB40 = ({route, navigation}) => {
                 <View style={styles.mainbox}>
                   <Card>
                     <DataTable>
-                      <DataTable.Header
-                        style={[
-                          styles.databeHeader,
-                          {backgroundColor: 'white'},
-                        ]}>
-                        <DataTable.Title style={{flex: 20, color: 'black'}}>
-                          Load Detail
+                      <DataTable.Header style={[styles.databeHeader]}>
+                        <DataTable.Title>
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Load Detail
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Quantity
+                        <DataTable.Title>
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Quantity
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Rating (W)
+                        <DataTable.Title>
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Rating (W)
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Total Watts
+                        <DataTable.Title>
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Total Watts
+                          </Text>
                         </DataTable.Title>
                       </DataTable.Header>
                       {tableList.map((l, i) => (
@@ -2891,17 +2901,25 @@ const ApiScreenB40 = ({route, navigation}) => {
                   <Card>
                     <DataTable>
                       <DataTable.Header style={styles.databeHeader}>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Discrepancy
+                        <DataTable.Title>
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Discrepancy
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 4, color: 'black'}}>
-                          Ticket
+                        <DataTable.Title>
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Ticket
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 4, color: 'black'}}>
-                          Description
+                        <DataTable.Title>
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Description
+                          </Text>
                         </DataTable.Title>
-                        <DataTable.Title style={{flex: 2, color: 'black'}}>
-                          Priority
+                        <DataTable.Title>
+                          <Text style={{flex: 2, color: 'white', fontSize: 15}}>
+                            Priority
+                          </Text>
                         </DataTable.Title>
                       </DataTable.Header>
                       {apiRes.length !== 0 &&
@@ -6434,12 +6452,14 @@ const ApiScreenB40 = ({route, navigation}) => {
               <Button
                 title=" Yes "
                 color="green"
+                disabled={!isEditable}
                 onPress={() => {
                   if (buttonType == 'Post') {
                     NetInfo.fetch().then(state => {
                       if (state.isConnected) {
                         console.log(' **** You are online! ******** ');
                         PostSIRSimultaneous(state.type);
+                        setIsEditable(false);
                       } else {
                         Alert.alert('You are offline!');
                         return;
@@ -6497,6 +6517,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                 color="red"
                 onPress={() => {
                   setAuthModalVisible(!isAuthModalVisible);
+                  setIsEditable(true);
                   // setError('');
                   // navigation.goBack();
                 }}
@@ -6652,8 +6673,11 @@ const styles = StyleSheet.create({
   },
   databeHeader: {
     margin: 10,
-    textAlign: 'left',
-    color: '#fff',
+    //textAlign: 'left',
+    color: 'green',
+    backgroundColor: '#1565C0',
+    color: 'pink',
+    width: '100%',
   },
   input: {
     width: 80,
