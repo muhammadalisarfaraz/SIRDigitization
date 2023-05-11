@@ -90,9 +90,9 @@ const DeleteSIRs = ({navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_STATUS_RETURN_SRV/HEADERSet',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_STATUS_RETURN_SRV/HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',

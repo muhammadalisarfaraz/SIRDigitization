@@ -78,10 +78,10 @@ const ChangePassword = ({navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_MIO_PASSWORD_UPDATE_SRV/HEADERSet',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_MIO_PASSWORD_UPDATE1_SRV/HEADERSet',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         Accept: 'application/json',
         'X-CSRF-Token': '',
         'X-Requested-With': 'X',

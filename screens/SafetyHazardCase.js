@@ -316,7 +316,7 @@ const SafetyHazardCase = ({navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://stagingdev.ke.com.pk:8039/api/Image/PostSIHImageData',
+      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIHImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -404,7 +404,7 @@ const SafetyHazardCase = ({navigation}) => {
     axios({
       method: 'GET',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING_SRV/WASet(Remarks=%27' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING1_SRV/WASet(Remarks=%27' +
         Remarks +
         '%27,Pmt=%27' +
         PMT +
@@ -424,7 +424,7 @@ const SafetyHazardCase = ({navigation}) => {
         AccidentLocationAddress +
         '%27)',
       headers: {
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',

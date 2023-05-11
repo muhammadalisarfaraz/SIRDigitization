@@ -484,9 +484,9 @@ const ApiScreen = ({route, navigation}) => {
     console.log('data.Sirnr' + data.Sirnr);
     axios({
       method: 'POST',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_METER_DATA_POSTING_SRV/SIR_HEADERSet',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_METER_DATA_POSTING_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -525,9 +525,9 @@ const ApiScreen = ({route, navigation}) => {
 */
     axios({
       method: 'POST',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_REGISTER_POSTING_SRV/SIR_HEADERSet',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_REGISTER_POSTING_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -560,9 +560,9 @@ const ApiScreen = ({route, navigation}) => {
       });
       axios({
         method: 'POST',
-        url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_LAT_LONGITUDE_POSTING_SRV/HEADERSet',
+        url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_LAT_LONGITUDE_POSTING1_SRV/HEADERSet',
         headers: {
-          Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+          Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
           'Content-Type': 'application/json',
           Accept: 'application/json',
           'X-CSRF-Token': '',
@@ -814,9 +814,9 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SIMULTANEOUS_POSTING_SRV/SIR_HEADERSet',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SIMULTANEOUS_POST_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -908,7 +908,7 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'GET',
-      url: 'https://stagingdev.ke.com.pk:8039/Token',
+      url: 'https://sir.ke.com.pk:8039/Token',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -951,7 +951,7 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'GET',
-      url: 'https://stagingdev.ke.com.pk:8039/api/Image/forall',
+      url: 'https://sir.ke.com.pk:8039/api/Image/forall',
       headers: {'content-type': 'application/json'},
     })
       .then(res => {
@@ -1008,7 +1008,7 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://stagingdev.ke.com.pk:8039/api/Image/PostSIRImageData',
+      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIRImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -1070,7 +1070,7 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://stagingdev.ke.com.pk:8039/api/Image/PostSIRImageData',
+      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIRImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -1098,9 +1098,9 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DFIND_SRV/SIR_HEADERSet',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DFIND_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -1133,9 +1133,9 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_POSTING_APPL_SRV/SIR_HEADERSet',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_POSTING_APPL_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -1542,9 +1542,13 @@ const ApiScreen = ({route, navigation}) => {
           setConsumerRemarks(item.ConsumerRemarks);
 
           if (item.SIRDate != undefined) {
+            setSirDate(item.SIRDate);
+            setSirTime(item.SIRTime);
+          } else {
             setSirDate(moment().format('DD.MM.YYYY'));
             setSirTime(moment().format('hh:mm:ss'));
           }
+
           if (item.IsConsumerRefuseYN != undefined)
             setIsConsumerRefuseYN(item.IsConsumerRefuseYN);
           if (item.ConsumerRefuseYN != undefined)
@@ -1745,7 +1749,7 @@ const ApiScreen = ({route, navigation}) => {
             LoadDetails: valueAppliance,
             Quantity: quantity,
             Rating: singleItem.RATING,
-            TotalWatts: totWatts,
+            TotalWatts: totWatts.toString(),
           },
         ]);
 
@@ -1755,7 +1759,7 @@ const ApiScreen = ({route, navigation}) => {
             Sirnr: data.Sirnr,
             ZsirAppname: valueAppliance,
             Acount: quantity,
-            TTLOAD: singleItem.RATING,
+            TTLOAD: totWatts.toString(),
           },
         ]);
 
@@ -2083,48 +2087,49 @@ const ApiScreen = ({route, navigation}) => {
                       {apiRes.length !== 0 &&
                         apiRes.map((l, i) => (
                           <DataTable.Row style={styles.databeBox} key={i}>
-                            <View style={{flex: 2}}>
+                            <View style={{flex: 0.5}}>
                               <TextInput
                                 editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateDiscrepancy(t, i)}
                                 placeholder="Please Enter"
                                 placeholderTextColor="black"
-                                fontSize={10}
+                                fontSize={12}
                                 value={l.Code}
                               />
                               {/* {l.test} */}
                             </View>
-                            <View style={{flex: 4}}>
+                            <View style={{flex: 0.5}}>
                               <TextInput
                                 editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateTicket(t, i)}
                                 placeholder="Please Enter"
                                 placeholderTextColor="black"
-                                fontSize={10}
+                                fontSize={12}
                                 value={l.Id}
                               />
                             </View>
-                            <View style={{flex: 4}}>
+                            <View style={{flex: 1}}>
                               <TextInput
+                                multiline={true}
                                 editable={false}
                                 style={styles.input}
                                 onChangeText={t => updateDescription(t, i)}
                                 placeholder="Please Enter"
                                 placeholderTextColor="black"
-                                fontSize={10}
+                                fontSize={12}
                                 value={l.Des}
                               />
                             </View>
-                            <View style={{flex: 2}}>
+                            <View style={{flex: 0.5}}>
                               <TextInput
                                 editable={false}
                                 style={styles.input}
                                 onChangeText={t => updatePriority(t, i)}
                                 placeholder="Please Enter"
                                 placeholderTextColor="black"
-                                fontSize={10}
+                                fontSize={12}
                                 value={l.Priority}
                               />
                             </View>
@@ -2262,9 +2267,9 @@ const ApiScreen = ({route, navigation}) => {
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setMeterTesting(text);
-                                if (validate(text, 2)) {
+                                if (validate(text, 5)) {
                                   setmeterTestingerror(
-                                    'Input must be at least 2 characters long.',
+                                    'Input must be at least 5 characters long.',
                                   );
                                 } else setmeterTestingerror('');
                               }}
@@ -3392,6 +3397,7 @@ const ApiScreen = ({route, navigation}) => {
                               <Text
                                 style={{
                                   color: '#fff',
+                                  fontSize: 14,
                                 }}>
                                 Register
                               </Text>
@@ -3400,6 +3406,7 @@ const ApiScreen = ({route, navigation}) => {
                               <Text
                                 style={{
                                   color: '#fff',
+                                  fontSize: 14,
                                 }}>
                                 Meter Reading
                               </Text>
@@ -3416,7 +3423,7 @@ const ApiScreen = ({route, navigation}) => {
                                   //onChangeText={t => updateTicket(t, i)}
                                   placeholder="Please Enter"
                                   placeholderTextColor="black"
-                                  fontSize={10}
+                                  fontSize={14}
                                   value={l.Kennziff}
                                   style={{
                                     flex: 1,
@@ -3427,7 +3434,7 @@ const ApiScreen = ({route, navigation}) => {
                                   //onChangeText={t => updateDescription(t, i)}
                                   placeholder="Please Enter"
                                   placeholderTextColor="black"
-                                  fontSize={10}
+                                  fontSize={14}
                                   value={l.VZwstand}
                                   style={{
                                     flex: 1,
@@ -4325,7 +4332,7 @@ const ApiScreen = ({route, navigation}) => {
                           style={{
                             flex: 2,
                             alignItems: 'flex-start',
-                            marginTop: -10,
+                            //marginTop: -10,
                           }}>
                           <RadioForm
                             disabled={!isEditable}
@@ -4333,16 +4340,18 @@ const ApiScreen = ({route, navigation}) => {
                             initial={isConsumerRefuseYN}
                             buttonColor={'#1565C0'}
                             formHorizontal={true}
+                            labelHorizontal={true}
                             // borderWidth={5}
                             buttonInnerColor={'#1565C0'}
                             selectedButtonColor={'#1565C0'}
                             // labelColor={'#50C900'}
 
-                            borderWidth={1}
                             //  buttonOuterColor={this.state.value3Index === i ? '#2196f3' : '#000'}
+                            //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
+
+                            borderWidth={1}
                             buttonSize={13}
                             buttonOuterSize={20}
-                            //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
                             buttonWrapStyle={{marginLeft: 10}}
                             onPress={value => {
                               ({value: value});
@@ -4383,7 +4392,7 @@ const ApiScreen = ({route, navigation}) => {
                           style={{
                             flex: 2,
                             alignItems: 'flex-start',
-                            marginTop: -10,
+                            //marginTop: -10,
                           }}>
                           <RadioForm
                             disabled={!isEditable}

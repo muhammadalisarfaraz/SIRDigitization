@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import moment from 'moment';
 
@@ -81,42 +82,82 @@ const HomeScreenPlannedSummary = ({navigation}) => {
       </View>
       <View style={styles.formheader}>
         <View style={{flexDirection: 'row', flex: 1, width: '96%'}}>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1}}>
+            <View style={{alignItems: 'center'}}>
+              <Icon
+                name="square-edit-outline"
+                size={30}
+                color="#ffff"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
             <Text style={styles.text_left}>Assigned Cases:</Text>
           </View>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1, alignItems: 'center'}}>
             <Text style={styles.text_right}>{assignedCases}</Text>
           </View>
         </View>
         <View style={{flexDirection: 'row', flex: 1, width: '96%'}}>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1}}>
+            <View style={{alignItems: 'center'}}>
+              <Icon
+                name="content-save-check-outline"
+                size={30}
+                color="#ffff"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
             <Text style={styles.text_left}>Saved Cases</Text>
           </View>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1, alignItems: 'center'}}>
             <Text style={styles.text_right}>{savedCases}</Text>
           </View>
         </View>
         <View style={{flexDirection: 'row', flex: 1, width: '96%'}}>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1}}>
+            <View style={{alignItems: 'center'}}>
+              <Icon
+                name="timer-outline"
+                size={30}
+                color="#ffff"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
             <Text style={styles.text_left}>Pending Cases</Text>
           </View>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1, alignItems: 'center'}}>
             <Text style={styles.text_right}>{pendingCases}</Text>
           </View>
         </View>
         <View style={{flexDirection: 'row', flex: 1, width: '96%'}}>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1}}>
+            <View style={{alignItems: 'center'}}>
+              <Icon
+                name="thumb-up-outline"
+                size={30}
+                color="#ffff"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
             <Text style={styles.text_left}>Post Cases</Text>
           </View>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1, alignItems: 'center'}}>
             <Text style={styles.text_right}>{postCases}</Text>
           </View>
         </View>
         <View style={{flexDirection: 'row', flex: 1, width: '96%'}}>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1}}>
+            <View style={{alignItems: 'center'}}>
+              <Icon
+                name="truck-plus-outline"
+                size={30}
+                color="#ffff"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
             <Text style={styles.text_left}>Safety Hazard Cases</Text>
           </View>
-          <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <View style={{flex: 1, alignItems: 'center'}}>
             <Text style={styles.text_right}>{safetyHazardCases}</Text>
           </View>
         </View>

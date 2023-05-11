@@ -82,12 +82,12 @@ const HomeScreen = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_GET_VERTRAG_VIA_GERNR_SRV/ITABSet?$filter=Gernr%20eq%20%27' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_GET_VERTRAG_VIA_GERNR1_SRV/ITABSet?$filter=Gernr%20eq%20%27' +
         Meterno +
         '%27%20&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -121,7 +121,7 @@ const HomeScreen = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_UNPLANNED_GET_POST_SRV/ITABSet?$filter=Vertrag%20eq%20%27' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_UNPLANNED_GET_POST1_SRV/ITABSet?$filter=Vertrag%20eq%20%27' +
         ContractNo +
         '%27%20and%20Sirnr%20eq%20%27' +
         Sirnr +
@@ -130,7 +130,7 @@ const HomeScreen = ({navigation}) => {
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -214,12 +214,12 @@ const HomeScreen = ({navigation}) => {
           axios({
             method: 'get',
             url:
-              'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_UNPLANNED_SRV/ITABSet?$filter=CONTRACT%20eq%20%27' +
+              'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_UNPLANNED1_SRV/ITABSet?$filter=CONTRACT%20eq%20%27' +
               contract +
               '%27&$format=json',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+              Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
             },
           })
             .then(res => {

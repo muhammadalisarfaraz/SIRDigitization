@@ -59,6 +59,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Moment from 'moment';
+import moment from 'moment';
 import {set} from 'react-native-reanimated';
 import SignatureCapture from 'react-native-signature-capture';
 import base64 from 'react-native-base64';
@@ -335,7 +336,7 @@ const ApiScreenA40 = ({route, navigation}) => {
             LoadDetails: valueAppliance,
             Quantity: quantity,
             Rating: singleItem.RATING,
-            TotalWatts: totWatts,
+            TotalWatts: totWatts.toString(),
           },
         ]);
 
@@ -345,7 +346,7 @@ const ApiScreenA40 = ({route, navigation}) => {
             Sirnr: data.Sirnr,
             ZsirAppname: valueAppliance,
             Acount: quantity,
-            TTLOAD: singleItem.RATING,
+            TTLOAD: totWatts.toString(),
           },
         ]);
 
@@ -1162,9 +1163,9 @@ const ApiScreenA40 = ({route, navigation}) => {
       });
       axios({
         method: 'POST',
-        url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_LAT_LONGITUDE_POSTING_SRV/HEADERSet',
+        url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_LAT_LONGITUDE_POSTING1_SRV/HEADERSet',
         headers: {
-          Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+          Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
           'Content-Type': 'application/json',
           Accept: 'application/json',
           'X-CSRF-Token': '',
@@ -1416,7 +1417,7 @@ const ApiScreenA40 = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://stagingdev.ke.com.pk:8039/api/Image/PostSIRImageData',
+      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIRImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -1478,7 +1479,7 @@ const ApiScreenA40 = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://stagingdev.ke.com.pk:8039/api/Image/PostSIRImageData',
+      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIRImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -1555,9 +1556,9 @@ const ApiScreenA40 = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SIMULTANEOUS_POSTING_SRV/SIR_HEADERSet',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SIMULTANEOUS_POST_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -1799,8 +1800,11 @@ const ApiScreenA40 = ({route, navigation}) => {
           //setTariff(item.Tariff);
 
           if (item.SIRDate != undefined) {
-            setSirDate(Moment().format('DD.MM.YYYY'));
-            setSirTime(Moment().format('hh:mm:ss'));
+            setSirDate(item.SIRDate);
+            setSirTime(item.SIRTime);
+          } else {
+            setSirDate(moment().format('DD.MM.YYYY'));
+            setSirTime(moment().format('hh:mm:ss'));
           }
 
           if (item.Tariff != undefined) setValueTarif(item.Tariff);

@@ -66,14 +66,14 @@ const DownloadMasterData = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DATA_SRV/ITABSet?$filter=Mio%20eq%20%27' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DAT1_SRV/ITABSet?$filter=Mio%20eq%20%27' +
         mio +
         '%27%20and%20Ibc%20eq%20%27' +
         ibc +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -169,12 +169,12 @@ const DownloadMasterData = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%270' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%270' +
         contract +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -227,10 +227,10 @@ const DownloadMasterData = ({navigation}) => {
     var MRNoteData = [];
     axios({
       method: 'get',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_MRNOTESet?$format=json',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_MRNOTESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -263,10 +263,10 @@ const DownloadMasterData = ({navigation}) => {
     var PremiseTypeData = [];
     axios({
       method: 'get',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/ZGET_PREMISE_TYPESet?$format=json',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/ZGET_PREMISE_TYPESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -299,10 +299,10 @@ const DownloadMasterData = ({navigation}) => {
     var AppliancesData = [];
     axios({
       method: 'get',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_APPLIANCESet?$format=json',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_APPLIANCESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -310,8 +310,8 @@ const DownloadMasterData = ({navigation}) => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
             AppliancesData.push({
-              label: singleResult.Zzsiraname + ' ' + singleResult.RATING,
-              value: singleResult.Zzsiraname + ' ' + singleResult.RATING,
+              label: singleResult.Zzsiraname,
+              value: singleResult.Zzsiraname,
               RATING: singleResult.RATING,
             });
             count++;
@@ -332,10 +332,10 @@ const DownloadMasterData = ({navigation}) => {
     var TariffData = [];
     axios({
       method: 'get',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/get_tariffSet?$format=json',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/get_tariffSet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -369,14 +369,14 @@ const DownloadMasterData = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DATA_SRV/IT_DISCREPANCYSet?$filter=Mio%20eq%20%27' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DAT1_SRV/IT_DISCREPANCYSet?$filter=Mio%20eq%20%27' +
         mio +
         '%27%20and%20Ibc%20eq%20%27' +
         ibc +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {

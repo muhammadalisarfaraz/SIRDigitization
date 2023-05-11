@@ -113,7 +113,7 @@ const SignInScreen = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/MIO_CREDENTIALSet(User=%27' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/MIO_CREDENTIALSet(User=%27' +
         userName +
         '%27,Pwd=%27' +
         password +
@@ -124,7 +124,7 @@ const SignInScreen = ({navigation}) => {
         '%27)?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -306,7 +306,7 @@ const SignInScreen = ({navigation}) => {
                 data.username,
                 data.password,
                 '000000000000012121',
-                'ZSIR_DG_V_102',
+                '1.0',
               );
             }}
 

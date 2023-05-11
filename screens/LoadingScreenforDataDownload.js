@@ -21,7 +21,7 @@ import base64 from 'react-native-base64';
 const LoadingScreenforDataDownload = ({navigation}) => {
   const [Mio, setMio] = useState('');
   const [Ibc, setIbc] = useState('');
-  const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
   const [MIOData, setMIOData] = useState('');
   const [SIRDigitizationData, setSIRDigitizationData] = useState('');
   const [MRNote, setMRNote] = useState('');
@@ -256,22 +256,22 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   };
 
   const getMIOData = (mio, ibc) => {
-    setLoader(true);
+    //setLoader(true);
 
     var MIOData = oldMIOData;
-    //   console.log('mio::' + mio);
-    //   console.log('ibc::' + ibc);
+    console.log('mio::' + mio);
+    console.log('ibc::' + ibc);
     axios({
       method: 'get',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DATA_SRV/ITABSet?$filter=Mio%20eq%20%27' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DAT1_SRV/ITABSet?$filter=Mio%20eq%20%27' +
         mio +
         '%27%20and%20Ibc%20eq%20%27' +
         ibc +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -423,12 +423,12 @@ const LoadingScreenforDataDownload = ({navigation}) => {
       axios({
         method: 'get',
         url:
-          'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%27' +
+          'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%27' +
           contract +
           '%27&$format=json',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+          Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
         },
       })
         .then(res => {
@@ -471,10 +471,10 @@ const LoadingScreenforDataDownload = ({navigation}) => {
     var MRNoteData = [];
     axios({
       method: 'get',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_MRNOTESet?$format=json',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_MRNOTESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -512,10 +512,10 @@ const LoadingScreenforDataDownload = ({navigation}) => {
     var PremiseTypeData = [];
     axios({
       method: 'get',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/ZGET_PREMISE_TYPESet?$format=json',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/ZGET_PREMISE_TYPESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -553,10 +553,10 @@ const LoadingScreenforDataDownload = ({navigation}) => {
     var AppliancesData = [];
     axios({
       method: 'get',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_APPLIANCESet?$format=json',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_APPLIANCESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -564,8 +564,8 @@ const LoadingScreenforDataDownload = ({navigation}) => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
             AppliancesData.push({
-              label: singleResult.Zzsiraname + ' ' + singleResult.RATING,
-              value: singleResult.Zzsiraname + ' ' + singleResult.RATING,
+              label: singleResult.Zzsiraname,
+              value: singleResult.Zzsiraname,
               RATING: singleResult.RATING,
             });
             count++;
@@ -597,10 +597,10 @@ const LoadingScreenforDataDownload = ({navigation}) => {
     var TariffData = [];
     axios({
       method: 'get',
-      url: 'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/get_tariffSet?$format=json',
+      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/get_tariffSet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -638,14 +638,14 @@ const LoadingScreenforDataDownload = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DATA_SRV/IT_DISCREPANCYSet?$filter=Mio%20eq%20%27' +
+        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DAT1_SRV/IT_DISCREPANCYSet?$filter=Mio%20eq%20%27' +
         mio +
         '%27%20and%20Ibc%20eq%20%27' +
         ibc +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('fioriqa:sapsap2'),
+        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
       },
     })
       .then(res => {
@@ -680,7 +680,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
         setLoader(false);
       })
       .catch(error => {
-        console.error('axios:error: ' + error);
+        console.error('axios:error:getDISCREPANCY: ' + error);
       });
   };
 

@@ -511,7 +511,7 @@ const HomeScreenUnPlannedSaved = ({navigation}) => {
                             color: 'white', //'#FFFFFF',
                             marginBottom: 4,
                           }}>
-                          {'Sir No. : ' + item.Sirnr}
+                          {'SIR No. : ' + item.Sirnr}
                         </Text>
                       </View>
                     </View>
