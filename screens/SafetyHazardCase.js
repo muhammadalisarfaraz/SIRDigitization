@@ -74,6 +74,7 @@ const SafetyHazardCase = ({navigation}) => {
   const [longitude1, setlongitude] = useState('');
   const [loader, setLoader] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [isEditable, setIsEditable] = useState(true);
 
   const [accidentLocationAddressError, setAccidentLocationAddressError] =
     useState('');
@@ -243,10 +244,11 @@ const SafetyHazardCase = ({navigation}) => {
 
   const chooseFile = type => {
     ImagePicker.openPicker({
-      width: 300,
-      height: 550,
+      width: 700,
+      height: 700,
       cropping: true,
       includeBase64: true,
+      compressImageQuality: 1,
     }).then(response => {
       console.log('Response = ', response);
 
@@ -1222,11 +1224,13 @@ Saad Commented on Single Gallery */}
                   <Button
                     title=" Yes "
                     color="green"
+                    disabled={!isEditable}
                     onPress={() => {
                       NetInfo.fetch().then(state => {
                         if (state.isConnected) {
                           console.log(' **** You are online! ******** ');
                           postSafetyHazard();
+                          setIsEditable(false);
                         } else {
                           Alert.alert('You are offline!');
                           return;
@@ -1240,6 +1244,7 @@ Saad Commented on Single Gallery */}
                     color="red"
                     onPress={() => {
                       setAuthModalVisible(!isAuthModalVisible);
+                      setIsEditable(true);
                     }}
                   />
                 </View>

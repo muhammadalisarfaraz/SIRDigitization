@@ -409,6 +409,7 @@ const LoadingScreenforDataDownload = ({navigation}) => {
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data));
 
           setSIRDigitizationData(count);
+          setLoader(false);
         });
     } catch (error) {
       // Error saving data
@@ -677,7 +678,6 @@ const LoadingScreenforDataDownload = ({navigation}) => {
             ' length: ' +
             DISCREPANCYData.length,
         );
-        setLoader(false);
       })
       .catch(error => {
         console.error('axios:error:getDISCREPANCY: ' + error);
