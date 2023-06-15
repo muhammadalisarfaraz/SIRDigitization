@@ -28,6 +28,7 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Geolocation from '@react-native-community/geolocation';
 
 import RNFetchBlob from 'rn-fetch-blob';
+import {myGlobalVariable} from './globals';
 
 import axios from 'axios';
 import {
@@ -78,10 +79,13 @@ const ChangePassword = ({navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_MIO_PASSWORD_UPDATE1_SRV/HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_MIO_PASSWORD_UPDATE1_SRV/HEADERSet',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         Accept: 'application/json',
         'X-CSRF-Token': '',
         'X-Requested-With': 'X',

@@ -24,6 +24,7 @@ import {useTheme} from 'react-native-paper';
 import {AuthContext} from '../components/context';
 
 import Users from '../model/users';
+import {myGlobalVariable} from './globals';
 
 const SignInScreen = ({navigation}) => {
   const [data, setData] = useState({
@@ -108,12 +109,15 @@ const SignInScreen = ({navigation}) => {
   const getLoginCredentials = (userName, password, Imei, AppVer) => {
     console.log('userName' + userName);
     console.log('password' + password);
+    console.log('myGlobalVariable[0]' + myGlobalVariable[0]);
 
     var LoginCredentialsData = [];
     axios({
       method: 'get',
       url:
-        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/MIO_CREDENTIALSet(User=%27' +
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/MIO_CREDENTIALSet(User=%27' +
         userName +
         '%27,Pwd=%27' +
         password +
@@ -124,7 +128,7 @@ const SignInScreen = ({navigation}) => {
         '%27)?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
       },
     })
       .then(res => {

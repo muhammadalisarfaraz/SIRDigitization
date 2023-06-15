@@ -61,6 +61,8 @@ import NetInfo from '@react-native-community/netinfo';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
+import {myGlobalVariable} from './globals';
+
 let current = 100;
 const ApiScreen = ({route, navigation}) => {
   const scrollRef = useRef(null);
@@ -477,16 +479,19 @@ const ApiScreen = ({route, navigation}) => {
     if (touched === indexSelected) return;
     carouselRef?.current?.snapToItem(touched);
   };
-
+  //RFCGWSIR:Z@p123456789
   const PostMeterData = () => {
     console.log('**** PostMeterData ****');
 
     console.log('data.Sirnr' + data.Sirnr);
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_METER_DATA_POSTING_SRV/SIR_HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_METER_DATA_POSTING_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -525,9 +530,12 @@ const ApiScreen = ({route, navigation}) => {
 */
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_REGISTER_POSTING_SRV/SIR_HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_REGISTER_POSTING_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -560,9 +568,12 @@ const ApiScreen = ({route, navigation}) => {
       });
       axios({
         method: 'POST',
-        url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_LAT_LONGITUDE_POSTING1_SRV/HEADERSet',
+        url:
+          'https://' +
+          myGlobalVariable[0] +
+          '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_LAT_LONGITUDE_POSTING1_SRV/HEADERSet',
         headers: {
-          Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+          Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
           'Content-Type': 'application/json',
           Accept: 'application/json',
           'X-CSRF-Token': '',
@@ -768,15 +779,15 @@ const ApiScreen = ({route, navigation}) => {
   };
 
   const PostSIRSimultaneous = connectionType => {
+    var filterData = completeDescripancyList.filter(item => {
+      console.log(item);
+    });
+
     if (latitude.toString() == '') {
       alert('Please On GPS Location');
       return false;
     }
     console.log('Post SIR Simultaneous called *** ');
-
-    var filterData = onsitemeter.filter(item => {
-      console.log(item);
-    });
 
     if (completeDescripancyList.length < 1) {
       alert('atleast one discrepancy is mandatory');
@@ -814,9 +825,12 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SIMULTANEOUS_POST_SRV/SIR_HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SIMULTANEOUS_POST_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -1098,9 +1112,12 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DFIND_SRV/SIR_HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DFIND_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
@@ -1133,9 +1150,12 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_POSTING_APPL_SRV/SIR_HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_POSTING_APPL_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',

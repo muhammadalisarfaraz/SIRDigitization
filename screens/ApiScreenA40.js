@@ -64,6 +64,7 @@ import {set} from 'react-native-reanimated';
 import SignatureCapture from 'react-native-signature-capture';
 import base64 from 'react-native-base64';
 import NetInfo from '@react-native-community/netinfo';
+import {myGlobalVariable} from './globals';
 
 let current = 100;
 
@@ -1163,9 +1164,12 @@ const ApiScreenA40 = ({route, navigation}) => {
       });
       axios({
         method: 'POST',
-        url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_LAT_LONGITUDE_POSTING1_SRV/HEADERSet',
+        url:
+          'https://' +
+          myGlobalVariable[0] +
+          '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_LAT_LONGITUDE_POSTING1_SRV/HEADERSet',
         headers: {
-          Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+          Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
           'Content-Type': 'application/json',
           Accept: 'application/json',
           'X-CSRF-Token': '',
@@ -1556,9 +1560,12 @@ const ApiScreenA40 = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SIMULTANEOUS_POST_SRV/SIR_HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SIMULTANEOUS_POST_SRV/SIR_HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',

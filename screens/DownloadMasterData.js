@@ -17,6 +17,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import base64 from 'react-native-base64';
+import {myGlobalVariable} from './globals';
 
 const DownloadMasterData = ({navigation}) => {
   const [Mio, setMio] = useState('');
@@ -66,14 +67,16 @@ const DownloadMasterData = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DAT1_SRV/ITABSet?$filter=Mio%20eq%20%27' +
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DAT1_SRV/ITABSet?$filter=Mio%20eq%20%27' +
         mio +
         '%27%20and%20Ibc%20eq%20%27' +
         ibc +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
       },
     })
       .then(res => {
@@ -169,12 +172,14 @@ const DownloadMasterData = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%270' +
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DEVICE_METER_REGISTER_SRV/ITABSet?$filter=CONTRACT%20eq%20%270' +
         contract +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
       },
     })
       .then(res => {
@@ -227,10 +232,13 @@ const DownloadMasterData = ({navigation}) => {
     var MRNoteData = [];
     axios({
       method: 'get',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_MRNOTESet?$format=json',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_MRNOTESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
       },
     })
       .then(res => {
@@ -263,10 +271,13 @@ const DownloadMasterData = ({navigation}) => {
     var PremiseTypeData = [];
     axios({
       method: 'get',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/ZGET_PREMISE_TYPESet?$format=json',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/ZGET_PREMISE_TYPESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
       },
     })
       .then(res => {
@@ -299,10 +310,13 @@ const DownloadMasterData = ({navigation}) => {
     var AppliancesData = [];
     axios({
       method: 'get',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_APPLIANCESet?$format=json',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/GET_APPLIANCESet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
       },
     })
       .then(res => {
@@ -332,10 +346,13 @@ const DownloadMasterData = ({navigation}) => {
     var TariffData = [];
     axios({
       method: 'get',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/get_tariffSet?$format=json',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DG_SRV/get_tariffSet?$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
       },
     })
       .then(res => {
@@ -369,14 +386,16 @@ const DownloadMasterData = ({navigation}) => {
     axios({
       method: 'get',
       url:
-        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DAT1_SRV/IT_DISCREPANCYSet?$filter=Mio%20eq%20%27' +
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_DOWNLOAD_ASSIGND_MIO_DAT1_SRV/IT_DISCREPANCYSet?$filter=Mio%20eq%20%27' +
         mio +
         '%27%20and%20Ibc%20eq%20%27' +
         ibc +
         '%27&$format=json',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
       },
     })
       .then(res => {

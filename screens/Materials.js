@@ -56,15 +56,17 @@ function Material({navigation}, props) {
   const [loader, setLoader] = useState(false);
   const item = {};
   const tableHead = ['Item', 'Description', 'Quantity'];
-  const tableData = [['1', '2', '3'], ['a', 'b', 'c'], ['1', '2', '3']];
+  const tableData = [
+    ['1', '2', '3'],
+    ['a', 'b', 'c'],
+    ['1', '2', '3'],
+  ];
 
   const material = [
     {
       __metadata: {
-        id:
-          "https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/GET_MATERIALS_LISTSet('2')",
-        uri:
-          "https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/GET_MATERIALS_LISTSet('2')",
+        id: "https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/GET_MATERIALS_LISTSet('2')",
+        uri: "https://fioriqa.ke.com.pk:44300/sap/opu/odata/sap/ZPM_PQC_SRV/GET_MATERIALS_LISTSet('2')",
         type: 'ZPM_PQC_SRV.GET_MATERIALS_LIST',
       },
       ProjId: '2',

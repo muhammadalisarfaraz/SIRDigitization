@@ -28,6 +28,7 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Geolocation from '@react-native-community/geolocation';
 
 import NetInfo from '@react-native-community/netinfo';
+import {myGlobalVariable} from './globals';
 
 import axios from 'axios';
 import {
@@ -406,7 +407,9 @@ const SafetyHazardCase = ({navigation}) => {
     axios({
       method: 'GET',
       url:
-        'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING1_SRV/WASet(Remarks=%27' +
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING1_SRV/WASet(Remarks=%27' +
         Remarks +
         '%27,Pmt=%27' +
         PMT +
@@ -426,7 +429,7 @@ const SafetyHazardCase = ({navigation}) => {
         AccidentLocationAddress +
         '%27)',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',

@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import base64 from 'react-native-base64';
 import LinearGradient from 'react-native-linear-gradient';
+import {myGlobalVariable} from './globals';
 
 const DeleteSIRs = ({navigation}) => {
   const [loader, setLoader] = useState(false);
@@ -53,9 +54,12 @@ const DeleteSIRs = ({navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_STATUS_RETURN_SRV/HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_STATUS_RETURN_SRV/HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',

@@ -28,6 +28,7 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import Geolocation from '@react-native-community/geolocation';
 
 import RNFetchBlob from 'rn-fetch-blob';
+import {myGlobalVariable} from './globals';
 
 import axios from 'axios';
 import {
@@ -90,9 +91,12 @@ const DeleteSIRs = ({navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://fioriprd.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_STATUS_RETURN_SRV/HEADERSet',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_STATUS_RETURN_SRV/HEADERSet',
       headers: {
-        Authorization: 'Basic ' + base64.encode('RFCGWSIR:Z@p123456789'),
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
         Accept: 'application/json',
         'X-CSRF-Token': '',
