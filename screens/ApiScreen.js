@@ -891,7 +891,13 @@ const ApiScreen = ({route, navigation}) => {
         console.log(
           '***********  res.data.d.Result------' +
             res.data.d.Result_Discrepancies,
+          res.data.d.Result_Appliances,
+          res.data.d.Result_Meter,
+          res.data.d.Result_Register,
+          res.data.d.Result_Onsite,
+          res.data.d.Result_MeterSeal,
         );
+
         PostSIRImage();
         StoreInDevice(
           'Post',
@@ -1445,6 +1451,17 @@ const ApiScreen = ({route, navigation}) => {
 
   useEffect(() => {
     // getApiData();
+
+    AsyncStorage.getItem('SIRDigitization').then(async items => {
+      let data1 = JSON.parse(items);
+      data1.filter((item, index) => {
+        if (item.Sirnr == '900005027602') {
+          console.log('item.Sirnr:' + item.Sirnr);
+          data1[index].Status = 'Save';
+          AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
+        }
+      });
+    });
 
     console.log('*****');
     console.log('data.Ibc: ' + data.Ibc);
