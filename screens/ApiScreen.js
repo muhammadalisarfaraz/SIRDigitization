@@ -1451,18 +1451,22 @@ const ApiScreen = ({route, navigation}) => {
 
   useEffect(() => {
     // getApiData();
-
+    /*
     AsyncStorage.getItem('SIRDigitization').then(async items => {
       let data1 = JSON.parse(items);
       data1.filter((item, index) => {
-        if (item.Sirnr == '900005027602') {
+        if (
+          item.Sirnr == '900005042499' ||
+          item.Sirnr == '900005042491' ||
+          item.Sirnr == '900005055125' 
+        ) {
           console.log('item.Sirnr:' + item.Sirnr);
           data1[index].Status = 'Save';
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
         }
       });
     });
-
+*/
     console.log('*****');
     console.log('data.Ibc: ' + data.Ibc);
     console.log('data.IBCNAME: ' + data.IBCNAME);
@@ -1604,13 +1608,13 @@ const ApiScreen = ({route, navigation}) => {
           }
 
           setSelectedItems(item.Discrepancyitems);
-          setDescripancyList(item.DescripancyDetail);
+          setTableList(item.ApplianceDetail);
+          setOnsiteMeter(item.OnsiteMeterDetail);
+
           if (item.CompleteDescripancyDetail != undefined)
             setCompleteDescripancyList(item.CompleteDescripancyDetail);
-
-          setTableList(item.ApplianceDetail);
+          setDescripancyList(item.DescripancyDetail);
           setApplianceList(item.Appliancelist);
-          setOnsiteMeter(item.OnsiteMeterDetail);
 
           console.log('item.Tarif: ' + item.Tariff);
           console.log('item.PremiseType: ' + item.PremiseType);
