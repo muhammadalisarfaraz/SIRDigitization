@@ -1455,11 +1455,7 @@ const ApiScreen = ({route, navigation}) => {
     AsyncStorage.getItem('SIRDigitization').then(async items => {
       let data1 = JSON.parse(items);
       data1.filter((item, index) => {
-        if (
-          item.Sirnr == '900005042499' ||
-          item.Sirnr == '900005042491' ||
-          item.Sirnr == '900005055125' 
-        ) {
+        if (item.Sirnr == '900005106595' || item.Sirnr == '900005106602') {
           console.log('item.Sirnr:' + item.Sirnr);
           data1[index].Status = 'Save';
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
@@ -1607,13 +1603,14 @@ const ApiScreen = ({route, navigation}) => {
             setlongitude(item.longitude);
           }
 
+          if (item.CompleteDescripancyDetail != undefined)
+            setCompleteDescripancyList(item.CompleteDescripancyDetail);
           setSelectedItems(item.Discrepancyitems);
+          setDescripancyList(item.DescripancyDetail);
+
           setTableList(item.ApplianceDetail);
           setOnsiteMeter(item.OnsiteMeterDetail);
 
-          if (item.CompleteDescripancyDetail != undefined)
-            setCompleteDescripancyList(item.CompleteDescripancyDetail);
-          setDescripancyList(item.DescripancyDetail);
           setApplianceList(item.Appliancelist);
 
           console.log('item.Tarif: ' + item.Tariff);

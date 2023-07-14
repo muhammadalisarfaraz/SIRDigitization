@@ -653,6 +653,9 @@ const LoadingScreenforDataDownload = ({navigation}) => {
   };
 
   const getDISCREPANCY = (mio, ibc) => {
+    console.log('DISCREPANCY METHOD: mio: ' + mio);
+    console.log('DISCREPANCY METHOD: ibc: ' + ibc);
+
     axios({
       method: 'get',
       url:
