@@ -59,6 +59,7 @@ import HomeScreenUnPlannedSummary from './screens/HomeScreenUnPlannedSummary';
 
 import SupportScreen from './screens/SupportScreen';
 import SafetyHazardCase from './screens/SafetyHazardCase';
+import PostSIRImages from './screens/PostSIRImages';
 import Update1 from './screens/Update1';
 import SafetyHazardDetail from './screens/SafetyHazardDetail';
 import SafetyHazardEditRecordDetails from './screens/SafetyHazardEditRecordDetails';
@@ -206,7 +207,7 @@ const App = () => {
     let latitude = location.coords.latitude;
     let longitude = location.coords.longitude;
     setSirDate(Moment().format('DD.MM.YYYY'));
-    setSirTime(Moment().format('hh:mm:ss'));
+    setSirTime(Moment().format('HH:MM:SS'));
 
     AsyncStorage.getItem('LoginCredentials').then(credentialsitems => {
       var userCredentials = [];
@@ -231,7 +232,7 @@ const App = () => {
             Latitude: latitude.toString(),
             Longitude: longitude.toString(),
             Erdat: Moment().format('DD.MM.YYYY'),
-            Ertime: Moment().format('hh:mm:ss'),
+            Ertime: Moment().format('HH:MM:SS'),
             //CaseType: Action,
           },
         ];
@@ -349,6 +350,7 @@ const App = () => {
                 name="Safety Hazard Case"
                 component={SafetyHazardCase}
               />
+              <Drawer.Screen name="Post SIR Images" component={PostSIRImages} />
               <Drawer.Screen
                 name="Saved Safety Hazard"
                 component={Update1}

@@ -17,6 +17,7 @@ import {
   ActivityIndicator,
   Dimensions,
   BackHandler,
+  LogBox,
 } from 'react-native';
 import {
   Provider,
@@ -65,14 +66,19 @@ import {myGlobalVariable} from './globals';
 
 let current = 100;
 const ApiScreen = ({route, navigation}) => {
+  LogBox.ignoreAllLogs();
+
   const scrollRef = useRef(null);
   const [pos, setPos] = React.useState(0);
   const [tab, setTab] = useState('Discrepancy Recorded');
   const [loader, setLoader] = useState(false);
 
   const sign = createRef();
+
   const [signaturePreview, setSign] = useState(null);
+
   const [consumerSignature, setConsumerSignature] = useState([]);
+
   const [isSignature, setIsSignature] = useState('N');
 
   // saad Comment Tarif Dropdowm
@@ -122,6 +128,7 @@ const ApiScreen = ({route, navigation}) => {
   const saveSign = () => {
     sign.current.saveImage();
   };
+
   const resetSign = () => {
     sign.current.resetImage();
     setSignModalVisible(!isSignModalVisible);
@@ -131,6 +138,7 @@ const ApiScreen = ({route, navigation}) => {
       setIsSignature('N');
     }, 1000);
   };
+
   const _onSaveEvent = result => {
     // alert('Signature Captured Successfully');
     setSign(result.encoded);
@@ -138,7 +146,20 @@ const ApiScreen = ({route, navigation}) => {
     setIsSignature('Y');
     setConsumerSignature([{consSign}]);
     setSignModalVisible(!isSignModalVisible);
+
+    // New Code Added BY Saad
+    var Allimages = signatureImages;
+
+    setSignatureImages([
+      {
+        uri: consSign,
+      },
+      ...Allimages,
+    ]);
+
+    // New Code Added BY Saad
   };
+
   const _onDragEvent = () => {
     // This callback will be called when the user enters signature
     console.log('dragged');
@@ -209,6 +230,7 @@ const ApiScreen = ({route, navigation}) => {
       selectedItems.filter(item => {
         localdata.push({
           Sirnr: data.Sirnr,
+          //Sirnr: '9000000',
           Discrepancy: item,
         });
       });
@@ -216,6 +238,7 @@ const ApiScreen = ({route, navigation}) => {
       descripancyRecordedList.filter(item => {
         localcompletedata.push({
           Sirnr: data.Sirnr,
+          //Sirnr: '90000000',
           Discrepancy: item,
         });
       });
@@ -223,6 +246,7 @@ const ApiScreen = ({route, navigation}) => {
       selectedItems.filter(item => {
         localcompletedata.push({
           Sirnr: data.Sirnr,
+          //Sirnr: '900000000',
           Discrepancy: item,
         });
       });
@@ -288,6 +312,7 @@ const ApiScreen = ({route, navigation}) => {
 
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
+  const [signatureImages, setSignatureImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
   const [images1, setImages1] = useState([]);
   const [consumerImages, setConsumerImages] = useState([]);
@@ -298,7 +323,9 @@ const ApiScreen = ({route, navigation}) => {
   const [isImage, setIsImage] = useState('N');
   const [IsImage1, setIsImage1] = useState('N');
   const [imageview, setimageview] = useState(false);
+  const [imageview2, setimageview2] = useState(false);
   const [indexer1, setindexer1] = useState(0);
+  const [indexer2, setindexer2] = useState(0);
   const {width} = Dimensions.get('window');
   const [ImagedeletionLoader, setImagedeletionLoader] = useState(false);
   const [image1Show, setImage1Show] = useState(false);
@@ -323,7 +350,9 @@ const ApiScreen = ({route, navigation}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [isAuthModalVisible, setAuthModalVisible] = useState(false);
+
   const [isSignModalVisible, setSignModalVisible] = useState(false);
+
   const [uploadingMsg, setUploadingMsg] = useState('');
 
   const [error, setError] = useState('');
@@ -474,10 +503,16 @@ const ApiScreen = ({route, navigation}) => {
   const THUMB_SIZE = 80;
   const flatListRef = useRef();
   const carouselRef = useRef();
+  const carouselRef2 = useRef();
 
   const onTouchThumbnail = touched => {
     if (touched === indexSelected) return;
     carouselRef?.current?.snapToItem(touched);
+  };
+
+  const onTouchThumbnail2 = touched => {
+    if (touched === indexSelected) return;
+    carouselRef2?.current?.snapToItem(touched);
   };
   //RFCGWSIR:Z@p123456789
   const PostMeterData = () => {
@@ -614,6 +649,7 @@ const ApiScreen = ({route, navigation}) => {
       Sirnr: SIR,
       IsSignature: isSignature,
       ConsumerSignature: consumerSignature,
+      SignatureImages: signatureImages,
       ConsumerImageFlag: IsImage1,
       ConsumerImages: consumerImages,
       //Images1: images1,
@@ -652,6 +688,7 @@ const ApiScreen = ({route, navigation}) => {
     Result_Register,
     Result_Onsite,
     Result_MeterSeal,
+    RESULT,
   ) => {
     let SIRData = [];
     AsyncStorage.getItem('SIRDigitization').then(async items => {
@@ -772,6 +809,7 @@ const ApiScreen = ({route, navigation}) => {
       Result_Register: Result_Register,
       Result_Onsite: Result_Onsite,
       Result_MeterSeal: Result_MeterSeal,
+      RESULT: RESULT,
     });
 
     AsyncStorage.setItem(SIR, JSON.stringify(SIRData));
@@ -885,34 +923,39 @@ const ApiScreen = ({route, navigation}) => {
       }),
     })
       .then(res => {
-        console.log(
-          '******************Post SIR Simultaneous UPDATED*********************************',
-        );
-        console.log(
-          '***********  res.data.d.Result------' +
+        if (res.data.d.Result_Discrepancies == 'Saved') {
+          console.log(
+            '******************Post SIR Simultaneous UPDATED*********************************',
+          );
+          console.log(
+            '***********  res.data.d.Result------' +
+              res.data.d.Result_Discrepancies,
+            res.data.d.Result_Appliances,
+            res.data.d.Result_Meter,
+            res.data.d.Result_Register,
+            res.data.d.Result_Onsite,
+            res.data.d.Result_MeterSeal,
+            res.data.d.RESULT,
+          );
+          PostSIRImage();
+          StoreInDevice(
+            'Post',
+            true,
             res.data.d.Result_Discrepancies,
-          res.data.d.Result_Appliances,
-          res.data.d.Result_Meter,
-          res.data.d.Result_Register,
-          res.data.d.Result_Onsite,
-          res.data.d.Result_MeterSeal,
-        );
+            res.data.d.Result_Appliances,
+            res.data.d.Result_Meter,
+            res.data.d.Result_Register,
+            res.data.d.Result_Onsite,
+            res.data.d.Result_MeterSeal,
+            res.data.d.RESULT,
+          );
 
-        PostSIRImage();
-        StoreInDevice(
-          'Post',
-          true,
-          res.data.d.Result_Discrepancies,
-          res.data.d.Result_Appliances,
-          res.data.d.Result_Meter,
-          res.data.d.Result_Register,
-          res.data.d.Result_Onsite,
-          res.data.d.Result_MeterSeal,
-        );
-
-        setAuthModalVisible(!isAuthModalVisible);
-        setSuccessModalVisible(!isSuccessModalVisible);
-        //GetImageAPIToken();
+          setAuthModalVisible(!isAuthModalVisible);
+          setSuccessModalVisible(!isSuccessModalVisible);
+          //GetImageAPIToken();
+        } else {
+          alert('SIR not updated in SAP');
+        }
       })
       .catch(error => {
         alert(error);
@@ -928,7 +971,7 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'GET',
-      url: 'https://sir.ke.com.pk:8039/Token',
+      url: 'https://' + myGlobalVariable[2] + ':8039/Token',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -971,7 +1014,7 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'GET',
-      url: 'https://sir.ke.com.pk:8039/api/Image/forall',
+      url: 'https://' + myGlobalVariable[2] + ':8039/api/Image/forall',
       headers: {'content-type': 'application/json'},
     })
       .then(res => {
@@ -1028,7 +1071,8 @@ const ApiScreen = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIRImageData',
+      url:
+        'https://' + myGlobalVariable[2] + ':8039/api/Image/PostSIRImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -1077,20 +1121,25 @@ const ApiScreen = ({route, navigation}) => {
     });
 
     if (isSignature == 'Y') {
-      consumerImageData.push({
-        imageName: data.Sirnr,
-        imageBase64: signaturePreview,
-        imageID: count.toString(),
-        IBC: data.Ibc,
-        SIRNo: data.Sirnr,
-        ContractNo: data.Vertrag,
-        MIONo: data.AssignMio,
+      signatureImages.filter(item => {
+        //console.log('item:= ' + item);
+        consumerImageData.push({
+          imageName: data.Sirnr,
+          imageBase64: item.uri,
+          imageID: count.toString(),
+          IBC: data.Ibc,
+          SIRNo: data.Sirnr,
+          ContractNo: data.Vertrag,
+          MIONo: data.AssignMio,
+        });
+        count++;
       });
     }
 
     axios({
       method: 'POST',
-      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIRImageData',
+      url:
+        'https://' + myGlobalVariable[2] + ':8039/api/Image/PostSIRImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -1192,7 +1241,7 @@ const ApiScreen = ({route, navigation}) => {
       height: 700,
       cropping: true,
       includeBase64: true,
-      compressImageQuality: 1,
+      compressImageQuality: 0.6,
     }).then(response => {
       console.log('Response = ', response);
 
@@ -1377,7 +1426,7 @@ const ApiScreen = ({route, navigation}) => {
         height: 700,
         cropping: true,
         includeBase64: true,
-        compressImageQuality: 1,
+        compressImageQuality: 0.6,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -1450,12 +1499,14 @@ const ApiScreen = ({route, navigation}) => {
   };
 
   useEffect(() => {
+    console.log('****************' + moment().format('HH:MM:SS'));
+
     // getApiData();
     /*
     AsyncStorage.getItem('SIRDigitization').then(async items => {
       let data1 = JSON.parse(items);
       data1.filter((item, index) => {
-        if (item.Sirnr == '900005106595' || item.Sirnr == '900005106602') {
+        if (item.Sirnr == '900005119732') {
           console.log('item.Sirnr:' + item.Sirnr);
           data1[index].Status = 'Save';
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
@@ -1508,6 +1559,10 @@ const ApiScreen = ({route, navigation}) => {
                 setSign(items.consSign);
               },
             );
+            if (item.SignatureImages != undefined) {
+              setSignatureImages(item.SignatureImages);
+            }
+
             setConsumerSignature(item.ConsumerSignature);
             setIsSignature(item.IsSignature);
           }
@@ -1583,7 +1638,7 @@ const ApiScreen = ({route, navigation}) => {
             setSirTime(item.SIRTime);
           } else {
             setSirDate(moment().format('DD.MM.YYYY'));
-            setSirTime(moment().format('hh:mm:ss'));
+            setSirTime(moment().format('HH:MM:SS'));
           }
 
           if (item.IsConsumerRefuseYN != undefined)
@@ -1602,16 +1657,47 @@ const ApiScreen = ({route, navigation}) => {
             setlatitude(item.latitude);
             setlongitude(item.longitude);
           }
+          // Discrepancies items update Start
 
-          if (item.CompleteDescripancyDetail != undefined)
-            setCompleteDescripancyList(item.CompleteDescripancyDetail);
-          setSelectedItems(item.Discrepancyitems);
-          setDescripancyList(item.DescripancyDetail);
+          if (item.CompleteDescripancyDetail != undefined) {
+            const completeDescripancyDetail =
+              item.CompleteDescripancyDetail.filter(
+                item => item.Sirnr == data.Sirnr,
+              );
+            setCompleteDescripancyList(completeDescripancyDetail);
+          }
 
-          setTableList(item.ApplianceDetail);
+          if (item.DescripancyDetail != undefined) {
+            const discrepancyitems = item.DescripancyDetail.filter(
+              item => item.Sirnr == data.Sirnr,
+            );
+            setDescripancyList(discrepancyitems);
+
+            const discrepancySirnrIds = discrepancyitems.map(
+              item => item.Discrepancy,
+            );
+            setSelectedItems(discrepancySirnrIds);
+          }
+
+          // Discrepancies items update End
+
+          // Applicance items update Start
+          if (item.ApplianceDetail != undefined) {
+            const applianceDetail = item.ApplianceDetail.filter(
+              item => item.Sirnr == data.Sirnr,
+            );
+            setTableList(applianceDetail);
+          }
+
+          if (item.Appliancelist != undefined) {
+            const appliancelist = item.Appliancelist.filter(
+              item => item.Sirnr == data.Sirnr,
+            );
+            setApplianceList(appliancelist);
+          }
+          // Applicance items update End
+
           setOnsiteMeter(item.OnsiteMeterDetail);
-
-          setApplianceList(item.Appliancelist);
 
           console.log('item.Tarif: ' + item.Tariff);
           console.log('item.PremiseType: ' + item.PremiseType);
@@ -1788,6 +1874,7 @@ const ApiScreen = ({route, navigation}) => {
             Quantity: quantity,
             Rating: singleItem.RATING,
             TotalWatts: totWatts.toString(),
+            Sirnr: data.Sirnr,
           },
         ]);
 
@@ -2252,6 +2339,7 @@ const ApiScreen = ({route, navigation}) => {
                               placeholder={'Sanction Load'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setSanctionLoad(text);
                               }}
@@ -2303,12 +2391,14 @@ const ApiScreen = ({route, navigation}) => {
                               placeholder={'Meter Testing Result'}
                               //keyboardType={'email-address'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setMeterTesting(text);
                                 if (validate(text, 5)) {
                                   setmeterTestingerror(
                                     'Input must be at least 5 characters long.',
                                   );
+                                  setMeterTesting(text.slice(0, 5));
                                 } else setmeterTestingerror('');
                               }}
                               value={meterTesting}
@@ -2355,6 +2445,7 @@ const ApiScreen = ({route, navigation}) => {
                               style={styles.inputLoadDetail}
                               placeholder={'%age Diff'}
                               //keyboardType={'numeric'}
+                              autoCapitalize="characters"
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setAgediff(text);
@@ -2362,6 +2453,7 @@ const ApiScreen = ({route, navigation}) => {
                                   setAgedifferror(
                                     'Input must be at least 7 characters long.',
                                   );
+                                  setAgediff(text.slice(0, 7));
                                 } else setAgedifferror('');
                               }}
                               value={agediff}
@@ -2407,6 +2499,7 @@ const ApiScreen = ({route, navigation}) => {
                               style={styles.inputLoadDetail}
                               placeholder={'%= Meter'}
                               //keyboardType={'numeric'}
+                              autoCapitalize="characters"
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setMeterPer(text);
@@ -2414,6 +2507,7 @@ const ApiScreen = ({route, navigation}) => {
                                   setMeterPerError(
                                     'Input must be at least 7 characters long.',
                                   );
+                                  setMeterPer(text.slice(0, 7));
                                 } else setMeterPerError('');
                               }}
                               value={meterPer}
@@ -2460,12 +2554,14 @@ const ApiScreen = ({route, navigation}) => {
                               placeholder={'%= Slow'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setMeterSlow(text);
                                 if (validate(text, 7)) {
                                   setMeterSlowError(
                                     'Input must be at least 7 characters long.',
                                   );
+                                  setMeterSlow(text.slice(0, 7));
                                 } else setMeterSlowError('');
                               }}
                               value={meterSlow}
@@ -2512,12 +2608,14 @@ const ApiScreen = ({route, navigation}) => {
                               placeholder={'Connected Load'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setConnectedLoad(text);
                                 if (validate(text, 14)) {
                                   setConnectedLoadError(
                                     'Input must be at least 14 characters long.',
                                   );
+                                  setConnectedLoad(text.slice(0, 14));
                                 } else setConnectedLoadError('');
                               }}
                               value={connectedLoad}
@@ -2566,12 +2664,14 @@ const ApiScreen = ({route, navigation}) => {
                               placeholder={'Running Load'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setRunningLoad(text);
                                 if (validate(text, 14)) {
                                   setRunningLoadError(
                                     'Input must be at least 14 characters long.',
                                   );
+                                  setRunningLoad(text.slice(0, 14));
                                 } else setRunningLoadError('');
                               }}
                               value={runningLoad}
@@ -2780,12 +2880,14 @@ const ApiScreen = ({route, navigation}) => {
                               autoCapitalize="characters"
                               keyboardType={'email-address'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setPremiseCategory(text);
                                 if (validate(text, 8)) {
                                   setPremiseCategoryError(
                                     'Input must be at least 8 characters long.',
                                   );
+                                  setPremiseCategory(text.slice(0, 8));
                                 } else setPremiseCategoryError('');
                               }}
                               style={{
@@ -2929,6 +3031,9 @@ const ApiScreen = ({route, navigation}) => {
                                 if (validate(text, 255)) {
                                   setDiscrepancyfindingsRemarksError(
                                     'Input must be at least 255 characters long.',
+                                  );
+                                  setDiscrepancyfindingsRemarks(
+                                    text.slice(0, 255),
                                   );
                                 } else setDiscrepancyfindingsRemarksError('');
                               }}
@@ -3101,12 +3206,14 @@ const ApiScreen = ({route, navigation}) => {
                     <TextInput
                       editable={isEditable}
                       style={{backgroundColor: 'white'}}
+                      autoCapitalize="characters"
                       onChangeText={text => {
                         setQuantity(text);
                         if (validate(text, 3)) {
                           setQuantityError(
                             'Input must be at least 3 characters long.',
                           );
+                          setQuantity(text.slice(0, 3));
                         } else setQuantityError('');
                       }}
                       placeholder="Quantity"
@@ -3538,12 +3645,14 @@ const ApiScreen = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={styles.MeterSystem}
+                              autoCapitalize="characters"
                               onChangeText={value => {
                                 setOnsiteMeterNo(value);
-                                if (validate(value, 18)) {
+                                if (validate(value, 10)) {
                                   setOnsiteMeterNoError(
-                                    'Input must be at least 18 characters long.',
+                                    'Input must be at least 10 characters long.',
                                   );
+                                  setOnsiteMeterNo(value.slice(0, 10));
                                 } else setOnsiteMeterNoError('');
                               }}
                               placeholder=" "
@@ -3588,12 +3697,14 @@ const ApiScreen = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={styles.MeterSystem}
+                              autoCapitalize="characters"
                               onChangeText={value => {
                                 setOnsiteMake(value);
                                 if (validate(value, 30)) {
                                   setOnsiteMakeError(
                                     'Input must be at least 30 characters long.',
                                   );
+                                  setOnsiteMake(value.slice(0, 30));
                                 } else setOnsiteMakeError('');
                               }}
                               placeholder=" "
@@ -3681,12 +3792,14 @@ const ApiScreen = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={styles.MeterSystem}
+                              autoCapitalize="characters"
                               onChangeText={value => {
                                 setOnsiteVolts(value);
                                 if (validate(value, 7)) {
                                   setOnsiteVoltsError(
                                     'Input must be at least 7 characters long.',
                                   );
+                                  setOnsiteVolts(value.slice(0, 7));
                                 } else setOnsiteVoltsError('');
                               }}
                               placeholder=" "
@@ -3732,12 +3845,14 @@ const ApiScreen = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={styles.MeterSystem}
+                              autoCapitalize="characters"
                               onChangeText={value => {
                                 setOnsiteMeterConstant(value);
                                 if (validate(value, 10)) {
                                   setOnsiteMeterConstantError(
                                     'Input must be at least 10 characters long.',
                                   );
+                                  setOnsiteMeterConstant(value.slice(0, 10));
                                 } else setOnsiteMeterConstantError('');
                               }}
                               placeholder=" "
@@ -3783,12 +3898,14 @@ const ApiScreen = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={styles.MeterSystem}
+                              autoCapitalize="characters"
                               onChangeText={value => {
                                 setOnsiteSecuritySlipNo(value);
                                 if (validate(value, 30)) {
                                   setOnsiteSecuritySlipNoError(
                                     'Input must be at least 10 characters long.',
                                   );
+                                  setOnsiteSecuritySlipNo(value.slice(0, 30));
                                 } else setOnsiteSecuritySlipNoError('');
                               }}
                               placeholder=" "
@@ -3833,12 +3950,14 @@ const ApiScreen = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={styles.MeterSystem}
+                              autoCapitalize="characters"
                               onChangeText={value => {
                                 setOnsiteMultiplyingFactor(value);
                                 if (validate(value, 2)) {
                                   setOnsiteMultiplyingFactorError(
                                     'Input must be at least 2 characters long.',
                                   );
+                                  setOnsiteMultiplyingFactor(value.slice(0, 2));
                                 } else setOnsiteMultiplyingFactorError('');
                               }}
                               placeholder=" "
@@ -3883,6 +4002,7 @@ const ApiScreen = ({route, navigation}) => {
                                 setPowerMeterRemarksError(
                                   'Input must be at least 255 characters long.',
                                 );
+                                setPowerMeterRemarks(text.slice(0, 255));
                               } else setPowerMeterRemarksError('');
                             }}
                             placeholder={'Any comment (if required)'}
@@ -4051,6 +4171,7 @@ const ApiScreen = ({route, navigation}) => {
                         }}>
                         <TextInput
                           editable={isEditable}
+                          autoCapitalize="characters"
                           style={{flex: 0.2, backgroundColor: 'white'}}
                           onChangeText={value => {
                             setOnsiteMeterReading(value);
@@ -4058,6 +4179,7 @@ const ApiScreen = ({route, navigation}) => {
                               setOnsiteMeterReadingError(
                                 'Input must be at least 8 characters long.',
                               );
+                              setOnsiteMeterReading(value.slice(0, 8));
                             } else setOnsiteMeterReadingError('');
                           }}
                           placeholder="Meter Reading"
@@ -4148,6 +4270,7 @@ const ApiScreen = ({route, navigation}) => {
                             <TextInput
                               placeholder={'Consumer Name'}
                               keyboardType={'email-address'}
+                              autoCapitalize="characters"
                               placeholderTextColor="grey"
                               onChangeText={text => {
                                 setConsumerName(text);
@@ -4155,6 +4278,7 @@ const ApiScreen = ({route, navigation}) => {
                                   setConsumerNameError(
                                     'Input must be at least 20 characters long.',
                                   );
+                                  setConsumerName(text.slice(0, 20));
                                 } else setConsumerNameError('');
                               }}
                               style={{
@@ -4206,6 +4330,7 @@ const ApiScreen = ({route, navigation}) => {
                               placeholder={'Mobile No'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               maxLength={11}
                               onChangeText={text => {
                                 setMobileNo(text);
@@ -4213,6 +4338,7 @@ const ApiScreen = ({route, navigation}) => {
                                   setMobileNoError(
                                     'Input must be at least 11 characters long.',
                                   );
+                                  setMobileNo(text.slice(0, 11));
                                 } else setMobileNoError('');
                               }}
                               style={{
@@ -4262,6 +4388,7 @@ const ApiScreen = ({route, navigation}) => {
                             <TextInput
                               placeholder={'Enter CNIC #'}
                               keyboardType={'numeric'}
+                              autoCapitalize="characters"
                               maxLength={13}
                               placeholderTextColor="grey"
                               onChangeText={text => {
@@ -4270,6 +4397,7 @@ const ApiScreen = ({route, navigation}) => {
                                   setConsumerNameCNICError(
                                     'Input must be at least 16 characters long.',
                                   );
+                                  setConsumerNameCNIC(text.slice(0, 16));
                                 } else setConsumerNameCNICError('');
                               }}
                               style={{
@@ -4321,6 +4449,7 @@ const ApiScreen = ({route, navigation}) => {
                                   setConsumerRemarksError(
                                     'Input must be at least 255 characters long.',
                                   );
+                                  setConsumerRemarks(text.slice(0, 255));
                                 } else setConsumerRemarksError('');
                               }}
                               placeholder={'Any comment (if required)'}
@@ -4505,7 +4634,7 @@ const ApiScreen = ({route, navigation}) => {
                         </View>
                       </View>
                     </View>
-
+                    {/*Consumer Signature START*/}
                     <View
                       style={{
                         flexDirection: 'row',
@@ -4549,7 +4678,7 @@ const ApiScreen = ({route, navigation}) => {
                         </TouchableOpacity>
                       </View>
                     </View>
-
+                    {/*  Take Signature Code Commented on 8 Aug 2023
                     <View
                       style={{
                         flexDirection: 'row',
@@ -4617,6 +4746,88 @@ const ApiScreen = ({route, navigation}) => {
                         </View>
                       </View>
                     </View>
+*/}
+                    {/*Consumer Signature END*/}
+                    {/*Carousel Signature Start*/}
+                    <View
+                      style={{
+                        flex: 2,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        // height: 50,
+                        flexDirection: 'row',
+                        marginVertical: 10,
+                        marginLeft: 85,
+                        // paddingHorizontal: 110,
+                      }}>
+                      <Carousel
+                        ref={carouselRef}
+                        layout="default"
+                        data={signatureImages}
+                        sliderWidth={width}
+                        itemWidth={width}
+                        renderItem={({item, index}) => {
+                          return (
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  onTouchThumbnail(index);
+                                  setindexer1(index);
+                                  setimageview(true);
+                                }}
+                                activeOpacity={0.9}>
+                                <Image
+                                  source={{
+                                    uri: 'data:image/png;base64,' + item.uri,
+                                  }}
+                                  style={{height: 400, width: 200}}></Image>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                disabled={!isEditable}
+                                onPress={() => {
+                                  setTimeout(() => {
+                                    // setRefresh(true);
+                                    setImagedeletionLoader(true);
+
+                                    //console.log("images", images);
+                                    var arr = signatureImages;
+                                    arr.splice(index, 1);
+                                    // console.log(index)
+                                    //console.log("index", index);
+                                    //console.log("arr)", arr);
+
+                                    setSignatureImages(arr);
+                                    setImagedeletionLoader(false);
+                                  }, 2000);
+                                }}
+                                style={{
+                                  width: 200,
+                                  height: 16,
+                                  // borderRadius: 13,
+                                  zIndex: 100,
+                                  backgroundColor: 'red',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text
+                                  style={{
+                                    color: 'white',
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                  }}>
+                                  Remove
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          );
+                        }}
+                        // sliderWidth={150}
+                        //itemWidth={120}
+                        onSnapToItem={index => onSelect(index)}
+                      />
+                    </View>
+
+                    {/*Carousel Signature End*/}
                   </View>
                 </View>
               </View>

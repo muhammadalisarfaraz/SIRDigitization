@@ -287,12 +287,54 @@ const LoadingScreenforDataDownload = ({navigation}) => {
       });
   };
 
+  const _updateSIRStatusList = async SirnrIdsList => {
+    let sirnrIdsList = [];
+
+    SirnrIdsList.filter(item => {
+      sirnrIdsList.push({
+        Sirnr: item,
+      });
+    });
+
+    console.log('sirnrIdsList');
+    console.log(sirnrIdsList);
+
+    axios({
+      method: 'POST',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_UPDATE_SAP_STATUS_SRV/HEADERSet',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-CSRF-Token': '',
+        'X-Requested-With': 'X',
+
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
+      },
+      data: JSON.stringify({
+        HeaderToItem: sirnrIdsList,
+      }),
+    })
+      .then(res => {
+        console.log('SIR Status List Updated in SAP');
+      })
+      .catch(error => {
+        console.error('axios:error:_updateSIRStatusList: ' + error.message);
+      });
+  };
+
   const _storeData = async (sapData, ibc) => {
     var data = [];
     var SIRData = [];
     let count = 0;
     var flag = false;
     var SirnrNo;
+
+    const SirnrIdsList = sapData.map(item => item.Sirnr);
+
+    _updateSIRStatusList(SirnrIdsList);
 
     console.log(
       '_storeData:sapData: ' + typeof sapData + ' length: ' + sapData.length,

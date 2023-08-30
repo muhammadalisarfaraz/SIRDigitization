@@ -90,6 +90,15 @@ export function DrawerContent(props) {
                 props.navigation.navigate('Safety Hazard Case');
               }}
             />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="account-outline" color={color} size={size} />
+              )}
+              label="Post SIR Images"
+              onPress={() => {
+                props.navigation.navigate('Post SIR Images');
+              }}
+            />
             {/*
             <DrawerItem
               icon={({color, size}) => (

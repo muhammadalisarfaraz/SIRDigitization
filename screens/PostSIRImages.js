@@ -45,7 +45,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 import base64 from 'react-native-base64';
 
-const SafetyHazardCase = ({navigation}) => {
+const PostSIRImages = ({navigation}) => {
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
@@ -64,6 +64,8 @@ const SafetyHazardCase = ({navigation}) => {
   const [isAuthModalVisible, setAuthModalVisible] = useState(false);
   const [error, setError] = useState('');
   const [uploadingMsg, setUploadingMsg] = useState('');
+  const [SIRNo, setSIRNo] = useState('');
+  const [vertrag, setVertrag] = useState('');
   const [AccidentLocationAddress, setAccidentLocationAddress] = useState('');
   const [PremiseConsumerNumber, setPremiseConsumerNumber] = useState('');
   const [PMT, setPMT] = useState('');
@@ -79,6 +81,9 @@ const SafetyHazardCase = ({navigation}) => {
 
   const [accidentLocationAddressError, setAccidentLocationAddressError] =
     useState('');
+  const [SIRNoError, setSIRNoError] = useState('');
+  const [vertragError, setVertragError] = useState('');
+
   const [premiseConsumerNumberError, setPremiseConsumerNumberError] =
     useState('');
   const [pmtError, setPMTError] = useState('');
@@ -148,7 +153,7 @@ const SafetyHazardCase = ({navigation}) => {
         height: 700,
         cropping: true,
         includeBase64: true,
-        compressImageQuality: 0.6,
+        compressImageQuality: 1,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -249,7 +254,7 @@ const SafetyHazardCase = ({navigation}) => {
       height: 700,
       cropping: true,
       includeBase64: true,
-      compressImageQuality: 0.6,
+      compressImageQuality: 1,
     }).then(response => {
       console.log('Response = ', response);
 
@@ -299,7 +304,7 @@ const SafetyHazardCase = ({navigation}) => {
     });
   };
 
-  const PostSIRImage = HAZARD_ID => {
+  const PostsafetyImage = HAZARD_ID => {
     let data1 = [];
     let count = 1;
     console.log('Post Safety Image called');
@@ -333,14 +338,71 @@ const SafetyHazardCase = ({navigation}) => {
     })
       .then(res => {
         console.log(
-          '******************Post Safety Image updated*********************************',
+          '******************Post SIR Image updated*********************************',
         );
         console.log(res.data);
-        storeInDevice();
+        //storeInDevice();
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'SupportScreen'}],
+        });
       })
       .catch(error => {
         console.error(error);
         alert('Post Safety Image Data: ' + error);
+      });
+  };
+
+  const PostSIRImage = () => {
+    let data1 = [];
+    let count = 1;
+    console.log('Post SIR Image called');
+    console.log('ibc:' + ibc);
+    console.log('count.toString():' + count.toString());
+    console.log('SIRNo:' + SIRNo);
+    console.log('vertrag:' + vertrag);
+    console.log('user:' + user);
+
+    images.filter(item => {
+      console.log('item.base64:= ' + item.base64);
+
+      data1.push({
+        imageName: ibc,
+        imageBase64: item.base64,
+        imageID: count.toString(),
+        IBC: ibc,
+        SIRNo: SIRNo,
+        ContractNo: vertrag,
+        MIONo: user,
+      });
+      count++;
+    });
+
+    axios({
+      method: 'POST',
+      url:
+        'https://' + myGlobalVariable[2] + ':8039/api/Image/PostSIRImageData',
+      headers: {
+        'content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
+      },
+      data: JSON.stringify(data1),
+    })
+      .then(res => {
+        console.log(
+          '******************Post SIR Image updated*********************************',
+        );
+        console.log(res.data);
+        //storeInDevice();
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'SupportScreen'}],
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Post SIR Image Data: ' + error);
       });
   };
 
@@ -442,11 +504,11 @@ const SafetyHazardCase = ({navigation}) => {
     })
       .then(resp => {
         console.log('res.data: ', resp.data.d.Message);
-        PostSIRImage(resp.data.d.HAZARD_ID);
+        PostsafetyImage(resp.data.d.HAZARD_ID);
       })
       .catch(error => {
         console.error(error);
-        alert('post Safety Hazard Data: ' + error);
+        alert('Post SIR Images Data: ' + error);
       });
     /*
     setRefresh(true);
@@ -457,14 +519,65 @@ const SafetyHazardCase = ({navigation}) => {
 */
   };
 
+  const ValidationService = (VERTRAG, BEGRU, SIRNR) => {
+    console.log('**** Validation Service ******');
+    console.log('VERTRAG: ' + VERTRAG);
+    console.log('BEGRU: ' + ibc);
+    console.log('SIRNR: ' + SIRNR);
+
+    axios({
+      method: 'GET',
+      url:
+        'https://' +
+        myGlobalVariable[0] +
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_VALIDATION_IMAGE_UPLOAD_SRV/WASet?$filter=VERTRAG%20eq%20%27' +
+        VERTRAG +
+        '%27%20and%20BEGRU%20eq%20%27' +
+        ibc +
+        '%27%20and%20SIRNR%20eq%20%27' +
+        SIRNR +
+        '%27%20&$format=json',
+      headers: {
+        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-CSRF-Token': '',
+        'X-Requested-With': 'X',
+      },
+    })
+      .then(res => {
+        console.log(
+          '******************Validation Service Called*********************************',
+        );
+        if (res.data.d.results != []) {
+          res.data.d.results.forEach(singleResult => {
+            console.log('singleResult.ERROR: ' + singleResult.ERROR);
+
+            if (singleResult.ERROR == '') {
+              console.log('contract is valid');
+              PostSIRImage();
+            } else {
+              alert('Not a valid Contract No');
+            }
+          });
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        alert('ValidationService:error ' + error);
+      });
+  };
+
   useEffect(() => {
-    console.log('SafetyHazardCase:Screen');
+    console.log('PostSIRImages:Screen');
     AsyncStorage.getItem('LoginCredentials').then(items => {
       var data = items ? JSON.parse(items) : {};
       // var datatable = [];
       //data[0].name=[0];
       setUser(data[0].pernr);
       setIbc(data[0].begru);
+      console.log(data[0].pernr);
+      console.log(data[0].begru);
     });
 
     getUserCurrentLocation();
@@ -501,7 +614,7 @@ const SafetyHazardCase = ({navigation}) => {
                       },
                     ]}>
                     {' '}
-                    Safety Hazard Case
+                    Post SIR Images
                   </Text>
                 </LinearGradient>
               </View>
@@ -529,7 +642,7 @@ const SafetyHazardCase = ({navigation}) => {
                 }}>
                 <Text
                   style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Accident Nearest Location Address
+                  SIr No.
                 </Text>
               </View>
               <View
@@ -559,18 +672,16 @@ const SafetyHazardCase = ({navigation}) => {
                   placeholder={'Enter Text'}
                   placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
-                    setAccidentLocationAddress(text);
+                    setSIRNo(text);
                     if (validate(text, 40)) {
-                      setAccidentLocationAddressError(
+                      setSIRNoError(
                         'Input must be at least 40 characters long.',
                       );
-                    } else setAccidentLocationAddressError('');
+                    } else setSIRNoError('');
                   }}
                 />
-                {accidentLocationAddressError !== '' && (
-                  <Text style={styles.error}>
-                    {accidentLocationAddressError}
-                  </Text>
+                {SIRNoError !== '' && (
+                  <Text style={styles.error}>{SIRNoError}</Text>
                 )}
               </View>
 
@@ -587,7 +698,7 @@ const SafetyHazardCase = ({navigation}) => {
                 }}>
                 <Text
                   style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Premise Consumer Number
+                  Contract NO.
                 </Text>
               </View>
 
@@ -623,179 +734,19 @@ const SafetyHazardCase = ({navigation}) => {
                   placeholder={'Enter Text'}
                   placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
-                    setPremiseConsumerNumber(text);
+                    setVertrag(text);
                     if (validate(text, 12)) {
-                      setPremiseConsumerNumberError(
+                      setVertragError(
                         'Input must be at least 12 characters long.',
                       );
-                    } else setPremiseConsumerNumberError('');
+                    } else setVertragError('');
                   }}
                 />
-                {premiseConsumerNumberError !== '' && (
-                  <Text style={styles.error}>{premiseConsumerNumberError}</Text>
+                {vertragError !== '' && (
+                  <Text style={styles.error}>{vertragError}</Text>
                 )}
               </View>
 
-              <View
-                style={{
-                  // height: 22,
-                  width: '100%',
-                  marginLeft: 40,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                  marginTop: 15,
-                }}>
-                <Text
-                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  PMT
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  //height: 25,
-                  width: '100%',
-                  marginLeft: 40,
-                  marginTop: 8,
-                  // position: 'absolute',
-                  //padding:90,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                }}>
-                <TextInput
-                  //  maxLength={10}
-                  style={{
-                    //height: 50,
-                    width: '86%',
-                    fontSize: 16,
-                    color: 'black',
-                    marginTop: -10,
-                    // marginBottom: 50,
-                    borderBottomWidth: 0.8,
-                  }}
-                  placeholder={'Enter Text'}
-                  placeholderText={{fontSize: 30, color: 'grey'}}
-                  onChangeText={text => {
-                    setPMT(text);
-                    if (validate(text, 30)) {
-                      setPMTError('Input must be at least 30 characters long.');
-                    } else setPMTError('');
-                  }}
-                />
-                {pmtError !== '' && (
-                  <Text style={styles.error}>{pmtError}</Text>
-                )}
-              </View>
-
-              <View
-                style={{
-                  height: 22,
-                  width: '100%',
-                  marginLeft: 40,
-                  // position: 'absolute',
-                  //padding:90,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Consumer Mobile Number
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  height: 25,
-                  width: '100%',
-                  marginLeft: 40,
-                  marginTop: 10,
-                  // position: 'absolute',
-                  //padding:90,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                }}>
-                <TextInput
-                  style={{
-                    height: 50,
-                    width: '86%',
-                    fontSize: 16,
-                    color: 'black',
-                    marginTop: -10,
-                    // marginBottom: 50,
-                    borderBottomWidth: 0.8,
-                  }}
-                  maxLength={11}
-                  keyboardType={'numeric'}
-                  placeholder={'Enter Text'}
-                  placeholderText={{fontSize: 16, color: 'grey'}}
-                  onChangeText={text => {
-                    setConsumerMobileNumber(text);
-                    if (validate(text, 15)) {
-                      setConsumerMobileNumberError(
-                        'Input must be at least 15 characters long.',
-                      );
-                    } else setConsumerMobileNumberError('');
-                  }}
-                />
-                {consumerMobileNumberError !== '' && (
-                  <Text style={styles.error}>{consumerMobileNumberError}</Text>
-                )}
-              </View>
-
-              <View
-                style={{
-                  height: 22,
-                  width: '100%',
-                  marginLeft: 40,
-                  // position: 'absolute',
-                  //padding:90,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                  marginTop: 20,
-                }}>
-                <Text
-                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Remarks
-                </Text>
-              </View>
-              <View
-                style={{
-                  height: 25,
-                  width: '100%',
-                  marginLeft: 40,
-                  marginTop: 70,
-                  // position: 'absolute',
-                  //padding:90,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                }}>
-                <TextInput
-                  multiline={true}
-                  placeholder={'Any comment (if required)'}
-                  placeholderTextColor="black"
-                  onChangeText={text => {
-                    setRemarks(text);
-                    if (validate(text, 200)) {
-                      setRemarksError(
-                        'Input must be at least 200 characters long.',
-                      );
-                    } else setRemarksError('');
-                  }}
-                  style={{
-                    height: 150,
-                    width: '86%',
-                    borderWidth: 0.75,
-                    textAlign: 'left',
-                    textAlignVertical: 'top',
-                    marginTop: 10,
-                    color: 'black',
-                  }}
-                />
-                {remarksError !== '' && (
-                  <Text style={styles.error}>{remarksError}</Text>
-                )}
-              </View>
               <View
                 style={{
                   width: '100%',
@@ -828,7 +779,7 @@ const SafetyHazardCase = ({navigation}) => {
                         },
                       ]}>
                       {' '}
-                      Photos of Hazards
+                      Photos of SIRs
                     </Text>
                   </LinearGradient>
                 </View>
@@ -1236,7 +1187,8 @@ Saad Commented on Single Gallery */}
                       NetInfo.fetch().then(state => {
                         if (state.isConnected) {
                           console.log(' **** You are online! ******** ');
-                          postSafetyHazard();
+                          //PostSIRImage();
+                          ValidationService(vertrag, user, SIRNo);
                           setIsEditable(false);
                         } else {
                           Alert.alert('You are offline!');
@@ -1264,7 +1216,7 @@ Saad Commented on Single Gallery */}
   );
 };
 
-export default SafetyHazardCase;
+export default PostSIRImages;
 
 const styles = StyleSheet.create({
   container: {

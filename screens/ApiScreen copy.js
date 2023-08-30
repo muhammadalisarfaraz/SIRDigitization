@@ -1,13 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
-  ScrollView, Image, ImageBackground,
-  TouchableOpacity, Platform,
+  ScrollView,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+  Platform,
   PermissionsAndroid,
-  ActivityIndicator, Dimensions
+  ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import {
   Provider,
@@ -20,24 +24,25 @@ import {
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
-import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
+import RadioForm, {
+  RadioButton,
+  RadioButtonInput,
+  RadioButtonLabel,
+} from 'react-native-simple-radio-button';
 import MultiSelect from 'react-native-multiple-select';
 import axios from 'axios';
 import ImageViewConsumer from 'react-native-image-viewing';
 import Geolocation from '@react-native-community/geolocation';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {
   launchCamera,
   launchImageLibrary,
   //ImagePicker,
-  Select
+  Select,
 } from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import ImageViewer from 'react-native-image-zoom-viewer';
-
- 
-
 
 let current = 100;
 const ApiScreen = () => {
@@ -47,13 +52,13 @@ const ApiScreen = () => {
   const [loader, setLoader] = useState(false);
 
   var radio_props = [
-    { label: 'Yes', value: 0 },
-    { label: 'No', value: 1 }
+    {label: 'Yes', value: 0},
+    {label: 'No', value: 1},
   ];
 
   var radio_propsS = [
-    { label: 'Yes', value: 0 },
-    { label: 'No', value: 1 }
+    {label: 'Yes', value: 0},
+    {label: 'No', value: 1},
   ];
 
   const items = [
@@ -150,70 +155,66 @@ const ApiScreen = () => {
     },
   ]);
 
-
   const [apiRes, setApiRes] = useState([]);
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
   const [images1, setImages1] = useState([]);
   const [indexSelected, setIndexSelected] = useState(0);
-  const [isImage, setIsImage] = useState("N");
-  const [IsImage1, setIsImage1] = useState("N");
+  const [isImage, setIsImage] = useState('N');
+  const [IsImage1, setIsImage1] = useState('N');
   const [imageview, setimageview] = useState(false);
   const [indexer1, setindexer1] = useState(0);
-  const { width } = Dimensions.get('window');
+  const {width} = Dimensions.get('window');
   const [ImagedeletionLoader, setImagedeletionLoader] = useState(false);
   const [image1Show, setImage1Show] = useState(false);
   const [visible1, setIsVisible1] = useState(false);
 
-
   /* Load Detail ------------ Start */
-  const [sanctionLoad, setSanctionLoad] = useState("");
-  const [meterTesting, setMeterTesting] = useState("");
-  const [agediff, setAgediff] = useState("");
-  const [meterPer, setMeterPer] = useState("");
-  const [meterSlow, setMeterSlow] = useState("");
-  const [connectedLoad, setConnectedLoad] = useState("");
-  const [runningLoad, setRunningLoad] = useState("");
+  const [sanctionLoad, setSanctionLoad] = useState('');
+  const [meterTesting, setMeterTesting] = useState('');
+  const [agediff, setAgediff] = useState('');
+  const [meterPer, setMeterPer] = useState('');
+  const [meterSlow, setMeterSlow] = useState('');
+  const [connectedLoad, setConnectedLoad] = useState('');
+  const [runningLoad, setRunningLoad] = useState('');
 
   /* Load Detail ------------ End */
 
-
   /* Meter Detail on Site ------------ Start */
-  const [meterNo, setMeterNo] = useState("");
-  const [currentReading, setCurrentReading] = useState("");
-  const [peakReading, setPeakReading] = useState("");
+  const [meterNo, setMeterNo] = useState('');
+  const [currentReading, setCurrentReading] = useState('');
+  const [peakReading, setPeakReading] = useState('');
 
-
-  const [make, setMake] = useState("");
-  const [amperes, setAmperes] = useState("");
-  const [volts, setVolts] = useState("");
-  const [meterConstant, setMeterConstant] = useState("");
-  const [securitySlipNo, setSecuritySlipNo] = useState("");
-  const [multiplyingFactor, setMultiplyingFactor] = useState("");
+  const [make, setMake] = useState('');
+  const [amperes, setAmperes] = useState('');
+  const [volts, setVolts] = useState('');
+  const [meterConstant, setMeterConstant] = useState('');
+  const [securitySlipNo, setSecuritySlipNo] = useState('');
+  const [multiplyingFactor, setMultiplyingFactor] = useState('');
 
   /* Meter Detail on Site ------------ End */
 
   /* Discrepancy and Findings ------------ Start */
-  const [serviceType, setServiceType] = useState("");
-  const [tarif, setTarif] = useState("");
-  const [premiseType, setPremiseType] = useState("");
-  const [premiseCategory, setPremiseCategory] = useState("");
+  const [serviceType, setServiceType] = useState('');
+  const [tarif, setTarif] = useState('');
+  const [premiseType, setPremiseType] = useState('');
+  const [premiseCategory, setPremiseCategory] = useState('');
 
-  const [remarks, setRemarks] = useState("");
-  const [discrepancyfindingsRemarks, setdiscrepancyfindingsRemarks] = useState("");
+  const [remarks, setRemarks] = useState('');
+  const [discrepancyfindingsRemarks, setdiscrepancyfindingsRemarks] =
+    useState('');
   /* Discrepancy and Findings ------------ End */
 
   /* Customer Acknowlegment ------------ Start */
 
-  const [consumerName, setConsumerName] = useState("");
-  const [mobileNo, setMobileNo] = useState("");
-  const [consumerRemarks, setConsumerRemarks] = useState("");
-  const [consumerRefuseYN, setConsumerRefuseYN] = useState("");
-  const [consumerSign, setConsumerSign] = useState("");
+  const [consumerName, setConsumerName] = useState('');
+  const [mobileNo, setMobileNo] = useState('');
+  const [consumerRemarks, setConsumerRemarks] = useState('');
+  const [consumerRefuseYN, setConsumerRefuseYN] = useState('');
+  const [consumerSign, setConsumerSign] = useState('');
 
   /* Customer Acknowlegment ------------ End */
-
 
   const SPACING = 10;
   const THUMB_SIZE = 80;
@@ -225,7 +226,7 @@ const ApiScreen = () => {
     carouselRef?.current?.snapToItem(touched);
   };
 
-  const chooseFile = (type) => {
+  const chooseFile = type => {
     let options = {
       mediaType: type,
       maxWidth: 300,
@@ -233,7 +234,7 @@ const ApiScreen = () => {
       quality: 1,
     };
 
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, response => {
       console.log('Response = ', response);
 
       if (response.didCancel) {
@@ -250,35 +251,47 @@ const ApiScreen = () => {
         return;
       }
 
-
-
-
-      setIsImage("Y");
+      setIsImage('Y');
 
       var Allimages = images;
-      setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+      setFilePath([
+        {
+          uri: response.assets[0].uri,
+          url: response.assets[0].uri,
+          fileName: response.assets[0].fileName,
+          base64: response.assets[0].base64,
+          Status: 'Pending',
+          RoshniBajiWebID: '',
+        },
+        ...Allimages,
+      ]);
 
-      setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
-
-
+      setImages([
+        {
+          uri: response.assets[0].uri,
+          url: response.assets[0].uri,
+          fileName: response.assets[0].fileName,
+          base64: response.assets[0].base64,
+          Status: 'Pending',
+          RoshniBajiWebID: '',
+        },
+        ...Allimages,
+      ]);
     });
   };
-
-
 
   const onSelect = indexSelected => {
     setIndexSelected(indexSelected);
     flatListRef?.current?.scrollToOffset({
       offset: indexSelected * THUMB_SIZE,
-      animated: true
+      animated: true,
     });
   };
-  const [latitude1, setlatitude] = useState("");
-  const [longitude1, setlongitude] = useState("");
-
+  const [latitude1, setlatitude] = useState('');
+  const [longitude1, setlongitude] = useState('');
 
   const getUserCurrentLocation = async () => {
-    let latitude, longitude
+    let latitude, longitude;
 
     //let isPermissionPermitted= await requestLocationPermission();
 
@@ -289,17 +302,14 @@ const ApiScreen = () => {
     //  console.log("isPermissionPermitted", isPermissionPermitted);
     Geolocation.getCurrentPosition(
       info => {
-        const { coords } = info
+        const {coords} = info;
 
-        latitude = coords.latitude
-        longitude = coords.longitude
-
+        latitude = coords.latitude;
+        longitude = coords.longitude;
 
         setlatitude(latitude);
         setlongitude(longitude);
         // console.log(latitude);
-
-
 
         // getUserCurrentAddress(latitude, longitude)
       },
@@ -307,20 +317,11 @@ const ApiScreen = () => {
       {
         enableHighAccuracy: false,
         timeout: 2000,
-        maximumAge: 3600000
-      }
-    )
+        maximumAge: 3600000,
+      },
+    );
     //}
-  }
-
-
-
-
-
-
-
-
-
+  };
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -361,37 +362,33 @@ const ApiScreen = () => {
     } else return true;
   };
 
-
   const requestAuthorization = async () => {
     if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.requestAuthorization()(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
-            'title': 'Location Permission',
-            'message': 'This App needs access to your location ' +
-              'so we can know where you are.'
-          }
-        )
+            title: 'Location Permission',
+            message:
+              'This App needs access to your location ' +
+              'so we can know where you are.',
+          },
+        );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use locations ")
+          console.log('You can use locations ');
           return granted === PermissionsAndroid.RESULTS.GRANTED;
-
         } else {
-          console.log("Location permission denied")
+          console.log('Location permission denied');
           return false;
         }
       } catch (err) {
         return false;
-        console.warn(err)
-
+        console.warn(err);
       }
     }
-  }
-
+  };
 
   const captureImage = async (type, imageNo) => {
-
     let options = {
       mediaType: type,
       maxWidth: 300,
@@ -406,21 +403,16 @@ const ApiScreen = () => {
     let isCameraPermitted = await requestCameraPermission();
     let isStoragePermitted = await requestExternalWritePermission();
 
-    console.log("isCameraPermitted", isCameraPermitted);
-    console.log("isStoragePermitted", isStoragePermitted);
+    console.log('isCameraPermitted', isCameraPermitted);
+    console.log('isStoragePermitted', isStoragePermitted);
     // && isStoragePermitted
     if (isCameraPermitted) {
-
       ImagePicker.openCamera({
         width: 300,
         height: 400,
         cropping: true,
         includeBase64: true,
       }).then(response => {
-
-
-
-
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
 
@@ -438,31 +430,49 @@ const ApiScreen = () => {
           return;
         }
 
-
-
-
-
-
-
         var Allimages = images;
 
         if (imageNo == '1') {
-          setIsImage1("Y");
+          setIsImage1('Y');
           console.log(response.path);
           //setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
-          setFilePath1([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }]);
-          setImages1({ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data });
+          setFilePath1([
+            {
+              uri: response.path,
+              url: response.path,
+              fileName: 'BFDC.jpg',
+              base64: response.data,
+            },
+          ]);
+          setImages1({
+            uri: response.path,
+            url: response.path,
+            fileName: 'BFDC.jpg',
+            base64: response.data,
+          });
           //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
-
+        } else {
+          setIsImage('Y');
+          setFilePath([
+            {
+              uri: response.path,
+              url: response.path,
+              fileName: 'BFDC.jpg',
+              base64: response.data,
+            },
+            ...Allimages,
+          ]);
+          setImages([
+            {
+              uri: response.path,
+              url: response.path,
+              fileName: 'BFDC.jpg',
+              base64: response.data,
+            },
+            ...Allimages,
+          ]);
         }
-        else {
-          setIsImage("Y");
-          setFilePath([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }, ...Allimages]);
-          setImages([{ uri: response.path, url: response.path, fileName: 'BFDC.jpg', base64: response.data }, ...Allimages]);
-
-
-        }
-        console.log("images1.uri", images1.uri);
+        console.log('images1.uri', images1.uri);
       });
     }
   };
@@ -493,16 +503,61 @@ const ApiScreen = () => {
 
   const [tableList, setTableList] = useState([
     {
-      id: Date.now(), LoadDetail: 'Fan', Quantity: '', Rating: '80', TotalWatts: ''
+      id: Date.now(),
+      LoadDetail: 'Fan',
+      Quantity: '',
+      Rating: '80',
+      TotalWatts: '',
     },
-    { id: Date.now(), LoadDetail: 'Bulb', Quantity: '', Rating: '', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Energy Saver', Quantity: '', Rating: '', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Tube Light', Quantity: '', Rating: '40', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'Heater', Quantity: '', Rating: '', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: 'AC-Window', Quantity: '', Rating: '2500', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: '1 1/2 Ton', Quantity: '', Rating: '1800', TotalWatts: '' },
-    { id: Date.now(), LoadDetail: '1 Ton', Quantity: '', Rating: '1200', TotalWatts: '' },
-
+    {
+      id: Date.now(),
+      LoadDetail: 'Bulb',
+      Quantity: '',
+      Rating: '',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: 'Energy Saver',
+      Quantity: '',
+      Rating: '',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: 'Tube Light',
+      Quantity: '',
+      Rating: '40',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: 'Heater',
+      Quantity: '',
+      Rating: '',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: 'AC-Window',
+      Quantity: '',
+      Rating: '2500',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: '1 1/2 Ton',
+      Quantity: '',
+      Rating: '1800',
+      TotalWatts: '',
+    },
+    {
+      id: Date.now(),
+      LoadDetail: '1 Ton',
+      Quantity: '',
+      Rating: '1200',
+      TotalWatts: '',
+    },
   ]);
 
   const onAddmore = () => {
@@ -518,28 +573,26 @@ const ApiScreen = () => {
     ]);
   };
 
-
   // console.log('list table', tableList);
-
 
   const updateLoadDetail = (text, index) => {
     let newArray = [...tableList];
-    newArray[index] = { ...newArray[index], LoadDetail: text };
+    newArray[index] = {...newArray[index], LoadDetail: text};
     setTableList(newArray);
   };
   const updateQuantity = (text, index) => {
     let newArray = [...tableList];
-    newArray[index] = { ...newArray[index], Quantity: text };
+    newArray[index] = {...newArray[index], Quantity: text};
     setTableList(newArray);
   };
   const updateRating = (text, index) => {
     let newArray = [...tableList];
-    newArray[index] = { ...newArray[index], Rating: text };
+    newArray[index] = {...newArray[index], Rating: text};
     setTableList(newArray);
   };
   const updateTotalWatts = (text, index) => {
     let newArray = [...tableList];
-    newArray[index] = { ...newArray[index], TotalWatts: text };
+    newArray[index] = {...newArray[index], TotalWatts: text};
     setTableList(newArray);
   };
 
@@ -547,24 +600,24 @@ const ApiScreen = () => {
     setTab(name);
     console.log(pos);
     if (id == 1) {
-      scrollRef.current.scrollTo({ x: pos });
+      scrollRef.current.scrollTo({x: pos});
     } else if (id == list.length - 1) {
-      scrollRef.current.scrollTo({ x: pos - 120 });
+      scrollRef.current.scrollTo({x: pos - 120});
     } else {
-      scrollRef.current.scrollTo({ x: pos + 120 });
+      scrollRef.current.scrollTo({x: pos + 120});
     }
 
     setList(
       list.map((li, index) =>
         li.name == name
           ? {
-            ...li,
-            active: true,
-          }
+              ...li,
+              active: true,
+            }
           : {
-            ...li,
-            active: false,
-          },
+              ...li,
+              active: false,
+            },
       ),
     );
     // setList(update);
@@ -573,16 +626,13 @@ const ApiScreen = () => {
 
   // console.log('data response', apiRes);
 
-  
-
-
   return (
     <ScrollView>
       <View>
         {/* <Animatable.View animation="fadeInRightBig"> */}
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <View style={styles.footer}>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
+            <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
                   // flex: 0.45,
@@ -648,9 +698,9 @@ const ApiScreen = () => {
               </View>
             </View>
 
-            <View style={{ paddingTop: 20 }}></View>
-            <View style={{ padding: 5, marginBottom: 10 }}></View>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
+            <View style={{paddingTop: 20}}></View>
+            <View style={{padding: 5, marginBottom: 10}}></View>
+            <View style={{flex: 1, flexDirection: 'row'}}>
               <View
                 style={{
                   // flex: 0.45,
@@ -705,7 +755,7 @@ const ApiScreen = () => {
                     <Text
                       style={[
                         styles.text_style,
-                        { color: li.active == true ? '#fff' : '#000' },
+                        {color: li.active == true ? '#fff' : '#000'},
                       ]}>
                       {li.name}
                     </Text>
@@ -832,23 +882,23 @@ const ApiScreen = () => {
                   <Card>
                     <DataTable>
                       <DataTable.Header style={styles.databeHeader}>
-                        <DataTable.Title style={{ flex: 1, color: 'black' }}>
+                        <DataTable.Title style={{flex: 1, color: 'black'}}>
                           DiscrepancyType
                         </DataTable.Title>
-                        <DataTable.Title style={{ flex: 2, color: 'black' }}>
+                        <DataTable.Title style={{flex: 2, color: 'black'}}>
                           Ticket
                         </DataTable.Title>
-                        <DataTable.Title style={{ flex: 8, color: 'black' }}>
+                        <DataTable.Title style={{flex: 8, color: 'black'}}>
                           Description
                         </DataTable.Title>
-                        <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                        <DataTable.Title style={{flex: 5, color: 'black'}}>
                           Priority
                         </DataTable.Title>
                       </DataTable.Header>
                       {apiRes.length !== 0 &&
                         apiRes.map((l, i) => (
                           <DataTable.Row style={styles.databeBox} key={i}>
-                            <View style={{ flex: 5 }}>
+                            <View style={{flex: 5}}>
                               <TextInput
                                 style={styles.input}
                                 onChangeText={t => updateDiscrepancy(t, i)}
@@ -859,7 +909,7 @@ const ApiScreen = () => {
                               />
                               {/* {l.test} */}
                             </View>
-                            <View style={{ flex: 6 }}>
+                            <View style={{flex: 6}}>
                               <TextInput
                                 style={styles.input}
                                 onChangeText={t => updateTicket(t, i)}
@@ -869,7 +919,7 @@ const ApiScreen = () => {
                                 value={l.username}
                               />
                             </View>
-                            <View style={{ flex: 5 }}>
+                            <View style={{flex: 5}}>
                               <TextInput
                                 style={styles.input}
                                 onChangeText={t => updateDescription(t, i)}
@@ -879,7 +929,7 @@ const ApiScreen = () => {
                                 value={l.email}
                               />
                             </View>
-                            <View style={{ flex: 5 }}>
+                            <View style={{flex: 5}}>
                               <TextInput
                                 style={styles.input}
                                 onChangeText={t => updatePriority(t, i)}
@@ -905,7 +955,7 @@ const ApiScreen = () => {
                         marginBottom: 10,
                       }}
                       onPress={() => getApiData()}>
-                      <Text style={{ textAlign: 'center', color: 'white' }}>
+                      <Text style={{textAlign: 'center', color: 'white'}}>
                         Add More +{' '}
                         {loader && (
                           <ActivityIndicator size="small" color="#000" />
@@ -929,7 +979,7 @@ const ApiScreen = () => {
                     justifyContent: 'center',
                   }}>
                   <View style={styles.footerInput}>
-                    <View style={{ flex: 6 }}>
+                    <View style={{flex: 6}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -944,7 +994,7 @@ const ApiScreen = () => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -963,7 +1013,7 @@ const ApiScreen = () => {
                             </Text>
                           </View>
 
-                          <View style={{ flex: 2, widht: '100%' }}>
+                          <View style={{flex: 2, widht: '100%'}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'Sanction Load'}
@@ -977,7 +1027,7 @@ const ApiScreen = () => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -992,7 +1042,7 @@ const ApiScreen = () => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1011,7 +1061,7 @@ const ApiScreen = () => {
                             </Text>
                           </View>
 
-                          <View style={{ flex: 2, widht: '100%' }}>
+                          <View style={{flex: 2, widht: '100%'}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'Meter Testing Result'}
@@ -1024,7 +1074,7 @@ const ApiScreen = () => {
                         </View>
                       </View>
                     </View>
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1039,7 +1089,7 @@ const ApiScreen = () => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1051,7 +1101,7 @@ const ApiScreen = () => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'%age Diff'}
@@ -1065,7 +1115,7 @@ const ApiScreen = () => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1080,7 +1130,7 @@ const ApiScreen = () => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1092,7 +1142,7 @@ const ApiScreen = () => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'%= Meter'}
@@ -1106,7 +1156,7 @@ const ApiScreen = () => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1121,7 +1171,7 @@ const ApiScreen = () => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1133,7 +1183,7 @@ const ApiScreen = () => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'%= Slow'}
@@ -1147,7 +1197,7 @@ const ApiScreen = () => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1162,7 +1212,7 @@ const ApiScreen = () => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1174,7 +1224,7 @@ const ApiScreen = () => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'Connected Load'}
@@ -1188,7 +1238,7 @@ const ApiScreen = () => {
                       </View>
                     </View>
 
-                    <View style={{ flex: 6, flexDirection: 'row' }}>
+                    <View style={{flex: 6, flexDirection: 'row'}}>
                       <View
                         style={{
                           //   flexDirection: 'column',
@@ -1203,7 +1253,7 @@ const ApiScreen = () => {
                             widht: '100%',
                             flexDirection: 'row',
                           }}>
-                          <View style={{ flex: 2 }}>
+                          <View style={{flex: 2}}>
                             <Text
                               style={{
                                 fontWeight: 'normal',
@@ -1215,7 +1265,7 @@ const ApiScreen = () => {
                           </View>
 
                           <View
-                            style={{ flex: 2, widht: '100%', marginTop: -10 }}>
+                            style={{flex: 2, widht: '100%', marginTop: -10}}>
                             <TextInput
                               style={styles.inputLoadDetail}
                               placeholder={'Running Load'}
@@ -1260,8 +1310,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Service Type{' '}
                           </Text>
                         </View>
@@ -1305,8 +1355,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Tarif{' '}
                           </Text>
                         </View>
@@ -1350,8 +1400,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Premise Type{' '}
                           </Text>
                         </View>
@@ -1396,8 +1446,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Premise Category{' '}
                           </Text>
                         </View>
@@ -1435,9 +1485,6 @@ const ApiScreen = () => {
                         </View>
                       </View>
 
-
-
-
                       <View
                         style={{
                           flexDirection: 'row',
@@ -1445,7 +1492,6 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-
                         <View
                           style={{
                             height: 35,
@@ -1453,25 +1499,23 @@ const ApiScreen = () => {
                             // position: 'absolute',
                             backgroundColor: '#1565C0',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
                           }}>
-
-
-
-
-
                           <LinearGradient
                             colors={['#1565C0', '#64b5f6']}
-                            style={styles.signIn}
-                          >
-                            <Text style={[styles.textSign, {
-                              color: '#fff'
-                            }]}>  Discrepancy</Text>
+                            style={styles.signIn}>
+                            <Text
+                              style={[
+                                styles.textSign,
+                                {
+                                  color: '#fff',
+                                },
+                              ]}>
+                              {' '}
+                              Discrepancy
+                            </Text>
                           </LinearGradient>
-
                         </View>
-
-
                       </View>
 
                       <View
@@ -1481,12 +1525,14 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
                           <View style={styles.multiSelectContainer}>
                             <MultiSelect
                               items={items}
                               uniqueKey="id"
-                              onSelectedItemsChange={e => onSelectedItemsChange(e)}
+                              onSelectedItemsChange={e =>
+                                onSelectedItemsChange(e)
+                              }
                               selectedItems={selectedItems}
                               selectText="Search Items..."
                               searchInputPlaceholderText="Search Items..."
@@ -1497,16 +1543,13 @@ const ApiScreen = () => {
                               selectedItemTextColor="#1565C0"
                               selectedItemIconColor="#000"
                               itemTextColor="#000"
-                              searchInputStyle={{ color: 'black' }}
+                              searchInputStyle={{color: 'black'}}
                               submitButtonColor="#000"
                               submitButtonText="Submit"
                             />
                           </View>
                         </View>
-
-
                       </View>
-
 
                       <View
                         style={{
@@ -1515,7 +1558,6 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-
                         <View
                           style={{
                             height: 35,
@@ -1523,22 +1565,23 @@ const ApiScreen = () => {
                             // position: 'absolute',
                             backgroundColor: '#1565C0',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
                           }}>
-
-
                           <LinearGradient
                             colors={['#1565C0', '#64b5f6']}
-                            style={styles.signIn}
-                          >
-                            <Text style={[styles.textSign, {
-                              color: '#fff'
-                            }]}>   Remarks{' '}</Text>
+                            style={styles.signIn}>
+                            <Text
+                              style={[
+                                styles.textSign,
+                                {
+                                  color: '#fff',
+                                },
+                              ]}>
+                              {' '}
+                              Remarks{' '}
+                            </Text>
                           </LinearGradient>
-
                         </View>
-
-
                       </View>
 
                       <View
@@ -1548,8 +1591,6 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-
-
                         <View
                           style={{
                             flexDirection: 'row',
@@ -1557,7 +1598,7 @@ const ApiScreen = () => {
                             width: '88%',
                             alignSelf: 'center',
                           }}>
-                          <View style={{ flex: 2, alignItems: 'flex-start' }}>
+                          <View style={{flex: 2, alignItems: 'flex-start'}}>
                             <TextInput
                               multiline={true}
                               onChangeText={text => {
@@ -1592,34 +1633,33 @@ const ApiScreen = () => {
                   <Card>
                     <DataTable>
                       <DataTable.Header style={styles.databeHeader}>
-                        <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                        <DataTable.Title style={{flex: 5, color: 'black'}}>
                           Load Detail
                         </DataTable.Title>
-                        <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                        <DataTable.Title style={{flex: 5, color: 'black'}}>
                           Quantity
                         </DataTable.Title>
-                        <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                        <DataTable.Title style={{flex: 5, color: 'black'}}>
                           Rating (W)
                         </DataTable.Title>
-                        <DataTable.Title style={{ flex: 5, color: 'black' }}>
+                        <DataTable.Title style={{flex: 5, color: 'black'}}>
                           Total Watts
                         </DataTable.Title>
                       </DataTable.Header>
                       {tableList.map((l, i) => (
                         <DataTable.Row style={styles.databeBox} key={i}>
-                          <View style={{ flex: 5 }}>
+                          <View style={{flex: 5}}>
                             <TextInput
                               style={styles.input}
                               onChangeText={t => updateLoadDetail(t, i)}
                               placeholder="Load Detail"
                               placeholderTextColor="black"
                               fontSize={10}
-
                               value={l.LoadDetail}
                             />
                             {/* {l.test} */}
                           </View>
-                          <View style={{ flex: 5 }}>
+                          <View style={{flex: 5}}>
                             <TextInput
                               style={styles.input}
                               onChangeText={t => updateQuantity(t, i)}
@@ -1630,7 +1670,7 @@ const ApiScreen = () => {
                               value={l.Quantity}
                             />
                           </View>
-                          <View style={{ flex: 5 }}>
+                          <View style={{flex: 5}}>
                             <TextInput
                               style={styles.input}
                               onChangeText={t => updateRating(t, i)}
@@ -1641,7 +1681,7 @@ const ApiScreen = () => {
                               value={l.Rating}
                             />
                           </View>
-                          <View style={{ flex: 5 }}>
+                          <View style={{flex: 5}}>
                             <TextInput
                               style={styles.input}
                               onChangeText={t => updateTotalWatts(t, i)}
@@ -1668,7 +1708,7 @@ const ApiScreen = () => {
                         marginBottom: 10,
                       }}
                       onPress={() => onAddmore()}>
-                      <Text style={{ textAlign: 'center', color: 'white' }}>
+                      <Text style={{textAlign: 'center', color: 'white'}}>
                         Add More +{' '}
                       </Text>
                     </TouchableOpacity>
@@ -1705,8 +1745,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Meter No{' '}
                           </Text>
                         </View>
@@ -1736,8 +1776,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Current/off-Peak Reading{' '}
                           </Text>
                         </View>
@@ -1766,8 +1806,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Peak Reading{' '}
                           </Text>
                         </View>
@@ -1790,9 +1830,6 @@ const ApiScreen = () => {
                         </View>
                       </View>
 
-
-
-
                       <View
                         style={{
                           flexDirection: 'row',
@@ -1800,8 +1837,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Make{' '}
                           </Text>
                         </View>
@@ -1831,8 +1868,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Amperes{' '}
                           </Text>
                         </View>
@@ -1862,8 +1899,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Volts{' '}
                           </Text>
                         </View>
@@ -1893,8 +1930,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Meter Constant{' '}
                           </Text>
                         </View>
@@ -1924,8 +1961,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Security Slip No{' '}
                           </Text>
                         </View>
@@ -1954,8 +1991,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Multiplying Factor{' '}
                           </Text>
                         </View>
@@ -1985,8 +2022,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 30,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             {' '}
                           </Text>
                         </View>
@@ -2003,9 +2040,7 @@ const ApiScreen = () => {
                               flex: 2,
                               alignItems: 'flex-start',
                               marginTop: -10,
-                            }}>
-
-                          </View>
+                            }}></View>
                         </View>
                       </View>
                     </View>
@@ -2042,8 +2077,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Meter No{' '}
                           </Text>
                         </View>
@@ -2087,8 +2122,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Current/off-Peak Reading{' '}
                           </Text>
                         </View>
@@ -2125,7 +2160,6 @@ const ApiScreen = () => {
                         </View>
                       </View>
 
-
                       <View
                         style={{
                           flexDirection: 'row',
@@ -2133,8 +2167,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Peak Reading{' '}
                           </Text>
                         </View>
@@ -2178,8 +2212,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Make{' '}
                           </Text>
                         </View>
@@ -2224,8 +2258,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Amperes{' '}
                           </Text>
                         </View>
@@ -2269,8 +2303,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Volts{' '}
                           </Text>
                         </View>
@@ -2314,8 +2348,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Meter Constant{' '}
                           </Text>
                         </View>
@@ -2360,8 +2394,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Security Slip No{' '}
                           </Text>
                         </View>
@@ -2405,8 +2439,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Multiplying Factor{' '}
                           </Text>
                         </View>
@@ -2477,8 +2511,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Consumer Name{' '}
                           </Text>
                         </View>
@@ -2521,8 +2555,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Mobile No{' '}
                           </Text>
                         </View>
@@ -2566,8 +2600,8 @@ const ApiScreen = () => {
                           width: '96%',
                           marginTop: 20,
                         }}>
-                        <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                          <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                        <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                          <Text style={{fontWeight: 'normal', color: 'black'}}>
                             Consumer Remarks{' '}
                           </Text>
                         </View>
@@ -2579,7 +2613,7 @@ const ApiScreen = () => {
                             width: '88%',
                             alignSelf: 'center',
                           }}>
-                          <View style={{ flex: 2, alignItems: 'flex-start' }}>
+                          <View style={{flex: 2, alignItems: 'flex-start'}}>
                             <TextInput
                               multiline={true}
                               onChangeText={text => {
@@ -2607,8 +2641,8 @@ const ApiScreen = () => {
                         width: '96%',
                         marginTop: 20,
                       }}>
-                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                      <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
                           Refuse to Sign on Notice{' '}
                         </Text>
                       </View>
@@ -2634,7 +2668,6 @@ const ApiScreen = () => {
                             // borderWidth={5}
                             buttonInnerColor={'#1565C0'}
                             selectedButtonColor={'#1565C0'}
-
                             // labelColor={'#50C900'}
 
                             borderWidth={1}
@@ -2642,19 +2675,15 @@ const ApiScreen = () => {
                             buttonSize={13}
                             buttonOuterSize={20}
                             //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
-                            buttonWrapStyle={{ marginLeft: 10 }}
-                            onPress={(value) => {
-
-                              ({ value: value })
+                            buttonWrapStyle={{marginLeft: 10}}
+                            onPress={value => {
+                              ({value: value});
                               if (value == 0) {
-                                setConsumerRefuseYN("Yes")
+                                setConsumerRefuseYN('Yes');
+                              } else {
+                                setConsumerRefuseYN('No');
                               }
-                              else {
-                                setConsumerRefuseYN("No")
-                              }
-                            }
-
-                            }
+                            }}
                           />
                         </View>
                       </View>
@@ -2667,8 +2696,8 @@ const ApiScreen = () => {
                         width: '96%',
                         marginTop: 20,
                       }}>
-                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
+                      <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                        <Text style={{fontWeight: 'normal', color: 'black'}}>
                           Signed / Delivered Notice{' '}
                         </Text>
                       </View>
@@ -2694,7 +2723,6 @@ const ApiScreen = () => {
                             // borderWidth={5}
                             buttonInnerColor={'#1565C0'}
                             selectedButtonColor={'#1565C0'}
-
                             // labelColor={'#50C900'}
 
                             borderWidth={1}
@@ -2702,39 +2730,38 @@ const ApiScreen = () => {
                             buttonSize={13}
                             buttonOuterSize={20}
                             //buttonStyle={{backgroundColor:'#5d2d91',borderWidth:10}}
-                            buttonWrapStyle={{ marginLeft: 10 }}
-                            onPress={(value) => {
-
-                              ({ value: value })
+                            buttonWrapStyle={{marginLeft: 10}}
+                            onPress={value => {
+                              ({value: value});
                               if (value == 0) {
-                                setConsumerSign("Yes")
+                                setConsumerSign('Yes');
+                              } else {
+                                setConsumerSign('No');
                               }
-                              else {
-                                setConsumerSign("No")
-                              }
-                            }
-
-                            }
+                            }}
                           />
                         </View>
                       </View>
                     </View>
-                     
-
-
 
                     <View style={[styles.container1]}>
-                      <View style={{ flexDirection: 'row', flex: 0.2, width: '96%' }}>
-                        <View style={{ flex: 1, alignItems: 'flex-start' }}>
-
-                          <Text style={styles.text_left}>Picture (Optional)</Text>
-
+                      <View
+                        style={{flexDirection: 'row', flex: 0.2, width: '96%'}}>
+                        <View style={{flex: 1, alignItems: 'flex-start'}}>
+                          <Text style={styles.text_left}>
+                            Picture (Optional)
+                          </Text>
                         </View>
-                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
-
-                          <TouchableOpacity onPress={() => captureImage('photo', '1')} >
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            alignItems: 'flex-start',
+                          }}>
+                          <TouchableOpacity
+                            onPress={() => captureImage('photo', '1')}>
                             <Image
-                              source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
+                              source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
                               style={styles.imageStyle}
                             />
                           </TouchableOpacity>
@@ -2743,19 +2770,16 @@ const ApiScreen = () => {
                             images={[images1]}
                             imageIndex={0}
                             visible={visible1}
-
                             onRequestClose={() => setIsVisible1(false)}
                           />
-                          <View style={{ flex: 2.5 }}>
-
-                            <TouchableOpacity onPress={() => setIsVisible1(true)} >
+                          <View style={{flex: 2.5}}>
+                            <TouchableOpacity
+                              onPress={() => setIsVisible1(true)}>
                               <Image
-                                source={{ uri: images1.uri }}/// source={{uri: filePath.uri}}
+                                source={{uri: images1.uri}} /// source={{uri: filePath.uri}}
                                 style={styles.imageStyle}
                               />
-
                             </TouchableOpacity>
-
                           </View>
                         </View>
                       </View>
@@ -2767,10 +2791,9 @@ const ApiScreen = () => {
                         width: '96%',
                         marginTop: 20,
                       }}>
-                      <View style={{ flex: 0.9, alignItems: 'flex-start' }}>
-                        <Text style={{ fontWeight: 'normal', color: 'black' }}>
-
-                        </Text>
+                      <View style={{flex: 0.9, alignItems: 'flex-start'}}>
+                        <Text
+                          style={{fontWeight: 'normal', color: 'black'}}></Text>
                       </View>
 
                       <View
@@ -2785,9 +2808,7 @@ const ApiScreen = () => {
                             flex: 2,
                             alignItems: 'flex-start',
                             marginTop: -10,
-                          }}>
-
-                        </View>
+                          }}></View>
                       </View>
                     </View>
                   </View>
@@ -2795,9 +2816,6 @@ const ApiScreen = () => {
               </View>
             </ScrollView>
           )}
-
-
-
 
           {tab == 'SIR Pictures' && (
             <ScrollView
@@ -2818,27 +2836,22 @@ const ApiScreen = () => {
                         width: '90%',
                         marginTop: -70,
                         marginLeft: 2,
-                      }}>
-                    </View>
-
-
-
-
-
-
-
-
-
+                      }}></View>
 
                     <LinearGradient
                       colors={['#1565C0', '#64b5f6']}
-                      style={styles.signIn}
-                    >
-                      <Text style={[styles.textSign, {
-                        color: '#fff'
-                      }]}> Photos of Surveyed Meter</Text>
+                      style={styles.signIn}>
+                      <Text
+                        style={[
+                          styles.textSign,
+                          {
+                            color: '#fff',
+                          },
+                        ]}>
+                        {' '}
+                        Photos of Surveyed Meter
+                      </Text>
                     </LinearGradient>
-
 
                     <View
                       style={{
@@ -2849,12 +2862,12 @@ const ApiScreen = () => {
                         alignItems: 'center',
                         // justifyContent: 'space-between',
                       }}>
-                      <View style={{ flex: 2, alignItems: 'center' }}>
+                      <View style={{flex: 2, alignItems: 'center'}}>
                         <TouchableOpacity
                           activeOpacity={0.5}
                           onPress={() => chooseFile('photo')}>
                           <Image
-                            source={require('../assets/Gallery.png')}// source={{uri: filePath.uri}}
+                            source={require('../assets/Gallery.png')} // source={{uri: filePath.uri}}
                             style={styles.imageStyle}
                           />
                         </TouchableOpacity>
@@ -2865,23 +2878,19 @@ const ApiScreen = () => {
                             textAlign: 'center',
                             width: 120,
                             textAlignVertical: 'center',
-                            color: '#1565C0'
-
+                            color: '#1565C0',
                           }}>
                           tap the picture from gallery
                         </Text>
-
                       </View>
-                      <View style={{ flex: 2, alignItems: 'center' }}>
+                      <View style={{flex: 2, alignItems: 'center'}}>
                         <TouchableOpacity
-                          style={{ marginTop: 15 }}
-                          onPress={() => captureImage('photo')
-                          }>
+                          style={{marginTop: 15}}
+                          onPress={() => captureImage('photo')}>
                           <Image
-                            source={require('../assets/camera.png')}// source={{uri: filePath.uri}}
+                            source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
                             style={styles.imageStyle}
                           />
-
                         </TouchableOpacity>
                         <Text
                           style={{
@@ -2890,36 +2899,31 @@ const ApiScreen = () => {
                             textAlign: 'center',
                             width: 120,
                             textAlignVertical: 'center',
-                            color: '#1565C0'
+                            color: '#1565C0',
                           }}>
                           tap the camera to take a picture
                         </Text>
                       </View>
-
                     </View>
 
                     <View
                       style={{
-                        flex: 2, alignItems: 'center',
+                        flex: 2,
+                        alignItems: 'center',
                         justifyContent: 'center',
                         // height: 50,
                         flexDirection: 'row',
                         marginVertical: 10,
                         marginLeft: 85,
-                        // paddingHorizontal: 110,  
+                        // paddingHorizontal: 110,
                       }}>
-
-
                       <Carousel
-
                         ref={carouselRef}
-                        layout='default'
+                        layout="default"
                         data={images}
-
                         sliderWidth={width}
                         itemWidth={width}
-
-                        renderItem={({ item, index }) => {
+                        renderItem={({item, index}) => {
                           return (
                             <View>
                               <TouchableOpacity
@@ -2927,18 +2931,14 @@ const ApiScreen = () => {
                                   onTouchThumbnail(index);
                                   setindexer1(index);
                                   setimageview(true);
-
                                 }}
-                                activeOpacity={0.9}
-                              >
-
+                                activeOpacity={0.9}>
                                 <Image
-                                  source={{ uri: item.uri }}
-                                  style={{ height: 200, width: 200 }}></Image>
+                                  source={{uri: item.uri}}
+                                  style={{height: 200, width: 200}}></Image>
                               </TouchableOpacity>
                               <TouchableOpacity
                                 onPress={() => {
-
                                   setTimeout(() => {
                                     // setRefresh(true);
                                     setImagedeletionLoader(true);
@@ -2953,10 +2953,6 @@ const ApiScreen = () => {
                                     setImages(arr);
                                     setImagedeletionLoader(false);
                                   }, 2000);
-
-
-
-
                                 }}
                                 style={{
                                   width: 200,
@@ -2976,27 +2972,19 @@ const ApiScreen = () => {
                                   Remove
                                 </Text>
                               </TouchableOpacity>
-
                             </View>
-                          )
+                          );
                         }}
-
                         // sliderWidth={150}
                         //itemWidth={120}
                         onSnapToItem={index => onSelect(index)}
-
                       />
-
                     </View>
 
-
-                    <Modal visible={imageview} transparent={true}
-                      closeOnClick={true}
-                    >
-
-
-
-
+                    <Modal
+                      visible={imageview}
+                      transparent={true}
+                      closeOnClick={true}>
                       <ImageViewer
                         renderHeader={() => {
                           return (
@@ -3068,23 +3056,21 @@ const ApiScreen = () => {
                         onPress={() => {
                           // setUploadingMsg(res.d.Return);
 
-
                           setAuthModalVisible(!isAuthModalVisible);
-
                         }}>
-
-
                         <LinearGradient
                           colors={['#1565C0', '#64b5f6']}
-                          style={styles.submit}
-                        >
-                          <Text style={[styles.textSign, {
-                            color: '#fff'
-                          }]}>Cancel</Text>
+                          style={styles.submit}>
+                          <Text
+                            style={[
+                              styles.textSign,
+                              {
+                                color: '#fff',
+                              },
+                            ]}>
+                            Cancel
+                          </Text>
                         </LinearGradient>
-
-
-
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={{
@@ -3097,33 +3083,28 @@ const ApiScreen = () => {
                         onPress={() => {
                           // setUploadingMsg(res.d.Return);
 
-
                           setAuthModalVisible(!isAuthModalVisible);
-
                         }}>
-
                         <LinearGradient
                           colors={['#1565C0', '#64b5f6']}
-                          style={styles.submit}
-                        >
-                          <Text style={[styles.textSign, {
-                            color: '#fff'
-                          }]}>Submit</Text>
+                          style={styles.submit}>
+                          <Text
+                            style={[
+                              styles.textSign,
+                              {
+                                color: '#fff',
+                              },
+                            ]}>
+                            Submit
+                          </Text>
                         </LinearGradient>
-
-
-
                       </TouchableOpacity>
                     </View>
-
-
                   </View>
                 </View>
               </View>
             </ScrollView>
           )}
-
-
         </View>
       </View>
     </ScrollView>
@@ -3150,7 +3131,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-
 
   sub_container: {
     alignItems: 'center',
@@ -3202,7 +3182,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderBottomWidth: 0,
     shadowColor: 'black',
-    shadowOffset: { width: 10, height: 10 },
+    shadowOffset: {width: 10, height: 10},
     shadowOpacity: 0.8,
     shadowRadius: 15,
     elevation: 10,
@@ -3217,7 +3197,6 @@ const styles = StyleSheet.create({
     paddingVertical: 100,
     width: 400,
     // height: 470,
-
   },
 
   dashboad: {
@@ -3292,7 +3271,6 @@ const styles = StyleSheet.create({
     // margin: 5,
   },
 
-
   formheader: {
     flex: 1,
     //    justifyContent:'space-between',
@@ -3305,7 +3283,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     fontWeight: 'bold',
-    paddingVertical: 10
+    paddingVertical: 10,
     //padding: 15,
   },
 
@@ -3314,7 +3292,7 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
 
   submit: {
@@ -3322,31 +3300,30 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10
+    borderRadius: 10,
   },
   textSign: {
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   preview: {
     width: 335,
     height: 114,
-    backgroundColor: "#F8F8F8",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#F8F8F8',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 15,
   },
   previewText: {
-    color: "#FFF",
+    color: '#FFF',
     fontSize: 14,
     height: 40,
     lineHeight: 40,
     paddingLeft: 10,
     paddingRight: 10,
-    backgroundColor: "#69B2FF",
+    backgroundColor: '#69B2FF',
     width: 120,
-    textAlign: "center",
+    textAlign: 'center',
     marginTop: 10,
   },
-
 });

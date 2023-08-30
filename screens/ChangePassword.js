@@ -60,7 +60,7 @@ const ChangePassword = ({navigation}) => {
   const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
-    console.log('SafetyHazardCase:Screen');
+    console.log('ChangePassword:Screen');
     AsyncStorage.getItem('LoginCredentials').then(items => {
       var data = items ? JSON.parse(items) : {};
       // var datatable = [];

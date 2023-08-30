@@ -96,6 +96,15 @@ const ApiScreenB40 = ({route, navigation}) => {
     setIsSignature('Y');
     setConsumerSignature([{consSign}]);
     setSignModalVisible(!isSignModalVisible);
+    // New Code Added BY Saad
+    var Allimages = signatureImages;
+    setSignatureImages([
+      {
+        uri: consSign,
+      },
+      ...Allimages,
+    ]);
+    // New Code Added BY Saad
   };
   const _onDragEvent = () => {
     // This callback will be called when the user enters signature
@@ -360,6 +369,7 @@ const ApiScreenB40 = ({route, navigation}) => {
 
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
+  const [signatureImages, setSignatureImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
   const [images1, setImages1] = useState([]);
   const [consumerImages, setConsumerImages] = useState([]);
@@ -367,7 +377,9 @@ const ApiScreenB40 = ({route, navigation}) => {
   const [isImage, setIsImage] = useState('N');
   const [IsImage1, setIsImage1] = useState('N');
   const [imageview, setimageview] = useState(false);
+  const [imageview2, setimageview2] = useState(false);
   const [indexer1, setindexer1] = useState(0);
+  const [indexer2, setindexer2] = useState(0);
   const {width} = Dimensions.get('window');
   const [ImagedeletionLoader, setImagedeletionLoader] = useState(false);
   const [image1Show, setImage1Show] = useState(false);
@@ -520,10 +532,16 @@ const ApiScreenB40 = ({route, navigation}) => {
   const THUMB_SIZE = 80;
   const flatListRef = useRef();
   const carouselRef = useRef();
+  const carouselRef2 = useRef();
 
   const onTouchThumbnail = touched => {
     if (touched === indexSelected) return;
     carouselRef?.current?.snapToItem(touched);
+  };
+
+  const onTouchThumbnail2 = touched => {
+    if (touched === indexSelected) return;
+    carouselRef2?.current?.snapToItem(touched);
   };
 
   const handleBackButtonPress = () => {
@@ -667,7 +685,7 @@ const ApiScreenB40 = ({route, navigation}) => {
       height: 700,
       cropping: true,
       includeBase64: true,
-      compressImageQuality: 1,
+      compressImageQuality: 0.6,
     }).then(response => {
       console.log('Response = ', response);
 
@@ -943,7 +961,7 @@ const ApiScreenB40 = ({route, navigation}) => {
         height: 700,
         cropping: true,
         includeBase64: true,
-        compressImageQuality: 1,
+        compressImageQuality: 0.6,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -1073,6 +1091,7 @@ const ApiScreenB40 = ({route, navigation}) => {
       Sirnr: SIR,
       IsSignature: isSignature,
       ConsumerSignature: consumerSignature,
+      SignatureImages: signatureImages,
       ConsumerImageFlag: IsImage1,
       ConsumerImages: consumerImages,
       //Images1: images1,
@@ -1111,6 +1130,7 @@ const ApiScreenB40 = ({route, navigation}) => {
     Result_Register,
     Result_Onsite,
     Result_MeterSeal,
+    RESULT,
   ) => {
     console.log(descripancylist);
     console.log(selectedItems);
@@ -1253,6 +1273,7 @@ const ApiScreenB40 = ({route, navigation}) => {
       Result_Register: Result_Register,
       Result_Onsite: Result_Onsite,
       Result_MeterSeal: Result_MeterSeal,
+      RESULT: RESULT,
     });
     AsyncStorage.setItem(SIR, JSON.stringify(SIRData));
 
@@ -1280,7 +1301,8 @@ const ApiScreenB40 = ({route, navigation}) => {
 
     axios({
       method: 'POST',
-      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIRImageData',
+      url:
+        'https://' + myGlobalVariable[2] + ':8039/api/Image/PostSIRImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -1329,20 +1351,25 @@ const ApiScreenB40 = ({route, navigation}) => {
     });
 
     if (isSignature == 'Y') {
-      consumerImageData.push({
-        imageName: data.Sirnr,
-        imageBase64: signaturePreview,
-        imageID: count.toString(),
-        IBC: data.Ibc,
-        SIRNo: data.Sirnr,
-        ContractNo: data.Vertrag,
-        MIONo: data.AssignMio,
+      signatureImages.filter(item => {
+        //console.log('item:= ' + item);
+        consumerImageData.push({
+          imageName: data.Sirnr,
+          imageBase64: item.uri,
+          imageID: count.toString(),
+          IBC: data.Ibc,
+          SIRNo: data.Sirnr,
+          ContractNo: data.Vertrag,
+          MIONo: data.AssignMio,
+        });
+        count++;
       });
     }
 
     axios({
       method: 'POST',
-      url: 'https://sir.ke.com.pk:8039/api/Image/PostSIRImageData',
+      url:
+        'https://' + myGlobalVariable[2] + ':8039/api/Image/PostSIRImageData',
       headers: {
         'content-type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -1354,7 +1381,7 @@ const ApiScreenB40 = ({route, navigation}) => {
         console.log(
           '******************Post Consumer Image updated*********************************',
         );
-        //console.log(res.data);
+        console.log(res.data);
       })
       .catch(error => {
         console.error(error);
@@ -1479,25 +1506,30 @@ const ApiScreenB40 = ({route, navigation}) => {
       }),
     })
       .then(res => {
-        console.log(
-          '******************PostSimultaneous UPDATED*********************************',
-        );
-        console.log(
-          'res.data.d.Result------' + res.data.d.Result_Discrepancies,
-        );
-        PostSIRImage();
-        StoreInDevice(
-          'Post',
-          true,
-          res.data.d.Result_Discrepancies,
-          res.data.d.Result_Appliances,
-          res.data.d.Result_Meter,
-          res.data.d.Result_Register,
-          res.data.d.Result_Onsite,
-          res.data.d.Result_MeterSeal,
-        );
-        setAuthModalVisible(!isAuthModalVisible);
-        setSuccessModalVisible(!isSuccessModalVisible);
+        if (res.data.d.Result_Discrepancies == 'Saved') {
+          console.log(
+            '******************PostSimultaneous UPDATED*********************************',
+          );
+          console.log(
+            'res.data.d.Result------' + res.data.d.Result_Discrepancies,
+          );
+          PostSIRImage();
+          StoreInDevice(
+            'Post',
+            true,
+            res.data.d.Result_Discrepancies,
+            res.data.d.Result_Appliances,
+            res.data.d.Result_Meter,
+            res.data.d.Result_Register,
+            res.data.d.Result_Onsite,
+            res.data.d.Result_MeterSeal,
+            res.data.d.RESULT,
+          );
+          setAuthModalVisible(!isAuthModalVisible);
+          setSuccessModalVisible(!isSuccessModalVisible);
+        } else {
+          alert('SIR not updated in SAP');
+        }
       })
       .catch(error => {
         console.error('PostSimultaneous:error: ' + error);
@@ -1557,6 +1589,9 @@ const ApiScreenB40 = ({route, navigation}) => {
                 setSign(items.consSign);
               },
             );
+            if (item.SignatureImages != undefined) {
+              setSignatureImages(item.SignatureImages);
+            }
             setConsumerSignature(item.ConsumerSignature);
             setIsSignature(item.IsSignature);
           }
@@ -1616,7 +1651,7 @@ const ApiScreenB40 = ({route, navigation}) => {
             setSirTime(item.SIRTime);
           } else {
             setSirDate(moment().format('DD.MM.YYYY'));
-            setSirTime(moment().format('hh:mm:ss'));
+            setSirTime(moment().format('HH:MM:SS'));
           }
 
           if (item.MeterTestingResultTC != undefined)
@@ -2362,12 +2397,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholder={'Please enter'}
                           //keyboardType={'email-address'}
                           placeholderTextColor="grey"
+                          autoCapitalize="characters"
                           onChangeText={text => {
                             setSizeofService(text);
                             if (validate(text, 4)) {
                               setSizeofServiceError(
                                 'Input must be at least 4 characters long.',
                               );
+                              setSizeofService(text.slice(0, 4));
                             } else setSizeofServiceError('');
                           }}
                           value={sizeofService}
@@ -2413,12 +2450,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholder={'Please enter'}
                           keyboardType={'email-address'}
                           placeholderTextColor="grey"
+                          autoCapitalize="characters"
                           onChangeText={text => {
                             setFedFromPMTSS(text);
                             if (validate(text, 10)) {
                               setFedFromPMTSSError(
                                 'Input must be at least 10 characters long.',
                               );
+                              setFedFromPMTSS(text.slice(0, 10));
                             } else setFedFromPMTSSError('');
                           }}
                           value={fedFromPMTSS}
@@ -2440,12 +2479,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholder={'Please enter'}
                           keyboardType={'numeric'}
                           placeholderTextColor="grey"
+                          autoCapitalize="characters"
                           onChangeText={text => {
                             setPMTSSCode(text);
                             if (validate(text, 10)) {
                               setPMTSSCodeError(
                                 'Input must be at least 10 characters long.',
                               );
+                              setPMTSSCode(text.slice(0, 10));
                             } else setPMTSSCodeError('');
                           }}
                           value={pmtSSCode}
@@ -2490,12 +2531,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholder={'Please enter'}
                           keyboardType={'numeric'}
                           placeholderTextColor="grey"
+                          autoCapitalize="characters"
                           onChangeText={text => {
                             setConnectedLoad(text);
                             if (validate(text, 10)) {
                               setConnectedLoadError(
                                 'Input must be at least 10 characters long.',
                               );
+                              setConnectedLoad(text.slice(0, 10));
                             } else setConnectedLoadError('');
                           }}
                           value={connectedLoad}
@@ -2517,12 +2560,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholder={'Please enter'}
                           keyboardType={'numeric'}
                           placeholderTextColor="grey"
+                          autoCapitalize="characters"
                           onChangeText={text => {
                             setContractLoad(text);
                             if (validate(text, 10)) {
                               setContractLoadError(
                                 'Input must be at least 10 characters long.',
                               );
+                              setContractLoad(text.slice(0, 10));
                             } else setContractLoadError('');
                           }}
                           value={contractLoad}
@@ -2563,12 +2608,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholder={'Please enter'}
                           keyboardType={'numeric'}
                           placeholderTextColor="grey"
+                          autoCapitalize="characters"
                           onChangeText={text => {
                             setConnectedLoadKW(text);
                             if (validate(text, 10)) {
                               setConnectedLoadKWError(
                                 'Input must be at least 10 characters long.',
                               );
+                              setConnectedLoadKW(text.slice(0, 10));
                             } else setConnectedLoadKWError('');
                           }}
                           value={connectedLoadKW}
@@ -2592,12 +2639,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                           placeholder={'Please enter'}
                           keyboardType={'numeric'}
                           placeholderTextColor="grey"
+                          autoCapitalize="characters"
                           onChangeText={text => {
                             setRunningLoadKW(text);
                             if (validate(text, 10)) {
                               setRunningLoadKWError(
                                 'Input must be at least 10 characters long.',
                               );
+                              setRunningLoadKW(text.slice(0, 10));
                             } else setRunningLoadKWError('');
                           }}
                           value={runningLoadKW}
@@ -2754,12 +2803,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                     <TextInput
                       editable={isEditable}
                       style={{backgroundColor: 'white'}}
+                      autoCapitalize="characters"
                       onChangeText={value => {
                         setQuantity(value);
                         if (validate(value, 2)) {
                           setQuantityError(
                             'Input must be at least 2 characters long.',
                           );
+                          setQuantity(value.slice(0, 2));
                         } else setQuantityError('');
                       }}
                       placeholder="Quantity"
@@ -3066,12 +3117,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholder={'TC'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setMeterTestingResultTC(text);
                                 if (validate(text, 10)) {
                                   setMeterTestingResultTCError(
                                     'Input must be at least 10 characters long.',
                                   );
+                                  setMeterTestingResultTC(text.slice(0, 10));
                                 } else setMeterTestingResultTCError('');
                               }}
                               value={meterTestingResultTC}
@@ -3129,12 +3182,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholder={'% Error'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setMeterTestingperError(text);
                                 if (validate(text, 6)) {
                                   setMeterTestingperErrorError(
                                     'Input must be at least 6 characters long.',
                                   );
+                                  setMeterTestingperError(text.slice(0, 6));
                                 } else setMeterTestingperErrorError('');
                               }}
                               value={meterTestingperError}
@@ -3182,12 +3237,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholder={'To'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setMeterTestingTo(text);
                                 if (validate(text, 6)) {
                                   setMeterTestingToError(
                                     'Input must be at least 6 characters long.',
                                   );
+                                  setMeterTestingTo(text.slice(0, 6));
                                 } else setMeterTestingToError('');
                               }}
                               value={meterTestingTo}
@@ -3251,12 +3308,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholder={'Detail'}
                               keyboardType={'email-address'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setMeterInstalled1(text);
                                 if (validate(text, 10)) {
                                   setMeterInstalled1Error(
                                     'Input must be at least 10 characters long.',
                                   );
+                                  setMeterInstalled1(text.slice(0, 10));
                                 } else setMeterInstalled1Error('');
                               }}
                               value={meterInstalled1}
@@ -3305,12 +3364,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholder={'Detail'}
                               //keyboardType={'email-address'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setMeterInstalled2(text);
                                 if (validate(text, 10)) {
                                   setMeterInstalled2Error(
                                     'Input must be at least 10 characters long.',
                                   );
+                                  setMeterInstalled2(text.slice(0, 10));
                                 } else setMeterInstalled2Error('');
                               }}
                               value={meterInstalled2}
@@ -3468,12 +3529,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholder={'FMR no'}
                               keyboardType={'numeric'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setFMRNo(text);
                                 if (validate(text, 4)) {
                                   setFMRNoError(
                                     'Input must be at least 4 characters long.',
                                   );
+                                  setFMRNo(text.slice(0, 4));
                                 } else setFMRNoError('');
                               }}
                               value={fmrNo}
@@ -3685,6 +3748,9 @@ const ApiScreenB40 = ({route, navigation}) => {
                                   setDiscrepancyfindingsRemarksError(
                                     'Input must be at least 255 characters long.',
                                   );
+                                  setDiscrepancyfindingsRemarks(
+                                    text.slice(0, 255),
+                                  );
                                 } else setDiscrepancyfindingsRemarksError('');
                               }}
                               placeholder={'Any Comments (If Required) '}
@@ -3767,12 +3833,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholder={'KE No'}
                                 keyboardType={'email-address'}
                                 placeholderTextColor="grey"
+                                autoCapitalize="characters"
                                 onChangeText={text => {
                                   setPowerKENo(text);
                                   if (validate(text, 10)) {
                                     setPowerKENoError(
                                       'Input must be at least 10 characters long.',
                                     );
+                                    setPowerKENo(text.slice(0, 10));
                                   } else setPowerKENoError('');
                                 }}
                                 style={{
@@ -3826,12 +3894,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholder={'Make'}
                                 keyboardType={'email-address'}
                                 placeholderTextColor="grey"
+                                autoCapitalize="characters"
                                 onChangeText={text => {
                                   setPowerMeterMake(text);
                                   if (validate(text, 10)) {
                                     setPowerMeterMakeError(
                                       'Input must be at least 10 characters long.',
                                     );
+                                    setPowerMeterMake(text.slice(0, 10));
                                   } else setPowerMeterMakeError('');
                                 }}
                                 style={{
@@ -3886,12 +3956,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholder={'Meter CT Ratio'}
                                 //keyboardType={'email-address'}
                                 placeholderTextColor="grey"
+                                autoCapitalize="characters"
                                 onChangeText={text => {
                                   setPowerMC(text);
                                   if (validate(text, 4)) {
                                     setPowerMCError(
                                       'Input must be at least 4 characters long.',
                                     );
+                                    setPowerMC(text.slice(0, 4));
                                   } else setPowerMCError('');
                                 }}
                                 style={{
@@ -3943,12 +4015,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholder={'MDI/MDI-Off Reading'}
                                 keyboardType={'numeric'}
                                 placeholderTextColor="grey"
+                                autoCapitalize="characters"
                                 onChangeText={text => {
                                   setPowerMCSec(text);
                                   if (validate(text, 4)) {
                                     setPowerMCError(
                                       'Input must be at least 4 characters long.',
                                     );
+                                    setPowerMCSec(text.slice(0, 4));
                                   } else setPowerMCError('');
                                 }}
                                 style={{
@@ -3996,6 +4070,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                                   setPowerMeterRemarksError(
                                     'Input must be at least 255 characters long.',
                                   );
+                                  setPowerMeterRemarks(text.slice(0, 255));
                                 } else setPowerMeterRemarksError('');
                               }}
                               placeholder={'Any comment (if required)'}
@@ -4156,12 +4231,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                             <TextInput
                               editable={isEditable}
                               style={{flex: 0.2, backgroundColor: 'white'}}
+                              autoCapitalize="characters"
                               onChangeText={value => {
                                 setPowerMeterReading(value);
                                 if (validate(value, 10)) {
                                   setPowerMeterReadingError(
                                     'Input must be at least 10 characters long.',
                                   );
+                                  setPowerMeterReading(value.slice(0, 10));
                                 } else setPowerMeterReadingError('');
                               }}
                               placeholder="Meter Reading"
@@ -4257,12 +4334,15 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholder={'KE No'}
                                 keyboardType={'email-address'}
                                 placeholderTextColor="grey"
+                                autoCapitalize="characters"
                                 onChangeText={text => {
                                   setLightKENo(text);
                                   if (validate(text, 2)) {
+                                    // NEED TO CHECK
                                     setAgedifferror(
                                       'Input must be at least 2 characters long.',
                                     );
+                                    setLightKENo(text.slice(0, 2));
                                   } else setAgedifferror('');
                                 }}
                                 style={{
@@ -4311,12 +4391,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholder={'Make'}
                                 keyboardType={'email-address'}
                                 placeholderTextColor="grey"
+                                autoCapitalize="characters"
                                 onChangeText={text => {
                                   setLightMeterMake(text);
                                   if (validate(text, 2)) {
                                     setAgedifferror(
                                       'Input must be at least 2 characters long.',
                                     );
+                                    setLightMeterMake(text.slice(0, 2));
                                   } else setAgedifferror('');
                                 }}
                                 style={{
@@ -4366,12 +4448,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholder={'Meter CT Ratio'}
                                 keyboardType={'email-address'}
                                 placeholderTextColor="grey"
+                                autoCapitalize="characters"
                                 onChangeText={text => {
                                   setLightMC(text);
                                   if (validate(text, 2)) {
                                     setAgedifferror(
                                       'Input must be at least 2 characters long.',
                                     );
+                                    setLightMC(text.slice(0, 2));
                                   } else setAgedifferror('');
                                 }}
                                 style={{
@@ -4420,12 +4504,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                                 placeholder={'Meter CT Ratio'}
                                 keyboardType={'email-address'}
                                 placeholderTextColor="grey"
+                                autoCapitalize="characters"
                                 onChangeText={text => {
                                   setLightMCSec(text);
                                   if (validate(text, 2)) {
                                     setAgedifferror(
                                       'Input must be at least 2 characters long.',
                                     );
+                                    setLightMCSec(text.slice(0, 2));
                                   } else setAgedifferror('');
                                 }}
                                 style={{
@@ -4466,10 +4552,11 @@ const ApiScreenB40 = ({route, navigation}) => {
                               multiline={true}
                               onChangeText={text => {
                                 setLightMeterRemarks(text);
-                                if (validate(text, 2)) {
+                                if (validate(text, 255)) {
                                   setAgedifferror(
-                                    'Input must be at least 2 characters long.',
+                                    'Input must be at least 255 characters long.',
                                   );
+                                  setLightMeterRemarks(text.slice(0, 255));
                                 } else setAgedifferror('');
                               }}
                               placeholder={'Any comment (if required)'}
@@ -4624,12 +4711,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                             }}>
                             <TextInput
                               style={{flex: 0.2, backgroundColor: 'white'}}
+                              autoCapitalize="characters"
                               onChangeText={value => {
                                 setLightMeterReading(value);
                                 if (validate(value, 2)) {
                                   setAgedifferror(
                                     'Input must be at least 2 characters long.',
                                   );
+                                  setLightMeterReading(value.slice(0, 2));
                                 } else setAgedifferror('');
                               }}
                               placeholder="Meter Reading"
@@ -5483,12 +5572,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               placeholder={'Consumer Name'}
                               keyboardType={'email-address'}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setConsumerName(text);
                                 if (validate(text, 20)) {
                                   setConsumerNameError(
                                     'Input must be at least 20 characters long.',
                                   );
+                                  setConsumerName(text.slice(0, 20));
                                 } else setConsumerNameError('');
                               }}
                               style={{
@@ -5541,12 +5632,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               keyboardType={'numeric'}
                               maxLength={11}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setMobileNo(text);
                                 if (validate(text, 11)) {
                                   setMobileNoError(
                                     'Input must be at least 11 characters long.',
                                   );
+                                  setMobileNo(text.slice(0, 11));
                                 } else setMobileNoError('');
                               }}
                               style={{
@@ -5598,12 +5691,14 @@ const ApiScreenB40 = ({route, navigation}) => {
                               keyboardType={'numeric'}
                               maxLength={13}
                               placeholderTextColor="grey"
+                              autoCapitalize="characters"
                               onChangeText={text => {
                                 setConsumerCNIC(text);
                                 if (validate(text, 16)) {
                                   setConsumerCNICError(
                                     'Input must be at least 16 characters long.',
                                   );
+                                  setConsumerCNIC(text.slice(0, 16));
                                 } else setConsumerCNICError('');
                               }}
                               style={{
@@ -5655,6 +5750,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                                   setConsumerRemarksError(
                                     'Input must be at least 255 characters long.',
                                   );
+                                  setConsumerRemarks(text.slice(0, 255));
                                 } else setConsumerRemarksError('');
                               }}
                               placeholder={'Any comment (if required)'}
@@ -5881,7 +5977,7 @@ const ApiScreenB40 = ({route, navigation}) => {
                         </TouchableOpacity>
                       </View>
                     </View>
-
+                    {/*  Take Signature Code Commented on 8 Aug 2023
                     <View
                       style={{
                         flexDirection: 'row',
@@ -5949,6 +6045,86 @@ const ApiScreenB40 = ({route, navigation}) => {
                         </View>
                       </View>
                     </View>
+*/}
+                    {/*Consumer Signature END*/}
+                    {/*Carousel Signature Start*/}
+                    <View
+                      style={{
+                        flex: 2,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        // height: 50,
+                        flexDirection: 'row',
+                        marginVertical: 10,
+                        marginLeft: 85,
+                        // paddingHorizontal: 110,
+                      }}>
+                      <Carousel
+                        ref={carouselRef}
+                        layout="default"
+                        data={signatureImages}
+                        sliderWidth={width}
+                        itemWidth={width}
+                        renderItem={({item, index}) => {
+                          return (
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  onTouchThumbnail(index);
+                                  setindexer1(index);
+                                  setimageview(true);
+                                }}
+                                activeOpacity={0.9}>
+                                <Image
+                                  source={{
+                                    uri: 'data:image/png;base64,' + item.uri,
+                                  }}
+                                  style={{height: 400, width: 200}}></Image>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                disabled={!isEditable}
+                                onPress={() => {
+                                  setTimeout(() => {
+                                    // setRefresh(true);
+                                    setImagedeletionLoader(true);
+                                    //console.log("images", images);
+                                    var arr = signatureImages;
+                                    arr.splice(index, 1);
+                                    // console.log(index)
+                                    //console.log("index", index);
+                                    //console.log("arr)", arr);
+                                    setSignatureImages(arr);
+                                    setImagedeletionLoader(false);
+                                  }, 2000);
+                                }}
+                                style={{
+                                  width: 200,
+                                  height: 16,
+                                  // borderRadius: 13,
+                                  zIndex: 100,
+                                  backgroundColor: 'red',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text
+                                  style={{
+                                    color: 'white',
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                  }}>
+                                  Remove
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          );
+                        }}
+                        // sliderWidth={150}
+                        //itemWidth={120}
+                        onSnapToItem={index => onSelect(index)}
+                      />
+                    </View>
+
+                    {/*Carousel Signature END*/}
                   </View>
                 </View>
               </View>
