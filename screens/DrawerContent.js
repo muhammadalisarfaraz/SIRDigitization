@@ -94,9 +94,18 @@ export function DrawerContent(props) {
               icon={({color, size}) => (
                 <Icon name="account-outline" color={color} size={size} />
               )}
-              label="Post SIR Images"
+              label="SIR Image Utility"
               onPress={() => {
                 props.navigation.navigate('Post SIR Images');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="account-outline" color={color} size={size} />
+              )}
+              label="SIR Error Handling Utility"
+              onPress={() => {
+                props.navigation.navigate('StatusReset');
               }}
             />
             {/*

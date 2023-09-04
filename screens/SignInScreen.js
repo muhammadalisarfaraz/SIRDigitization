@@ -106,10 +106,11 @@ const SignInScreen = ({navigation}) => {
     }
   };
 
-  const getLoginCredentials = (userName, password, Imei, AppVer) => {
+  const getLoginCredentials = (userName, password, AppVer) => {
     console.log('userName' + userName);
     console.log('password' + password);
     console.log('IMEI: ' + UniqueId.toUpperCase());
+    console.log('AppVer: ' + AppVer);
     console.log('myGlobalVariable[0]' + myGlobalVariable[0]);
 
     var LoginCredentialsData = [];
@@ -310,9 +311,8 @@ const SignInScreen = ({navigation}) => {
               getLoginCredentials(
                 data.username,
                 data.password,
-                '000000000000012121',
                 //'1.0',
-                'ZSIR_DG_V_102',
+                '1.1',
               );
             }}
 

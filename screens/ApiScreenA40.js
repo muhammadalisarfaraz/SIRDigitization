@@ -912,7 +912,7 @@ const ApiScreenA40 = ({route, navigation}) => {
       height: 700,
       cropping: true,
       includeBase64: true,
-      compressImageQuality: 0.6,
+      compressImageQuality: 1,
     }).then(response => {
       console.log('Response = ', response);
 
@@ -1095,7 +1095,7 @@ const ApiScreenA40 = ({route, navigation}) => {
         height: 700,
         cropping: true,
         includeBase64: true,
-        compressImageQuality: 0.6,
+        compressImageQuality: 1,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -1672,11 +1672,12 @@ const ApiScreenA40 = ({route, navigation}) => {
       }),
     })
       .then(res => {
-        if (res.data.d.Result_Discrepancies == 'Saved') {
+        console.log('res.data.d.Result------' + res.data.d.RESULT);
+        if (res.data.d.RESULT == 'Saved') {
           console.log(
             '******************Post SIR Simultaneous UPDATED*********************************',
           );
-          console.log('res.data.d.Result------' + res.data.d.Result_Appliances);
+
           PostSIRImage();
           StoreInDevice(
             'Post',
@@ -1845,7 +1846,7 @@ const ApiScreenA40 = ({route, navigation}) => {
             setSirTime(item.SIRTime);
           } else {
             setSirDate(moment().format('DD.MM.YYYY'));
-            setSirTime(moment().format('HH:MM:SS'));
+            setSirTime(moment().format('HH:mm:ss'));
           }
 
           if (item.Tariff != undefined) setValueTarif(item.Tariff);

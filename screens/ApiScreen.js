@@ -923,20 +923,25 @@ const ApiScreen = ({route, navigation}) => {
       }),
     })
       .then(res => {
+        /*
+        console.log(
+          '***********  res.data.d.Result------' +
+            res.data.d.Result_Discrepancies,
+          res.data.d.Result_Appliances,
+          res.data.d.Result_Meter,
+          res.data.d.Result_Register,
+          res.data.d.Result_Onsite,
+          res.data.d.Result_MeterSeal,
+          res.data.d.RESULT,
+        );
+*/
+        console.log(res.data.d);
+
         if (res.data.d.Result_Discrepancies == 'Saved') {
           console.log(
             '******************Post SIR Simultaneous UPDATED*********************************',
           );
-          console.log(
-            '***********  res.data.d.Result------' +
-              res.data.d.Result_Discrepancies,
-            res.data.d.Result_Appliances,
-            res.data.d.Result_Meter,
-            res.data.d.Result_Register,
-            res.data.d.Result_Onsite,
-            res.data.d.Result_MeterSeal,
-            res.data.d.RESULT,
-          );
+
           PostSIRImage();
           StoreInDevice(
             'Post',
@@ -954,7 +959,7 @@ const ApiScreen = ({route, navigation}) => {
           setSuccessModalVisible(!isSuccessModalVisible);
           //GetImageAPIToken();
         } else {
-          alert('SIR not updated in SAP');
+          alert('Error: SIR not posted in SAP. Please save your work.');
         }
       })
       .catch(error => {
@@ -1241,7 +1246,7 @@ const ApiScreen = ({route, navigation}) => {
       height: 700,
       cropping: true,
       includeBase64: true,
-      compressImageQuality: 0.6,
+      compressImageQuality: 1,
     }).then(response => {
       console.log('Response = ', response);
 
@@ -1426,7 +1431,7 @@ const ApiScreen = ({route, navigation}) => {
         height: 700,
         cropping: true,
         includeBase64: true,
-        compressImageQuality: 0.6,
+        compressImageQuality: 1,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -1499,14 +1504,14 @@ const ApiScreen = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    console.log('****************' + moment().format('HH:MM:SS'));
+    console.log('****************' + moment().format('HH:mm:ss'));
 
     // getApiData();
     /*
     AsyncStorage.getItem('SIRDigitization').then(async items => {
       let data1 = JSON.parse(items);
       data1.filter((item, index) => {
-        if (item.Sirnr == '900005119732') {
+        if (item.Sirnr == '900005216655') {
           console.log('item.Sirnr:' + item.Sirnr);
           data1[index].Status = 'Save';
           AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
@@ -1638,7 +1643,7 @@ const ApiScreen = ({route, navigation}) => {
             setSirTime(item.SIRTime);
           } else {
             setSirDate(moment().format('DD.MM.YYYY'));
-            setSirTime(moment().format('HH:MM:SS'));
+            setSirTime(moment().format('HH:mm:ss'));
           }
 
           if (item.IsConsumerRefuseYN != undefined)

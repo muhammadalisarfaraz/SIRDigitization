@@ -45,7 +45,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 import base64 from 'react-native-base64';
 
-const PostSIRImages = ({navigation}) => {
+const StatusReset = ({navigation}) => {
   const [filePath, setFilePath] = useState([]);
   const [images, setImages] = useState([]);
   const [filePath1, setFilePath1] = useState([]);
@@ -71,8 +71,13 @@ const PostSIRImages = ({navigation}) => {
   const [PMT, setPMT] = useState('');
   const [ConsumerMobileNumber, setConsumerMobileNumber] = useState('');
   const [Remarks, setRemarks] = useState('');
+
   const [user, setUser] = useState('');
   const [ibc, setIbc] = useState('');
+  const [VERTRAG, setVERTRAG] = useState('');
+  const [BEGRU, setBEGRU] = useState('');
+  const [SIRNR, setSIRNR] = useState('');
+
   const [latitude1, setlatitude] = useState('');
   const [longitude1, setlongitude] = useState('');
   const [loader, setLoader] = useState(false);
@@ -96,151 +101,6 @@ const PostSIRImages = ({navigation}) => {
   const flatListRef = useRef();
   const carouselRef = useRef();
 
-  const onTouchThumbnail = touched => {
-    if (touched === indexSelected) return;
-    carouselRef?.current?.snapToItem(touched);
-  };
-
-  const onSelect = indexSelected => {
-    setIndexSelected(indexSelected);
-    flatListRef?.current?.scrollToOffset({
-      offset: indexSelected * THUMB_SIZE,
-      //animated: true
-    });
-  };
-
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs camera permission',
-          },
-        );
-        // If CAMERA Permission is granted
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } else return true;
-  };
-
-  const captureImage = async type => {
-    console.log('test');
-    let options = {
-      mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
-      includeBase64: true,
-      videoQuality: 'low',
-      durationLimit: 30, //Video max duration in seconds
-      saveToPhotos: true,
-    };
-    var filterkeyN;
-    let isCameraPermitted = await requestCameraPermission();
-    let isStoragePermitted = await requestExternalWritePermission();
-
-    console.log('isCameraPermitted', isCameraPermitted);
-    console.log('isStoragePermitted', isStoragePermitted);
-    // && isStoragePermitted
-    if (isCameraPermitted) {
-      ImagePicker.openCamera({
-        width: 700,
-        height: 700,
-        cropping: true,
-        includeBase64: true,
-        compressImageQuality: 1,
-      }).then(response => {
-        //launchCamera(options, (response) => {
-        // console.log('response.assets[0] = ', response.assets[0].fileName);
-
-        if (response.didCancel) {
-          //  alert('User cancelled camera picker');
-          return;
-        } else if (response.errorCode == 'camera_unavailable') {
-          //  alert('Camera not available on device');
-          return;
-        } else if (response.errorCode == 'permission') {
-          alert('Permission not satisfied');
-          return;
-        } else if (response.errorCode == 'others') {
-          alert(response.errorMessage);
-          return;
-        }
-        var Allimages = images;
-        setIsImage('Y');
-        setFilePath([
-          {
-            uri: response.path,
-            url: response.path,
-            fileName: 'BFDC.jpg',
-            base64: response.data,
-          },
-          ...Allimages,
-        ]);
-        setImages([
-          {
-            uri: response.path,
-            url: response.path,
-            fileName: 'BFDC.jpg',
-            base64: response.data,
-          },
-          ...Allimages,
-        ]);
-      });
-    }
-  };
-
-  const requestExternalWritePermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'External Storage Write Permission',
-            message: 'App needs write permission',
-          },
-        );
-        // If WRITE_EXTERNAL_STORAGE Permission is granted
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        alert('Write permission err', err);
-      }
-      return false;
-    } else return true;
-  };
-
-  const getUserCurrentLocation = async () => {
-    let latitude, longitude;
-
-    Geolocation.getCurrentPosition(
-      info => {
-        const {coords} = info;
-
-        latitude = coords.latitude;
-        longitude = coords.longitude;
-
-        setlatitude(latitude);
-        setlongitude(longitude);
-
-        console.log('latitude' + latitude);
-        console.log('longitude' + longitude);
-      },
-      error => console.log(error),
-      {
-        enableHighAccuracy: false,
-        timeout: 2000,
-        maximumAge: 3600000,
-      },
-    );
-    //}
-  };
-
   const validate = (text, textLength) => {
     if (text.length <= textLength) {
       return false;
@@ -248,295 +108,38 @@ const PostSIRImages = ({navigation}) => {
     return true;
   };
 
-  const chooseFile = type => {
-    ImagePicker.openPicker({
-      width: 700,
-      height: 700,
-      cropping: true,
-      includeBase64: true,
-      compressImageQuality: 1,
-    }).then(response => {
-      console.log('Response = ', response);
-
-      if (response.didCancel) {
-        // alert('User cancelled camera picker');
-        return;
-      } else if (response.errorCode == 'camera_unavailable') {
-        // alert('Camera not available on device');
-        return;
-      } else if (response.errorCode == 'permission') {
-        alert('Permission not satisfied');
-        return;
-      } else if (response.errorCode == 'others') {
-        alert('chooseFile: ' + response.errorMessage);
-        return;
-      }
-
-      setIsImage('Y');
-
-      var Allimages = images;
-      // setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
-
-      //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
-
-      setFilePath([
-        {
-          uri: response.path,
-          url: response.path,
-          fileName: 'BFDC.jpg',
-          base64: response.data,
-          Status: 'Pending',
-          RoshniBajiWebID: '',
-        },
-        ...Allimages,
-      ]);
-      setImages([
-        {
-          uri: response.path,
-          url: response.path,
-          fileName: 'BFDC.jpg',
-          base64: response.data,
-          Status: 'Pending',
-          RoshniBajiWebID: '',
-        },
-        ...Allimages,
-      ]);
-    });
-  };
-
-  const PostsafetyImage = HAZARD_ID => {
-    let data1 = [];
-    let count = 1;
-    console.log('Post Safety Image called');
-    console.log('HAZARD_ID:' + HAZARD_ID);
-    console.log('ibc:' + ibc);
-    console.log('user:' + user);
-
-    images.filter(item => {
-      //console.log('item:= ' + item);
-      data1.push({
-        imageName: 'SafetyHazrd',
-        imageBase64: item.base64,
-        imageID: count,
-        IBC: ibc,
-        SHID: user,
-        MIONo: HAZARD_ID,
-      });
-      count++;
-    });
-
-    axios({
-      method: 'POST',
-      url:
-        'https://' + myGlobalVariable[2] + ':8039/api/Image/PostSIHImageData',
-      headers: {
-        'content-type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-      },
-      data: JSON.stringify(data1),
-    })
-      .then(res => {
-        console.log(
-          '******************Post SIR Image updated*********************************',
-        );
-        console.log(res.data);
-        //storeInDevice();
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'SupportScreen'}],
-        });
-      })
-      .catch(error => {
-        console.error(error);
-        alert('Post Safety Image Data: ' + error);
-      });
-  };
-
-  const PostSIRImage = () => {
-    let data1 = [];
-    let count = 1;
-    console.log('Post SIR Image called');
-    console.log('ibc:' + ibc);
-    console.log('count.toString():' + count.toString());
-    console.log('SIRNo:' + SIRNo);
-    console.log('vertrag:' + vertrag);
-    console.log('user:' + user);
-
-    images.filter(item => {
-      console.log('item.base64:= ' + item.base64);
-
-      data1.push({
-        imageName: ibc,
-        imageBase64: item.base64,
-        imageID: count.toString(),
-        IBC: ibc,
-        SIRNo: SIRNo,
-        ContractNo: vertrag,
-        MIONo: user,
-      });
-      count++;
-    });
-
-    axios({
-      method: 'POST',
-      url:
-        'https://' + myGlobalVariable[2] + ':8039/api/Image/PostSIRImageData',
-      headers: {
-        'content-type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
-      },
-      data: JSON.stringify(data1),
-    })
-      .then(res => {
-        console.log(
-          '******************Post SIR Image updated*********************************',
-        );
-        console.log(res.data);
-        //storeInDevice();
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'SupportScreen'}],
-        });
-      })
-      .catch(error => {
-        console.error(error);
-        alert('Post SIR Image Data: ' + error);
-      });
-  };
-
   const storeInDevice = () => {
     setSuccessModalVisible(!isSuccessModalVisible);
     setAuthModalVisible(!isAuthModalVisible);
 
-    AsyncStorage.getItem('LoginCredentials').then(items => {
-      var data = items ? JSON.parse(items) : {};
+    AsyncStorage.getItem('SIRDigitization').then(async items => {
+      let data1 = JSON.parse(items);
+      data1.filter((item, index) => {
+        if (item.Sirnr == SIRNR) {
+          console.log('item.Sirnr: ', item.Sirnr);
+          console.log('index: ', index);
+          console.log('SIR: ', SIRNR);
 
-      AsyncStorage.getItem('SafetyHazard').then(items => {
-        var data1 = [];
+          data1[index].Status = 'Save';
 
-        data1 = items ? JSON.parse(items) : [];
-
-        data1 = [
-          ...data1,
-          {
-            UserID: user, //data[0].name
-            SDate: Moment(Date.now()).format('YYYY-MM-DD'),
-            AccidentLocationAddress: AccidentLocationAddress,
-            PremiseConsumerNumber: PremiseConsumerNumber,
-            PMT: PMT,
-            ConsumerMobileNumber: ConsumerMobileNumber,
-            Remarks: Remarks,
-            longitude1: longitude1,
-            latitude1: latitude1,
-            Status: 'Pending',
-            IBC: ibc,
-            SafetyHazardWebID: '',
-            ImageFlag: isImage,
-            HazardImages: images,
-          },
-        ];
-
-        AsyncStorage.setItem('SafetyHazard', JSON.stringify(data1)).then(() => {
-          navigation.reset({
-            index: 0,
-            routes: [{name: 'SupportScreen'}],
-          });
-          //                          console.log("DAta1", data1);
-          //setRefresh(true);
-
-          // swiper.current.scrollBy(1, true);
-          /*
-                setTimeout(() => {
-                  setRefresh(false);
-                }, 1000);
-*/
-        });
+          AsyncStorage.setItem('SIRDigitization', JSON.stringify(data1));
+        }
       });
     });
   };
 
-  const postSafetyHazard = () => {
-    setLoader(true);
-
-    console.log('Remarks ' + Remarks);
-    console.log('PMT ' + PMT);
-    console.log('ConsumerMobileNumber ' + ConsumerMobileNumber);
-    console.log('AccidentLocationAddress ' + AccidentLocationAddress);
-    console.log('user ' + user);
-    console.log('PremiseConsumerNumber ' + PremiseConsumerNumber);
-    console.log('latitude1 ' + latitude1);
-    console.log('longitude1 ' + longitude1);
-    console.log('ibc' + ibc);
-
-    axios({
-      method: 'GET',
-      url:
-        'https://' +
-        myGlobalVariable[0] +
-        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_SAFETY_HAZARDS_POSTING1_SRV/WASet(Remarks=%27' +
-        Remarks +
-        '%27,Pmt=%27' +
-        PMT +
-        '%27,Mobileno=%27' +
-        ConsumerMobileNumber +
-        '%27,Ibc=%27' +
-        ibc +
-        '%27,CreatedBy=%27' +
-        user +
-        '%27,Consumernumber=%27' +
-        PremiseConsumerNumber +
-        '%27,Latitude=%27' +
-        latitude1.toString() +
-        '%27,Longitude=%27' +
-        longitude1.toString() +
-        '%27,ACCIDENT_NEAR_ADDR=%27' +
-        AccidentLocationAddress +
-        '%27)',
-      headers: {
-        Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-CSRF-Token': '',
-        'X-Requested-With': 'X',
-      },
-    })
-      .then(resp => {
-        console.log('res.data: ', resp.data.d.Message);
-        PostsafetyImage(resp.data.d.HAZARD_ID);
-      })
-      .catch(error => {
-        console.error(error);
-        alert('Post SIR Images Data: ' + error);
-      });
-    /*
-    setRefresh(true);
-
-    setTimeout(() => {
-      setRefresh(false);
-    }, 1000);
-*/
-  };
-
-  const ValidationService = (VERTRAG, BEGRU, SIRNR) => {
+  const StatusResetService = () => {
     console.log('**** Validation Service ******');
-    console.log('VERTRAG: ' + VERTRAG);
+    console.log('VERTRAG: ' + user);
     console.log('BEGRU: ' + ibc);
     console.log('SIRNR: ' + SIRNR);
 
     axios({
-      method: 'GET',
+      method: 'POST',
       url:
         'https://' +
         myGlobalVariable[0] +
-        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_VALIDATION_IMAGE_UPLOAD_SRV/WASet?$filter=VERTRAG%20eq%20%27' +
-        VERTRAG +
-        '%27%20and%20BEGRU%20eq%20%27' +
-        ibc +
-        '%27%20and%20SIRNR%20eq%20%27' +
-        SIRNR +
-        '%27%20&$format=json',
+        '.ke.com.pk:44300/sap/opu/odata/sap/ZSIR_RESET_SAP_STATUS_SRV/HEADERSet',
       headers: {
         Authorization: 'Basic ' + base64.encode(myGlobalVariable[1]),
         'Content-Type': 'application/json',
@@ -544,27 +147,36 @@ const PostSIRImages = ({navigation}) => {
         'X-CSRF-Token': '',
         'X-Requested-With': 'X',
       },
+      data: JSON.stringify({
+        HeaderToItem: [
+          {
+            BEGRU: ibc,
+            Pernr: user,
+            Sirnr: SIRNR,
+          },
+        ],
+      }),
     })
       .then(res => {
         console.log(
-          '******************Validation Service Called*********************************',
+          '******************Status Reset Service Called*********************************',
         );
         if (res.data.d.results != []) {
-          res.data.d.results.forEach(singleResult => {
-            console.log('singleResult.ERROR: ' + singleResult.ERROR);
+          res.data.d.HeaderToItem.results.forEach(singleResult => {
+            console.log('singleResult.STATUS: ' + singleResult.STATUS);
 
-            if (singleResult.ERROR == '') {
-              console.log('contract is valid');
-              PostSIRImage();
+            if (singleResult.STATUS != 'ERROR') {
+              console.log('SIR is valid');
+              storeInDevice();
             } else {
-              alert('Not a valid Contract No');
+              alert('SIR not Found');
             }
           });
         }
       })
       .catch(error => {
         console.error(error);
-        alert('ValidationService:error ' + error);
+        alert('StatusResetService:error ' + error);
       });
   };
 
@@ -576,11 +188,7 @@ const PostSIRImages = ({navigation}) => {
       //data[0].name=[0];
       setUser(data[0].pernr);
       setIbc(data[0].begru);
-      console.log(data[0].pernr);
-      console.log(data[0].begru);
     });
-
-    getUserCurrentLocation();
   }, []);
 
   return (
@@ -614,7 +222,7 @@ const PostSIRImages = ({navigation}) => {
                       },
                     ]}>
                     {' '}
-                    Post SIR Images
+                    Enter SIR No.
                   </Text>
                 </LinearGradient>
               </View>
@@ -672,7 +280,7 @@ const PostSIRImages = ({navigation}) => {
                   placeholder={'Enter Text'}
                   placeholderText={{fontSize: 16, color: 'grey'}}
                   onChangeText={text => {
-                    setSIRNo(text);
+                    setSIRNR(text);
                     if (validate(text, 40)) {
                       setSIRNoError(
                         'Input must be at least 40 characters long.',
@@ -684,209 +292,6 @@ const PostSIRImages = ({navigation}) => {
                   <Text style={styles.error}>{SIRNoError}</Text>
                 )}
               </View>
-
-              <View
-                style={{
-                  //height: 22,
-                  width: '100%',
-                  marginLeft: 40,
-                  marginTop: 10,
-                  // position: 'absolute',
-                  //padding:90,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Contract No.
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  //height: 25,
-                  width: '100%',
-                  marginLeft: 40,
-                  marginTop: 10,
-                  // position: 'absolute',
-                  //padding:90,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                }}>
-                <TextInput
-                  // selectedValue={selectedFeeder}
-                  //value={PMT}
-                  //  keyboardType={'numeric'}
-                  //  maxLength={8}
-                  //contractnumber={contractnumber}
-
-                  // onChangeText={text => setcontractnumber(text)}
-                  // onFocus={text => setcontractnumber(ShowMaxAlert(text))}
-                  style={{
-                    //height: 50,
-                    width: '86%',
-                    fontSize: 16,
-                    color: 'black',
-                    marginTop: -10,
-                    // marginBottom: 50,
-                    borderBottomWidth: 0.8,
-                  }}
-                  placeholder={'Enter Text'}
-                  placeholderText={{fontSize: 16, color: 'grey'}}
-                  onChangeText={text => {
-                    setVertrag(text);
-                    if (validate(text, 12)) {
-                      setVertragError(
-                        'Input must be at least 12 characters long.',
-                      );
-                    } else setVertragError('');
-                  }}
-                />
-                {vertragError !== '' && (
-                  <Text style={styles.error}>{vertragError}</Text>
-                )}
-              </View>
-
-              <View
-                style={{
-                  width: '100%',
-                  //padding: 20,
-                  //paddingTop: -90,
-                  //paddingBottom: 150,
-                  flexDirection: 'column',
-                  //alignSelf: 'center',
-                  //alignItems: 'center',
-                  // justifyContent: 'space-between',
-                }}>
-                <View
-                  style={{
-                    //height: 2,
-                    width: '100%',
-                    // position: 'absolute',
-                    // backgroundColor: ' rgba(93,45,145,255)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginTop: 60,
-                  }}>
-                  <LinearGradient
-                    colors={['#1565C0', '#64b5f6']}
-                    style={styles.PhotosIn}>
-                    <Text
-                      style={[
-                        styles.textPhotos,
-                        {
-                          color: '#fff',
-                        },
-                      ]}>
-                      {' '}
-                      Photos of SIRs
-                    </Text>
-                  </LinearGradient>
-                </View>
-                {/*Saad Added on Galery*/}
-                <View
-                  style={{
-                    width: '100%',
-                    // padding: 20,
-                    flexDirection: 'row',
-                    alignSelf: 'center',
-                    alignItems: 'center',
-                    // justifyContent: 'space-between',
-                  }}>
-                  <View style={{flex: 2, alignItems: 'center'}}>
-                    <TouchableOpacity
-                      activeOpacity={0.5}
-                      onPress={() => chooseFile('photo')}>
-                      <Image
-                        source={require('../assets/Gallery.png')} // source={{uri: filePath.uri}}
-                        style={styles.imageStyle}
-                      />
-                    </TouchableOpacity>
-                    <Text
-                      style={{
-                        fontSize: 11,
-                        marginTop: 4,
-                        textAlign: 'center',
-                        width: 120,
-                        textAlignVertical: 'center',
-                        color: '#1565C0',
-                      }}>
-                      tap the picture from gallery
-                    </Text>
-                  </View>
-                  <View style={{flex: 2, alignItems: 'center'}}>
-                    <TouchableOpacity
-                      style={{marginTop: 15}}
-                      onPress={() => captureImage('photo')}>
-                      <Image
-                        source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
-                        style={styles.imageStyle}
-                      />
-                    </TouchableOpacity>
-                    <Text
-                      style={{
-                        fontSize: 11,
-                        marginTop: 4,
-                        textAlign: 'center',
-                        width: 120,
-                        textAlignVertical: 'center',
-                        color: '#1565C0',
-                      }}>
-                      tap the camera to take a picture
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              {/*Saad Added on Galery*/}
-              {/* Saad Commented on Single Gallery
-
-              <View
-                style={{
-                  height: 22,
-                  width: '100%',
-                  marginLeft: 40,
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                  marginTop: 90,
-                }}>
-                <Text
-                  style={{fontSize: 15, fontWeight: 'normal', color: 'black'}}>
-                  Picture (Mandatory)
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  width: '100%',
-                  // padding: 20,
-                  flexDirection: 'row',
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                  marginLeft: 100,
-                  // justifyContent: 'space-between',
-                }}>
-                <TouchableOpacity onPress={() => captureImage('photo')}>
-                  <Image
-                    source={require('../assets/camera.png')} // source={{uri: filePath.uri}}
-                    style={styles.imageStyle}
-                  />
-                  <Text
-                    style={{
-                      fontSize: 11,
-                      //marginTop: 2,
-                      textAlign: 'center',
-                      width: 120,
-                      marginLeft: -15,
-                      textAlignVertical: 'center',
-                      color: '#1565C0',
-                    }}>
-                    tap the picture from gallery
-                  </Text>
-                </TouchableOpacity>
-
-                
-              </View>
-Saad Commented on Single Gallery */}
             </View>
             <View
               style={{
@@ -1188,7 +593,7 @@ Saad Commented on Single Gallery */}
                         if (state.isConnected) {
                           console.log(' **** You are online! ******** ');
                           //PostSIRImage();
-                          ValidationService(vertrag, user, SIRNo);
+                          StatusResetService();
                           setIsEditable(false);
                         } else {
                           Alert.alert('You are offline!');
@@ -1216,7 +621,7 @@ Saad Commented on Single Gallery */}
   );
 };
 
-export default PostSIRImages;
+export default StatusReset;
 
 const styles = StyleSheet.create({
   container: {

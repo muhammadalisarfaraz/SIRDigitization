@@ -60,6 +60,7 @@ import HomeScreenUnPlannedSummary from './screens/HomeScreenUnPlannedSummary';
 import SupportScreen from './screens/SupportScreen';
 import SafetyHazardCase from './screens/SafetyHazardCase';
 import PostSIRImages from './screens/PostSIRImages';
+import StatusReset from './screens/StatusReset';
 import Update1 from './screens/Update1';
 import SafetyHazardDetail from './screens/SafetyHazardDetail';
 import SafetyHazardEditRecordDetails from './screens/SafetyHazardEditRecordDetails';
@@ -207,7 +208,7 @@ const App = () => {
     let latitude = location.coords.latitude;
     let longitude = location.coords.longitude;
     setSirDate(Moment().format('DD.MM.YYYY'));
-    setSirTime(Moment().format('HH:MM:SS'));
+    setSirTime(Moment().format('HH:mm:ss'));
 
     AsyncStorage.getItem('LoginCredentials').then(credentialsitems => {
       var userCredentials = [];
@@ -232,7 +233,7 @@ const App = () => {
             Latitude: latitude.toString(),
             Longitude: longitude.toString(),
             Erdat: Moment().format('DD.MM.YYYY'),
-            Ertime: Moment().format('HH:MM:SS'),
+            Ertime: Moment().format('HH:mm:ss'),
             //CaseType: Action,
           },
         ];
@@ -350,7 +351,20 @@ const App = () => {
                 name="Safety Hazard Case"
                 component={SafetyHazardCase}
               />
-              <Drawer.Screen name="Post SIR Images" component={PostSIRImages} />
+              <Drawer.Screen
+                name="Post SIR Images"
+                component={PostSIRImages}
+                options={{
+                  title: 'SIR Image Utility',
+                }}
+              />
+              <Drawer.Screen
+                name="StatusReset"
+                component={StatusReset}
+                options={{
+                  title: 'SIR Error Handling Utility',
+                }}
+              />
               <Drawer.Screen
                 name="Saved Safety Hazard"
                 component={Update1}

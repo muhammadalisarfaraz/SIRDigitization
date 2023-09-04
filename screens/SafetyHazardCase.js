@@ -148,7 +148,7 @@ const SafetyHazardCase = ({navigation}) => {
         height: 700,
         cropping: true,
         includeBase64: true,
-        compressImageQuality: 0.6,
+        compressImageQuality: 1,
       }).then(response => {
         //launchCamera(options, (response) => {
         // console.log('response.assets[0] = ', response.assets[0].fileName);
@@ -249,7 +249,7 @@ const SafetyHazardCase = ({navigation}) => {
       height: 700,
       cropping: true,
       includeBase64: true,
-      compressImageQuality: 0.6,
+      compressImageQuality: 1,
     }).then(response => {
       console.log('Response = ', response);
 

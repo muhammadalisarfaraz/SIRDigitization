@@ -141,7 +141,7 @@ const HomeScreen = ({navigation}) => {
       .then(res => {
         if (res.data.d.results != []) {
           res.data.d.results.forEach(singleResult => {
-            if (singleResult.RESULT == 'Success') {
+            if (singleResult.ERROR == '') {
               CustomData.push({
                 Vertrag: singleResult.Vertrag.padStart(10, '0'),
                 Vkont: singleResult.Vkont,
@@ -161,7 +161,7 @@ const HomeScreen = ({navigation}) => {
               });
               isSystemMeterServiceCall = true;
             } else {
-              alert(singleResult.RESULT);
+              alert('Customer Move-out. SIR not Tagged !');
               isSystemMeterServiceCall = false;
               return false;
             }
