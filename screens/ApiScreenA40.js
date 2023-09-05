@@ -1672,8 +1672,11 @@ const ApiScreenA40 = ({route, navigation}) => {
       }),
     })
       .then(res => {
-        console.log('res.data.d.Result------' + res.data.d.RESULT);
-        if (res.data.d.RESULT == 'Saved') {
+        console.log(
+          'res.data.d.Result_Discrepancies------' +
+            res.data.d.Result_Discrepancies,
+        );
+        if (res.data.d.Result_Discrepancies == 'Saved') {
           console.log(
             '******************Post SIR Simultaneous UPDATED*********************************',
           );
@@ -1693,7 +1696,7 @@ const ApiScreenA40 = ({route, navigation}) => {
           setAuthModalVisible(!isAuthModalVisible);
           setSuccessModalVisible(!isSuccessModalVisible);
         } else {
-          alert('SIR not updated in SAP');
+          alert('Error: SIR not posted in SAP. Please save your work.');
         }
       })
       .catch(error => {

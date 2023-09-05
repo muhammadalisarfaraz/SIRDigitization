@@ -935,7 +935,7 @@ const ApiScreen = ({route, navigation}) => {
           res.data.d.RESULT,
         );
 */
-        console.log(res.data.d);
+        //console.log(res.data.d);
 
         if (res.data.d.Result_Discrepancies == 'Saved') {
           console.log(

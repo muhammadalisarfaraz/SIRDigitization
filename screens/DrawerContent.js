@@ -30,7 +30,7 @@ export function DrawerContent(props) {
             <View style={{flexDirection: 'row', marginTop: 15}}>
               <View style={{marginLeft: 15, flexDirection: 'column'}}>
                 <Title style={styles.title}>SIR Application</Title>
-                <Caption style={styles.caption}>Menu Options</Caption>
+                <Caption style={styles.caption}>Version: 2.1</Caption>
               </View>
             </View>
           </View>

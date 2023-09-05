@@ -5,6 +5,7 @@ export const myGlobalVariable = [
   'stagingdev.ke.com.pk',
 ];
 */
+
 /*
 export const myGlobalVariable = [
   'fioriqa',
@@ -18,5 +19,3 @@ export const myGlobalVariable = [
   'RFCGWSIR:Z@p123456789',
   'sir.ke.com.pk',
 ];
-
-

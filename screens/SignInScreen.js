@@ -312,7 +312,7 @@ const SignInScreen = ({navigation}) => {
                 data.username,
                 data.password,
                 //'1.0',
-                '2.0',
+                '2.1',
               );
             }}
 
