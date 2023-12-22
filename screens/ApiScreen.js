@@ -942,7 +942,7 @@ const ApiScreen = ({route, navigation}) => {
             '******************Post SIR Simultaneous UPDATED*********************************',
           );
 
-          PostSIRImage();
+          //PostSIRImage();
           StoreInDevice(
             'Post',
             true,
@@ -1049,7 +1049,7 @@ const ApiScreen = ({route, navigation}) => {
         console.log('error: ', error);
       });
   };
-  const PostSIRImage = () => {
+  const PostSIRImage = connectionType => {
     let data1 = [];
     let count = 1;
     console.log('Post SIR Image Data called');
@@ -1089,8 +1089,14 @@ const ApiScreen = ({route, navigation}) => {
         console.log(
           '******************Post SIR Image updated*********************************',
         );
-        //console.log(res.data);
-        PostConsumerImage(count);
+        if (res.data[0].StatusCode == '0') {
+          console.log(res.data[0].StatusCode);
+          //alert(res.data[0].StatusMessage);
+          PostConsumerImage(count, connectionType);
+        } else {
+          alert(res.data[0].StatusMessage);
+          console.log(res.data[0].StatusMessage);
+        }
       })
       .catch(error => {
         console.log('Post SIR Image ERROR STARTS NOW');
@@ -1107,9 +1113,9 @@ const ApiScreen = ({route, navigation}) => {
       });
   };
 
-  const PostConsumerImage = count => {
+  const PostConsumerImage = (count, connectionType) => {
     let consumerImageData = [];
-    console.log('Post SIR Image Data called');
+    console.log('Post Consumer Image Data called');
 
     consumerImages.filter(item => {
       //console.log('item:= ' + item);
@@ -1156,7 +1162,17 @@ const ApiScreen = ({route, navigation}) => {
         console.log(
           '******************Post Consumer Image updated*********************************',
         );
-        //console.log(res.data);
+
+        if (
+          res.data[0].StatusCode == '0' ||
+          res.data[0].StatusMessage == 'no data found'
+        ) {
+          console.log(res.data[0].StatusMessage);
+          PostSIRSimultaneous(connectionType);
+        } else {
+          console.log(res.data);
+          alert(res.data[0].StatusMessage);
+        }
       })
       .catch(error => {
         console.error(error);
@@ -1166,7 +1182,7 @@ const ApiScreen = ({route, navigation}) => {
 
   const PostDescrippancyList = () => {
     console.log('**** PostDescrippancyList ******');
-    var filterData = descrippancylist.filter(item => {
+    var filterData = descripancylist.filter(item => {
       console.log(item);
     });
 
@@ -5361,7 +5377,8 @@ const ApiScreen = ({route, navigation}) => {
 
                       if (state.isConnected) {
                         console.log(' **** You are online! ******** ');
-                        PostSIRSimultaneous(state.type);
+                        //PostSIRSimultaneous(state.type);
+                        PostSIRImage(state.type);
                         setIsEditable(false);
                       } else {
                         Alert.alert('You are offline!');
