@@ -4,8 +4,10 @@ import {
   Text,
   Button,
   StyleSheet,
+  Dimensions,
   StatusBar,
   Image,
+  PermissionsAndroid,
   TouchableOpacity,
   TextInput,
   Platform,
@@ -14,10 +16,15 @@ import {
 } from 'react-native';
 import Moment from 'moment';
 
+import ImagePicker from 'react-native-image-crop-picker';
+
 import {AuthContext} from '../components/context';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+const WIDTH = Dimensions.get('screen').width;
+const HEIGHT = Dimensions.get('screen').height;
 
 function SupportScreen({navigation}) {
   //  const { colors } = useTheme();
@@ -33,9 +40,152 @@ function SupportScreen({navigation}) {
   const [user, setUser] = useState('');
   const [ibc, setIbc] = useState('');
   const [ibcName, setIbcName] = useState('');
+  const [imageurl, setImageUrl] = useState('');
 
   const [currentDate, setCurrentDate] = useState('');
   const {supportScreen} = React.useContext(AuthContext);
+
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs camera permission',
+          },
+        );
+        // If CAMERA Permission is granted
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    } else return true;
+  };
+
+  const requestExternalWritePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'External Storage Write Permission',
+            message: 'App needs write permission',
+          },
+        );
+        // If WRITE_EXTERNAL_STORAGE Permission is granted
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        alert('Write permission err', err);
+      }
+      return false;
+    } else return true;
+  };
+
+  const captureImage = async (type, imageNo) => {
+    let options = {
+      mediaType: type,
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
+      includeBase64: true,
+      videoQuality: 'low',
+      durationLimit: 30, //Video max duration in seconds
+      saveToPhotos: true,
+    };
+    var filterkeyN;
+    let isCameraPermitted = await requestCameraPermission();
+    let isStoragePermitted = await requestExternalWritePermission();
+
+    console.log('isCameraPermitted', isCameraPermitted);
+    console.log('isStoragePermitted', isStoragePermitted);
+    // && isStoragePermitted
+    if (isCameraPermitted) {
+      ImagePicker.openCamera({
+        width: 700,
+        height: 700,
+        cropping: true,
+        includeBase64: true,
+        compressImageQuality: 1,
+      }).then(response => {
+        //launchCamera(options, (response) => {
+        // console.log('response.assets[0] = ', response.assets[0].fileName);
+
+        if (response.didCancel) {
+          //  alert('User cancelled camera picker');
+          return;
+        } else if (response.errorCode == 'camera_unavailable') {
+          //  alert('Camera not available on device');
+          return;
+        } else if (response.errorCode == 'permission') {
+          alert('Permission not satisfied');
+          return;
+        } else if (response.errorCode == 'others') {
+          alert(response.errorMessage);
+          return;
+        }
+
+        // var Allimages = images;
+
+        // if (imageNo == '1') {
+        //   setIsImage1('Y');
+        //   console.log(response.path);
+        //   //setFilePath([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+        //   setFilePath1([
+        //     {
+        //       uri: response.path,
+        //       url: response.path,
+        //       fileName: 'BFDC.jpg',
+        //       base64: response.data,
+        //     },
+        //   ]);
+        //   setImages1({
+        //     uri: response.path,
+        //     url: response.path,
+        //     fileName: 'BFDC.jpg',
+        //     base64: response.data,
+        //   });
+        //   setConsumerImages([
+        //     {
+        //       uri: response.path,
+        //       url: response.path,
+        //       fileName: 'consumerImage.jpg',
+        //       base64: response.data,
+        //     },
+        //   ]);
+
+        //   //setImages([{ uri: response.assets[0].uri, url: response.assets[0].uri, fileName: response.assets[0].fileName, base64: response.assets[0].base64, Status: 'Pending', RoshniBajiWebID: '' }, ...Allimages]);
+        // } else {
+        //   setIsImage('Y');
+        //   setFilePath([
+        //     {
+        //       uri: response.path,
+        //       url: response.path,
+        //       fileName: 'BFDC.jpg',
+        //       base64: response.data,
+        //     },
+        //     ...Allimages,
+        //   ]);
+        //   setImages([
+        //     {
+        //       uri: response.path,
+        //       url: response.path,
+        //       fileName: 'BFDC.jpg',
+        //       base64: response.data,
+        //     },
+        //     ...Allimages,
+        //   ]);
+        // }
+        console.log('images1.uri', response.path);
+        console.log('image path', response);
+        setImageUrl(response.path);
+
+        AsyncStorage.setItem('employeeImage', response.path);
+      });
+    }
+  };
 
   useEffect(() => {
     console.log('Ali');
@@ -50,6 +200,14 @@ function SupportScreen({navigation}) {
       setUser(data1[0].User);
       setIbc(data1[0].begru);
       setIbcName(data1[0].IBC_Name);
+    });
+    AsyncStorage.getItem('employeeImage').then(item => {
+      console.log('Itemmmmmmmmm', item);
+      if (item) {
+        setImageUrl(item);
+      } else {
+        setImageUrl('');
+      }
     });
 
     var date = new Date();
@@ -100,6 +258,36 @@ function SupportScreen({navigation}) {
               {'IBC: ' + ibcName}
             </Text>
           </View>
+          <TouchableOpacity
+            onPress={() => captureImage('photo')}
+            style={{
+              justifyContent: 'flex-end',
+              alignItems: 'flex-start',
+              marginLeft: 40,
+            }}>
+            {imageurl ? (
+              <Image
+                source={{uri: imageurl}} /// source={{uri: filePath.uri}}
+                style={{
+                  width: 100,
+                  height: 100,
+                  resizeMode: 'contain',
+                  borderRadius: 20,
+                  borderColor: '#000',
+                  borderWidth: 2,
+                }}
+              />
+            ) : (
+              <Image
+                style={{
+                  // height: HEIGHT / 10,
+                  width: WIDTH / 5,
+                  resizeMode: 'contain',
+                }}
+                source={require('../assets/avatar.png')}
+              />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -190,6 +378,8 @@ function SupportScreen({navigation}) {
                 backgroundColor: '#E349EC',
                 alignItems: 'center',
                 justifyContent: 'center',
+                borderRadius: 10,
+                padding: 2,
               }}>
               <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
                 Assigned
@@ -205,6 +395,8 @@ function SupportScreen({navigation}) {
               alignItems: 'center',
               justifyContent: 'center',
               marginLeft: 2,
+              borderRadius: 10,
+              padding: 2,
             }}>
             <TouchableOpacity
               onPress={() => {
@@ -245,6 +437,8 @@ function SupportScreen({navigation}) {
               alignItems: 'center',
               justifyContent: 'center',
               marginLeft: 2,
+              borderRadius: 10,
+              padding: 2,
             }}>
             <TouchableOpacity
               onPress={() => {
@@ -285,6 +479,8 @@ function SupportScreen({navigation}) {
               alignItems: 'center',
               justifyContent: 'center',
               marginLeft: 2,
+              borderRadius: 10,
+              padding: 2,
             }}>
             <TouchableOpacity
               onPress={() => {
@@ -387,6 +583,8 @@ function SupportScreen({navigation}) {
                 backgroundColor: '#E349EC',
                 alignItems: 'center',
                 justifyContent: 'center',
+                borderRadius: 10,
+                padding: 2,
               }}>
               <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
                 Assigned
@@ -402,6 +600,8 @@ function SupportScreen({navigation}) {
               alignItems: 'center',
               justifyContent: 'center',
               marginLeft: 2,
+              borderRadius: 10,
+              padding: 2,
             }}>
             <TouchableOpacity
               onPress={() => {
@@ -443,6 +643,8 @@ function SupportScreen({navigation}) {
               alignItems: 'center',
               justifyContent: 'center',
               marginLeft: 2,
+              borderRadius: 10,
+              padding: 2,
             }}>
             <TouchableOpacity
               onPress={() => {
@@ -484,6 +686,8 @@ function SupportScreen({navigation}) {
               alignItems: 'center',
               justifyContent: 'center',
               marginLeft: 2,
+              borderRadius: 10,
+              padding: 2,
             }}>
             <TouchableOpacity
               onPress={() => {
@@ -527,6 +731,7 @@ function SupportScreen({navigation}) {
             // width: '32%',
             color: '#1565C0',
             flexDirection: 'row',
+
             //alignItems:'flex-start',
             //justifyContent: 'left',
           }}>
@@ -578,6 +783,8 @@ function SupportScreen({navigation}) {
                 backgroundColor: '#E349EC',
                 alignItems: 'center',
                 justifyContent: 'center',
+                borderRadius: 10,
+                padding: 2,
               }}>
               <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
                 New
@@ -607,6 +814,8 @@ function SupportScreen({navigation}) {
                 backgroundColor: '#E349EC',
                 alignItems: 'center',
                 justifyContent: 'center',
+                borderRadius: 10,
+                padding: 2,
               }}>
               <Text style={{fontSize: 14, fontWeight: 'bold', color: 'white'}}>
                 Post
@@ -624,7 +833,8 @@ function SupportScreen({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1565C0',
+    padding: 10,
+    backgroundColor: '#fff',
 
     //  alignItems: 'center',
     //    justifyContent: 'center'
@@ -670,22 +880,42 @@ const styles = StyleSheet.create({
 
   footer: {
     flex: 3,
+    elevation: 15,
     backgroundColor: 'white',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopLeftRadius: 40,
+    // borderTopRightRadius: 30,
+    borderBottomEndRadius: 40,
+    // borderBottomStartRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 30,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   footerMaster: {
     flex: 0.5,
-    backgroundColor: 'white',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomEndRadius: 10,
-    borderBottomStartRadius: 10,
+    elevation: 15,
 
+    backgroundColor: 'white',
+    // borderTopLeftRadius: 20,
+    borderTopRightRadius: 30,
+    // borderBottomEndRadius: 10,
+    borderBottomStartRadius: 30,
+    // width: WIDTH / 1.1,
     paddingHorizontal: 20,
     paddingVertical: 30,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    marginBottom: 5,
   },
   text_header: {
     color: '#fff',
@@ -760,6 +990,13 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     height: 50,
     color: 'black',
+  },
+  tinyLogo: {
+    width: WIDTH / 1.06,
+    height: HEIGHT / 8,
+    paddingHorizontal: 20,
+
+    resizeMode: 'contain',
   },
 });
 

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  Dimensions,
   Alert,
   ActivityIndicator,
 } from 'react-native';
@@ -19,12 +20,16 @@ import axios from 'axios';
 import base64 from 'react-native-base64';
 import {myGlobalVariable} from './globals';
 
+const WIDTH = Dimensions.get('screen').width;
+const HEIGHT = Dimensions.get('screen').height;
+
 const LoadingScreenforDataDownload = ({navigation}) => {
   const [Mio, setMio] = useState('');
   const [Ibc, setIbc] = useState('');
   const [loader, setLoader] = useState(true);
   const [MIOData, setMIOData] = useState('');
   const [SIRDigitizationData, setSIRDigitizationData] = useState('');
+
   const [MRNote, setMRNote] = useState('');
   const [PremiseType, setPremiseType] = useState('');
   const [Tariff, setTariff] = useState('');
@@ -766,11 +771,134 @@ const LoadingScreenforDataDownload = ({navigation}) => {
         </View>
       ) : (
         <>
-          <Text style={{color: 'white', fontSize: 15}}>IBC: {Ibc}</Text>
-          <Text style={{color: 'white', fontSize: 15}}>MIO: {Mio}</Text>
+          <Image
+            style={styles.tinyLogo}
+            source={require('../assets/images/kelogo.jpg')}
+          />
+          <View
+            style={{
+              borderTopColor: 'orange',
+              // marginTop: 20,
+              marginBottom: 10,
+              width: WIDTH / 1.06,
+              borderTopWidth: 2,
+            }}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              // justifyContent: 'center',
+              alignContent: 'center',
+            }}>
+            <View
+              style={{
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderBottomStartRadius: 20,
+                borderTopEndRadius: 20,
+                backgroundColor: '#fff',
+                elevation: 25,
+                width: WIDTH / 2.2,
+                padding: 10,
+              }}>
+              <Image
+                style={{
+                  // height: HEIGHT / 10,
+                  width: WIDTH / 3.8,
+                  resizeMode: 'contain',
+                }}
+                source={require('../assets/organizationIcon.png')}
+              />
+              <Text style={{color: '#000', fontSize: 18}}>IBC</Text>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  marginTop: 5,
+                }}>
+                {Ibc}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderBottomEndRadius: 20,
+                borderTopStartRadius: 20,
+                marginLeft: 10,
+                backgroundColor: '#fff',
+                elevation: 25,
+                width: WIDTH / 2.2,
+                padding: 10,
+              }}>
+              <Image
+                style={{
+                  // height: HEIGHT / 10,
+                  width: WIDTH / 5,
+                  resizeMode: 'contain',
+                }}
+                source={require('../assets/employee-100.png')}
+              />
+              <Text style={{color: '#000', fontSize: 18}}>MIO</Text>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  marginTop: 5,
+                }}>
+                {Mio}
+              </Text>
+            </View>
+          </View>
+          <View
+            style={{
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#fff',
+              elevation: 25,
+              width: WIDTH / 1.1,
+              borderBottomEndRadius: 20,
+              borderTopStartRadius: 20,
+              padding: 20,
+              marginTop: 20,
+            }}>
+            <Image
+              style={{
+                // height: HEIGHT / 10,
+                width: WIDTH / 5,
+                resizeMode: 'contain',
+              }}
+              source={require('../assets/file-downloaded.png')}
+            />
+            <Text
+              style={{
+                color: '#000',
+                // flex: 1,
+                fontSize: 18,
+                // fontWeight: 'bold',
+                marginTop: 8,
+              }}>
+              Total SIR Cases Downloaded
+            </Text>
+            <Text
+              style={{
+                color: '#000',
+                fontSize: 25,
+                fontWeight: 'bold',
+                marginTop: 5,
+              }}>
+              {SIRDigitizationData}
+            </Text>
+          </View>
+          {/* <Text style={{color: 'white', fontSize: 15}}>MIO: {Mio}</Text>
           <Text style={{color: 'white', fontSize: 15}}>
             Total SIR cases downloaded : {SIRDigitizationData}
-          </Text>
+          </Text> */}
         </>
       )}
     </View>
@@ -783,6 +911,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#1565C0',
     paddingLeft: 10,
     paddingTop: 10,
+  },
+  tinyLogo: {
+    width: WIDTH / 1.06,
+    height: HEIGHT / 8,
+    paddingHorizontal: 20,
+
+    resizeMode: 'contain',
   },
 });
 

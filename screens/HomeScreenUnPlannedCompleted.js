@@ -83,10 +83,11 @@ const HomeScreenUnPlannedCompleted = ({navigation}) => {
       // Saad Comment Loading PremiseType Data
       AsyncStorage.getItem('SIRDigitization').then(items => {
         var data = items ? JSON.parse(items) : [];
+
         data = data.filter(item => {
           return item.Random != '' && item.Status == 'Post';
         });
-
+        // console.log('data01 ====>', data01);
         setORDCount(data.filter(x => x.SirFormat == 'ORD').length);
         setB40Count(data.filter(x => x.SirFormat == 'B40').length);
         setA40Count(data.filter(x => x.SirFormat == 'A40').length);

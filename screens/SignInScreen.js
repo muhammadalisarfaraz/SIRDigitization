@@ -9,7 +9,9 @@ import {
   StatusBar,
   Alert,
   Image,
+  Dimensions,
 } from 'react-native';
+
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import Feather from 'react-native-vector-icons/Feather';
@@ -25,6 +27,9 @@ import {AuthContext} from '../components/context';
 
 import Users from '../model/users';
 import {myGlobalVariable} from './globals';
+
+const WIDTH = Dimensions.get('screen').width;
+const HEIGHT = Dimensions.get('screen').height;
 
 const SignInScreen = ({navigation}) => {
   const [data, setData] = useState({
@@ -221,7 +226,17 @@ const SignInScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="black" barStyle="light-content" />
+
       <View style={styles.header}>
+        <Image
+          style={{
+            width: WIDTH / 1.1,
+            height: HEIGHT / 8,
+            resizeMode: 'contain',
+            // marginBottom: 6,
+          }}
+          source={require('../assets/images/keLogoSIR-removebg-preview.png')}
+        />
         <Text style={styles.text_header}>SIR Digitization</Text>
       </View>
       <Animatable.View
@@ -328,6 +343,7 @@ const SignInScreen = ({navigation}) => {
             <LinearGradient
               colors={['#1565C0', '#64b5f6']}
               style={styles.signIn}>
+              {/* <View  style={styles.signIn}> */}
               <Text
                 style={[
                   styles.textSign,
@@ -338,6 +354,7 @@ const SignInScreen = ({navigation}) => {
                 Login
               </Text>
             </LinearGradient>
+            {/* </View> */}
             <Text
               style={[
                 styles.textSign,
@@ -380,6 +397,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 30,
     textAlign: 'center',
+    // marginTop: 10,
   },
   text_footer: {
     color: '#05375a',
@@ -419,6 +437,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    // backgroundColor:'#1565C0'
   },
   textSign: {
     fontSize: 18,

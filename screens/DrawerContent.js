@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Image} from 'react-native';
 import {
   useTheme,
   Avatar,
@@ -14,6 +14,7 @@ import {
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// import Icon1 from 'react-native-vector-icons/MaterialIcons';
 
 import {AuthContext} from '../components/context';
 
@@ -27,10 +28,14 @@ export function DrawerContent(props) {
       <DrawerContentScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
+            <Image
+              style={styles.tinyLogo}
+              source={require('../assets/images/kelogo.jpg')}
+            />
             <View style={{flexDirection: 'row', marginTop: 15}}>
               <View style={{marginLeft: 15, flexDirection: 'column'}}>
                 <Title style={styles.title}>SIR Application</Title>
-                <Caption style={styles.caption}>Version: 2.1</Caption>
+                <Caption style={styles.caption}>Version: 2.2</Caption>
               </View>
             </View>
           </View>
@@ -40,6 +45,7 @@ export function DrawerContent(props) {
               icon={({color, size}) => (
                 <Icon name="home-outline" color={color} size={size} />
               )}
+              style={{borderBottomColor: '#000', borderBottomWidth: 1}}
               label="Dashboard"
               onPress={() => {
                 props.navigation.navigate('SupportScreen');
@@ -47,63 +53,70 @@ export function DrawerContent(props) {
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="account-check-outline" color={color} size={size} />
+                <Icon name="download-multiple" color={color} size={size} />
               )}
               label="Download SIR"
+              style={{borderBottomColor: '#000', borderBottomWidth: 1}}
               onPress={() => {
                 props.navigation.navigate('LoadingScreenforDataDownload');
               }}
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="account-check-outline" color={color} size={size} />
+                <Icon name="update" color={color} size={size} />
               )}
               label="Update Master Data"
+              style={{borderBottomColor: '#000', borderBottomWidth: 1}}
               onPress={() => {
                 props.navigation.navigate('DownloadMasterData');
               }}
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="account-check-outline" color={color} size={size} />
+                <Icon name="database-sync" color={color} size={size} />
               )}
               label="Syncronize SIR Data"
+              style={{borderBottomColor: '#000', borderBottomWidth: 1}}
               onPress={() => {
                 props.navigation.navigate('DeleteSIRs');
               }}
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="bookmark-outline" color={color} size={size} />
+                <Icon name="key-change" color={color} size={size} />
               )}
               label="Change Password"
+              style={{borderBottomColor: '#000', borderBottomWidth: 1}}
               onPress={() => {
                 props.navigation.navigate('ChangePassword');
               }}
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="account-outline" color={color} size={size} />
+                <Icon name="safe" color={color} size={size} />
               )}
               label="Safety Hazard Case"
+              style={{borderBottomColor: '#000', borderBottomWidth: 1}}
               onPress={() => {
                 props.navigation.navigate('Safety Hazard Case');
               }}
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="account-outline" color={color} size={size} />
+                <Icon name="image-move" color={color} size={size} />
               )}
               label="SIR Image Utility"
+              style={{borderBottomColor: '#000', borderBottomWidth: 1}}
               onPress={() => {
                 props.navigation.navigate('Post SIR Images');
               }}
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="account-outline" color={color} size={size} />
+                <Icon name="ladybug" color={color} size={size} />
               )}
               label="SIR Error Handling Utility"
+              style={{borderBottomColor: '#000', borderBottomWidth: 1}}
               onPress={() => {
                 props.navigation.navigate('StatusReset');
               }}
@@ -150,7 +163,7 @@ export function DrawerContent(props) {
       <Drawer.Section style={styles.bottomDrawerSection}>
         <DrawerItem
           icon={({color, size}) => (
-            <Icon name="exit-to-app" color={color} size={size} />
+            <Icon name="logout" color={color} size={size} />
           )}
           label="Sign Out"
           onPress={() => {
@@ -205,5 +218,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 16,
+  },
+  tinyLogo: {
+    width: '76%',
+    height: 50,
+    // borderRadius: 50,
+    // borderWidth: 1,
+    // paddingHorizontal: 20,
+    resizeMode: 'contain',
   },
 });

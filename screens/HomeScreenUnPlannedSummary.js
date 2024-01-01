@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   //AsyncStorage,
+  Dimensions,
   Image,
   ImageBackground,
 } from 'react-native';
@@ -16,6 +17,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import moment from 'moment';
+
+const WIDTH = Dimensions.get('screen').width;
+const HEIGHT = Dimensions.get('screen').height;
 
 const HomeScreenUnPlannedSummary = ({navigation}) => {
   //   const [data, setdata] = useState();
@@ -82,7 +86,161 @@ const HomeScreenUnPlannedSummary = ({navigation}) => {
       </View>
 
       <View style={styles.formheader}>
-        <View style={{flexDirection: 'row', flex: 1, width: '96%'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            // flex: 1,
+            width: '96%',
+            padding: 10,
+
+            // margin: ,
+            // paddingLeft: 10,
+            // paddingRight: 10,
+            // backgroundColor: '#fff',
+          }}>
+          <View
+            style={{
+              width: WIDTH / 2.1,
+              borderBottomRightRadius: 20,
+              borderTopLeftRadius: 20,
+              backgroundColor: '#FFF',
+              height: HEIGHT / 6,
+              margin: 4,
+              elevation: 5,
+            }}>
+            <View style={{alignItems: 'center', flexDirection: 'column'}}>
+              <Icon
+                name="square-edit-outline"
+                size={30}
+                color="#000"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
+            <Text style={styles.text_left}>Assigned Cases</Text>
+            <Text style={styles.text_right}>{assignedCases}</Text>
+          </View>
+          <View
+            style={{
+              width: WIDTH / 2.1,
+              borderBottomLeftRadius: 20,
+              borderTopRightRadius: 20,
+              backgroundColor: '#FFF',
+              height: HEIGHT / 6,
+              margin: 4,
+              elevation: 5,
+            }}>
+            <View style={{alignItems: 'center', flexDirection: 'column'}}>
+              <Icon
+                name="content-save-check-outline"
+                size={30}
+                color="#000"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
+            <Text style={styles.text_left}>Saved Cases</Text>
+
+            <Text style={styles.text_right}>{savedCases}</Text>
+          </View>
+          {/* <View style={{flex: 1, alignItems: 'center'}}>
+            <Text style={styles.text_right}>{assignedCases}</Text>
+          </View> */}
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            // flex: 1,
+            // width: '96%',
+            padding: 10,
+            // margin: ,
+            // paddingLeft: 10,
+            // paddingRight: 10,
+            // backgroundColor: '#fff',
+          }}>
+          <View
+            style={{
+              width: WIDTH / 2.1,
+              borderBottomRightRadius: 20,
+              borderTopLeftRadius: 20,
+              backgroundColor: '#FFF',
+              height: HEIGHT / 6,
+              margin: 4,
+              elevation: 5,
+            }}>
+            <View style={{alignItems: 'center', flexDirection: 'column'}}>
+              <Icon
+                name="timer-outline"
+                size={30}
+                color="#000"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
+            <Text style={styles.text_left}>Pending Cases</Text>
+            <Text style={styles.text_right}>{pendingCases}</Text>
+          </View>
+          <View
+            style={{
+              width: WIDTH / 2.1,
+              borderBottomLeftRadius: 20,
+              borderTopRightRadius: 20,
+              backgroundColor: '#FFF',
+              height: HEIGHT / 6,
+              margin: 4,
+              elevation: 5,
+            }}>
+            <View style={{alignItems: 'center'}}>
+              <Icon
+                name="thumb-up-outline"
+                size={30}
+                color="#000"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
+            <Text style={styles.text_left}>Post Cases</Text>
+            <Text style={styles.text_right}>{postCases}</Text>
+          </View>
+          {/* <View style={{flex: 1, alignItems: 'center'}}>
+            <Text style={styles.text_right}>{assignedCases}</Text>
+          </View> */}
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            // flex: 1,
+            width: '96%',
+            padding: 10,
+            justifyContent: 'center',
+            // margin: ,
+            // paddingLeft: 10,
+            // paddingRight: 10,
+            // backgroundColor: '#fff',
+          }}>
+          <View
+            style={{
+              width: WIDTH / 2.1,
+              borderBottomLeftRadius: 20,
+              borderTopRightRadius: 20,
+              backgroundColor: '#FFF',
+              height: HEIGHT / 6,
+              margin: 4,
+              elevation: 5,
+            }}>
+            <View style={{alignItems: 'center'}}>
+              <Icon
+                name="truck-plus-outline"
+                size={30}
+                color="#000"
+                style={{alignItems: 'flex-end'}}
+              />
+            </View>
+            <Text style={styles.text_left}>Safety Hazard Cases</Text>
+
+            <Text style={styles.text_right}>{safetyHazardCases}</Text>
+          </View>
+          {/* <View style={{flex: 1, alignItems: 'center'}}>
+            <Text style={styles.text_right}>{assignedCases}</Text>
+          </View> */}
+        </View>
+        {/* <View style={{flexDirection: 'row', flex: 1, width: '96%'}}>
           <View style={{flex: 1}}>
             <View style={{alignItems: 'center'}}>
               <Icon
@@ -161,7 +319,7 @@ const HomeScreenUnPlannedSummary = ({navigation}) => {
           <View style={{flex: 1, alignItems: 'center'}}>
             <Text style={styles.text_right}>{safetyHazardCases}</Text>
           </View>
-        </View>
+        </View> */}
       </View>
     </ImageBackground>
   );
@@ -189,14 +347,14 @@ const styles = StyleSheet.create({
     //shadowRadius: 20,
   },
   text_left: {
-    color: 'white',
+    color: '#000',
     fontWeight: 'bold',
     fontSize: 15,
     textAlign: 'center',
     padding: 15,
   },
   text_right: {
-    color: 'white',
+    color: '#000',
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center',
